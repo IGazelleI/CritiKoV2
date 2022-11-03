@@ -37,11 +37,11 @@
                         <a class="nav-link" aria-current="page" href="#intro">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="https://www.youtube.com/channel/UC5CF7mLQZhvx8O5GODZAhdA" rel="nofollow"
-                        target="_blank">Learn Bootstrap 5</a>
+                        <a class="nav-link" href="" rel="nofollow"
+                        target="_blank"></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="https://mdbootstrap.com/docs/standard/" target="_blank">Download MDB UI KIT</a>
+                        <a class="nav-link" href="" target="_blank"></a>
                     </li>
                     </ul>
         
@@ -97,7 +97,7 @@
         {{$slot}}
     </main>
     <footer>
-        <div class="d-flex flex-column flex-md-row text-center text-md-start justify-content-center bg-primary fixed-bottom">
+        <div class="d-flex flex-column flex-md-row text-center text-md-start justify-content-center bg-primary fixed-bottom opacity-75">
           <!-- Copyright -->
           <div class="text-white mb-3 mb-md-0">
             Copyright © 2020. All rights reserved.
