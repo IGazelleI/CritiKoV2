@@ -184,7 +184,7 @@
                     </div>
             
                     <!-- Submit button -->
-                    <button type="submit" class="btn btn-primary btn-block mb-3">Sign Up</button>
+                    <button type="submit" class="btn btn-primary btn-block mb-3">Sign up</button>
                 </form>
             </div>
         </div>

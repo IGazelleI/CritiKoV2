@@ -1,62 +1,12 @@
 <?php
 
-namespace App\Models;
-
-use Illuminate\Support\Arr;
-use Illuminate\Http\Request;
+use App\Models\EvalDet;
+use App\Models\Evaluation;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Student extends Model
+class UserService
 {
-    use HasFactory;
-
-    protected $fillable = [
-        'id_number', 
-        'fname', 
-        'mname', 
-        'lname', 
-        'suffix', 
-        'gender',
-        'address',
-        'dob',
-        'cnumber',
-        'emergency_cPName',
-        'emergency_cPNumber',
-        'emergency_cPRelationship',
-        'status',
-        'course_id',
-        'user_id', 
-        'status'
-    ];
-    //create student from user
-    public static function createFromUser($request, $userID)
-    {
-        $request['user_id'] = $userID;
-
-        return self::create($request->all());
-    }
-    //update studnet information
-    public static function updateInfo($request)
-    {
-        $userID = $request['user_id'];
-
-        Arr::forget(
-            $request, [
-                '_token',
-                '_method'
-            ]
-        );
-        
-        $result = DB::table('students')
-                    -> where('user_id', $userID)
-                    -> update($request);
-
-        return $result;
-    }
-    //store evaluate
-    public static function storeEvaluate($request)
+    public function store($request)
     {
         $eval = Evaluation::create([
             'evaluator' => auth()->user()->id,
@@ -122,39 +72,5 @@ class Student extends Model
         }
 
         return true;
-    }
-
-    //display full name
-    public function fullName($iniMid)
-    {
-        return ucfirst($this->fname) . ' ' . 
-               (empty($this->mname)? '' : (($iniMid)? ucfirst($this->mname[0]) . '.' : ucfirst($this->mname))) . ' ' .
-               ucfirst($this->lname) . ' ' . 
-               (empty($this->suffix)? '' : ucfirst($this->suffix) .'.' );
-    } 
-    //profile picture path
-    public function imgPath()
-    {
-        return 'storage/images/' . $this->imgPath;
-    }
-    //user relationship
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-    //course relationship
-    public function courses()
-    {
-        return $this->hasMany(Course::class, 'id');
-    }
-    //blockstudent relationship
-    public function blockStudent()
-    {
-        return $this->hasMany(BlockStudent::class, 'user_id');
-    }
-    //klase student relationship
-    public function klaseStudent()
-    {
-        return $this->hasMany(KlaseStudent::class, 'user_id');
     }
 }

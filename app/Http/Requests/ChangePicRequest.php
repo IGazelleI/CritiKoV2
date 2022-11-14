@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StudentStoreRequest extends FormRequest
+class ChangePicRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,10 +24,11 @@ class StudentStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => 'required'
+            'imgPath' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048'
         ];
     }
-     /**
+
+    /**
      * Get the error messages for the defined validation rules.
      *
      * @return array
@@ -35,7 +36,7 @@ class StudentStoreRequest extends FormRequest
     public function messages()
     {
         return [
-            'user_id.required' => 'Please select instructor first.'
+            'imgPath.required' => 'Upload an image first.'
         ];
     }
 }

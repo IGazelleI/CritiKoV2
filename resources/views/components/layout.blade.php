@@ -15,12 +15,12 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-primary d-none d-lg-block">
             <div class="container-fluid">
                 @auth
-                <a class="btn btn-outline-light" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
+                <button class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasUser" aria-controls="offcanvasScrolling">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-menu-button-wide" viewBox="0 0 16 16">
                         <path d="M0 1.5A1.5 1.5 0 0 1 1.5 0h13A1.5 1.5 0 0 1 16 1.5v2A1.5 1.5 0 0 1 14.5 5h-13A1.5 1.5 0 0 1 0 3.5v-2zM1.5 1a.5.5 0 0 0-.5.5v2a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 0-.5-.5h-13z"/>
                         <path d="M2 2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5zm10.823.323-.396-.396A.25.25 0 0 1 12.604 2h.792a.25.25 0 0 1 .177.427l-.396.396a.25.25 0 0 1-.354 0zM0 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V8zm1 3v2a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2H1zm14-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v2h14zM2 8.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0 4a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5z"/>
                     </svg>
-                </a>
+                </button>
                 <img src="{{asset('images/logo.png')}}" class="img-fluid my-n5" style="width: 75px;"/>
                 @endauth
                 <!-- Navbar brand -->
@@ -37,11 +37,11 @@
                         <a class="nav-link" aria-current="page" href="#intro">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="" rel="nofollow"
-                        target="_blank"></a>
+                        <a class="nav-link" href="https://www.youtube.com/channel/UC5CF7mLQZhvx8O5GODZAhdA" rel="nofollow"
+                        target="_blank">Learn Bootstrap 5</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="" target="_blank"></a>
+                        <a class="nav-link" href="https://mdbootstrap.com/docs/standard/" target="_blank">Download MDB UI KIT</a>
                     </li>
                     </ul>
         
@@ -92,12 +92,13 @@
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/5.0.0/mdb.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
         <script src="//unpkg.com/alpinejs" defer></script>
+        <script src="{{asset('assets/js/image.js')}}"></script>
     </body>
     <main>
         {{$slot}}
     </main>
     <footer>
-        <div class="d-flex flex-column flex-md-row text-center text-md-start justify-content-center bg-primary fixed-bottom opacity-75">
+        <div class="d-flex flex-column flex-md-row text-center text-md-start justify-content-center bg-primary fixed-bottom">
           <!-- Copyright -->
           <div class="text-white mb-3 mb-md-0">
             Copyright © 2020. All rights reserved.

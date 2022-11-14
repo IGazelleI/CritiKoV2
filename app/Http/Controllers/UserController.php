@@ -7,7 +7,7 @@ use App\Models\Student;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UserStoreRequest;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Events\PasswordReset;
 
@@ -18,7 +18,7 @@ class UserController extends Controller
         return view('index');
     }
     
-    public function store(StoreUserRequest $request)
+    public function store(UserStoreRequest $request)
     {
         $request['password'] = Hash::make($request->password);
         $user = User::create($request->all());
@@ -47,7 +47,7 @@ class UserController extends Controller
         {
             $request->session()->regenerate();
 
-            return redirect(route('index'))->with('message', 'You are now logged in.');
+            return redirect(route(self::role(auth()->user()->type) . '.home'))->with('message', 'You are now logged in.');
         }
         else
             return back()->withErrors(['email' => 'Invalid login attempt.'])->onlyInput('email');
@@ -111,7 +111,24 @@ class UserController extends Controller
         );
      
         return $status === Password::PASSWORD_RESET
-                    ? redirect()->route('login')->with('status', __($status))
+                    ? redirect()->route('index')->with('status', __($status))
                     : back()->withErrors(['email' => [__($status)]]);
+    }
+    
+    function role($type)
+    {
+        switch($type)
+        {
+            case 1: return 'admin';
+                    break;
+            case 2: return 'sast';
+                    break;
+            case 3: return 'faculty';
+                    break;
+            case 4: return 'student';
+                    break;
+
+            default: return false;
+        }
     }
 }
