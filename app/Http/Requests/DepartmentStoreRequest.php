@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StudentStoreRequest extends FormRequest
+class DepartmentStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,9 +24,11 @@ class StudentStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => 'required'
+            'name' => 'required',
+            'description' => 'required'
         ];
     }
+
      /**
      * Get the error messages for the defined validation rules.
      *
@@ -35,7 +37,8 @@ class StudentStoreRequest extends FormRequest
     public function messages()
     {
         return [
-            'user_id.required' => 'Please select instructor first.'
+            'name.required' => 'Name field is required.',
+            'description' => 'Description field is required.'
         ];
     }
 }

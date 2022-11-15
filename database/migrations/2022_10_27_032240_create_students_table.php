@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->date('dob')->nullable();
             $table->string('cnumber')->nullable();
+            $table->string('imgPath')->nullable();
             $table->string('emergency_cPName')->nullable();
             $table->string('emergency_cPNumber')->nullable();
             $table->string('emergency_cPRelationship')->nullable();

@@ -132,7 +132,7 @@
                         <!-- Gender input -->
                         <div class="col">
                             <div class="form-outline mb-4">
-                                <select class="select form-select" name="gender">
+                                <select class="select form-select rounded-pill" name="gender">
                                     <option selected disabled>Gender</option>
                                     <option value="Male" >Male</option>
                                     <option value="Female">Female</option>
@@ -184,7 +184,7 @@
                     </div>
             
                     <!-- Submit button -->
-                    <button type="submit" class="btn btn-primary btn-block mb-3">Sign in</button>
+                    <button type="submit" class="btn btn-primary btn-block mb-3">Sign up</button>
                 </form>
             </div>
         </div>

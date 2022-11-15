@@ -2,9 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
+use App\Models\Period;
+use App\Models\Faculty;
 use App\Models\Student;
+use App\Models\Question;
 use Illuminate\Http\Request;
-use App\Http\Requests\StoreStudentRequest;
+use Illuminate\Support\Facades\Hash;
+use Intervention\Image\Facades\Image;
+use App\Http\Requests\ChangePicRequest;
+use App\Http\Requests\EnrollmentSubmitRequest;
 use App\Http\Requests\StudentStoreRequest;
 
 class StudentController extends Controller
@@ -16,7 +23,7 @@ class StudentController extends Controller
      */
     public function index()
     {
-        //
+        return view('student.index');
     }
 
     /**
@@ -35,9 +42,12 @@ class StudentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StudentStoreRequest $request)
     {
-        //
+        if(!Student::storeEvaluate($request->all()))
+            return back()->with('message', 'Error in submitting evaluation.');
+
+        return redirect('/student')->with('message', 'Evaluation submitted.');
     }
 
     /**
@@ -48,20 +58,28 @@ class StudentController extends Controller
      */
     public function show()
     {
-        $det = Student::find(auth()->user()->id);
-
+        $det = Student::with('user')->where('user_id', '=', auth()->user()->id)->first();
+        
         return view('student.profile', compact('det'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Change profile picture.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function changeProfilePicture(ChangePicRequest $request, Student $student)
     {
-        //
+        $name = Hash::make($student->id) . '.' . $request->file('imgPath')->getClientOriginalExtension();
+        $request->file('imgPath')->storeAs('public/images', $name);
+        //update img
+        $student->imgPath = $name;
+
+        if(!$student->save())
+            return redirect(route('student.profile'))->with('message', 'Error in updating profile. Please try again.');
+        
+        return redirect(route('student.profile'))->with('message', 'Profile picture updated.');
     }
 
     /**
@@ -81,7 +99,30 @@ class StudentController extends Controller
 
     public function evaluate()
     {
-        return view('student.evaluate');
+        $question = Question::all();
+        $instructor = Faculty::all();
+
+        return view('student.evaluate', compact('question', 'instructor'));
+    }
+
+    public function changePeriod(Request $request)
+    {
+        $request->session()->put('period', (int) $request->period);
+
+        return back()->with('message', 'Period changed.');
+    }
+
+    public function enrollment(Request $request)
+    {
+        $det = Student::find(auth()->user()->students[0]->user_id);
+        $course = Course::orderBy('name')->get();
+        
+        return view('student.enrollment', compact('det', 'course'));
+    }
+
+    public function enroll(EnrollmentSubmitRequest $request)
+    {
+
     }
 
     /**

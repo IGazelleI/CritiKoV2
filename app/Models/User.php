@@ -43,6 +43,23 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    //role
+    public function role()
+    {
+        switch($this->type)
+        {
+            case 1: return 'admin';
+                    break;
+            case 2: return 'sast';
+                    break;
+            case 3: return 'faculty';
+                    break;
+            case 4: return 'student';
+                    break;
+            
+            default: return false;
+        }
+    }
     //student relationship
     public function students()
     {
