@@ -16,6 +16,10 @@ class Block extends Model
         'section',
         'status,'
     ];
+    public function getDescription()
+    {
+        return $this->course->name . ' ' . $this->year_level . '-' . $this->section;
+    }
     //course relationship
     public function course()
     {

@@ -31,58 +31,24 @@
                     aria-controls="navbarExample01" aria-expanded="false" aria-label="Toggle navigation">
                     <i class="fas fa-bars"></i>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarExample01">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item active">
-                        <a class="nav-link" aria-current="page" href="#intro">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="https://www.youtube.com/channel/UC5CF7mLQZhvx8O5GODZAhdA" rel="nofollow"
-                        target="_blank">Learn Bootstrap 5</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="https://mdbootstrap.com/docs/standard/" target="_blank">Download MDB UI KIT</a>
-                    </li>
-                    </ul>
-        
-                    <ul class="navbar-nav d-flex flex-row">
-                    <!-- Icons -->
-                    <li class="nav-item me-3 me-lg-0">
-                        <a class="nav-link" href="https://www.youtube.com/channel/UC5CF7mLQZhvx8O5GODZAhdA" rel="nofollow"
-                        target="_blank">
-                        <i class="fab fa-youtube"></i>
-                        </a>
-                    </li>
-                    <li class="nav-item me-3 me-lg-0">
-                        <a class="nav-link" href="https://www.facebook.com/mdbootstrap" rel="nofollow" target="_blank">
-                        <i class="fab fa-facebook-f"></i>
-                        </a>
-                    </li>
-                    <li class="nav-item me-3 me-lg-0">
-                        <a class="nav-link" href="https://twitter.com/MDBootstrap" rel="nofollow" target="_blank">
-                        <i class="fab fa-twitter"></i>
-                        </a>
-                    </li>
-                    <li class="nav-item me-3 me-lg-0">
-                        <a class="nav-link" href="https://github.com/mdbootstrap/mdb-ui-kit" rel="nofollow" target="_blank">
-                        <i class="fab fa-github"></i>
-                        </a>
-                    </li>
-                    @auth
-                    <li>
-                        <form action="{{route('logout')}}" method="POST" class="inline">
-                            @csrf
-
-                            <button type="submit" class="bg-danger text-white border-light rounded">
-                                Logout
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-power" viewBox="0 0 16 16">
-                                    <path d="M7.5 1v7h1V1h-1z"/>
-                                    <path d="M3 8.812a4.999 4.999 0 0 1 2.578-4.375l-.485-.874A6 6 0 1 0 11 3.616l-.501.865A5 5 0 1 1 3 8.812z"/>
-                                  </svg>
-                            </button>
-                        </form>
-                    </li>
-                    @endauth
+                <div class="collapse navbar-collapse d-flex float-end" id="navbarExample01">
+                    <ul class="navbar-nav me-3 mb-2 mb-lg-0 position-absolute end-0">
+                        @auth
+                        <li>
+                            <span class="nav-link me-3" style="font-size: 25px"> <b> {{ucfirst(auth()->user()->role())}} </b> </span>
+                        </li>
+                        <li>
+                            <form action="{{route('logout')}}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit" class="btn bg-transparent text-white border border-danger rounded">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-power" viewBox="0 0 16 16">
+                                        <path d="M7.5 1v7h1V1h-1z"/>
+                                        <path d="M3 8.812a4.999 4.999 0 0 1 2.578-4.375l-.485-.874A6 6 0 1 0 11 3.616l-.501.865A5 5 0 1 1 3 8.812z"/>
+                                    </svg>
+                                </button>
+                            </form>
+                        </li>
+                        @endauth
                     </ul>
                 </div>
             </div>

@@ -12,26 +12,25 @@
                 <div class="row">
                     <div class="col d-flex justify-content-center align-self-center">     
                         <input type="hidden" id="imgPath"/>
-                        @unless ($instructor->isEmpty())
-                            <select name="user_id" id="user_id" class="form-select form-select-lg" aria-label="Default select example" style="height: 10px" onchange="changeImage()">
-                                <option selected disabled> -Select Instructor- </option>
+                        
+                        <select name="user_id" id="user_id" class="form-select form-select-lg rounded-pill" aria-label="Default select example" onchange="changeImage()">
+                            <option selected disabled> -Select Instructor- </option>
+                            @unless ($instructor->isEmpty())
                                 @foreach ($instructor as $prof)
                                     @php
-                                        $done = checkStatus($status, $prof->id);
+                                        /* $done = checkStatus($status, $prof->id); */
                                     @endphp
                                     <option value="{{$prof->id}}" 
                                         {{old('user_id') == $prof->id? 'selected' : ''}}
-                                        {{$done? 'disabled' : ''}} >
-                                        {{$done ? '(Finished) ' : ''}}
-                                        {{$prof->subject}} - {{$prof->name}} 
+                                        {{-- {{$done? 'disabled' : ''}} --}} >
+                                        {{-- {{$done ? '(Finished) ' : ''}} --}}
+                                        {{-- {{$prof->subject}} - --}} {{$prof->fullName(true)}} 
                                     </option>
                                 @endforeach
-                            </select>
-                        @else
-                            <select class="text-center form-select form-select-lg" aria-label="Default select example">
+                            @else
                                 <option selected disabled> Current block has no instructor. </option>
-                            </select>
-                        @endunless
+                            @endunless
+                        </select>
         
                         @error('user_id')
                             <p class="text-red-500 text-xs mt-1">
@@ -60,7 +59,7 @@
                         $qnum = 1;
                         $prevCat = '';
                     @endphp
-                    <div class="row d-flex justify-content-end bg-secondary rounded-top">
+                    <div class="row d-flex justify-content-end border border-dark rounded-top">
                         <div class="col-md-auto p-2 pe-3">
                             1
                         </div>
@@ -99,7 +98,7 @@
                                     $count = 0;
                                 @endphp
                                 <div class="row">
-                                    <div class="col bg-warning border-bottom border-dark text-white rounded-bottom">
+                                    <div class="col {{randomBg()}} border-bottom border-dark text-white rounded-bottom">
                                         <strong> {{$q->qCat->name}} </strong>
                                     </div>
                                 </div>
@@ -107,7 +106,7 @@
                             
                             <div class="row ms-1 d-flex align-items-center">
                                 <div class="col border-end">
-                                    {{++$count}}. {{$q->sentence}}
+                                    <b> {{++$count}}. </b> {{$q->sentence}}
                                     <input type="hidden" name="{{'qCatID'  . $qnum}}" value="{{$q->q_category_id}}"/>
                                 </div>
                                 <div class="col-md-auto p-2">
@@ -164,3 +163,25 @@
         document.getElementById("evaluateeImg").src = document.getElementById("evaluateeImg").src = 'https://risibank.fr/cache/medias/0/2/240/24099/full.png';
     }
 </script>
+@php
+    function checkStatus($status, $facultyID)
+    {
+        if(!$status->isEmpty())
+        {
+            foreach($status as $detail)
+            {
+                if($facultyID == $detail->evaluatee)
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    function randomBg()
+    {
+        $bg = ['bg-primary', 'bg-secondary', 'bg-info', 'bg-warning', 'bg-danger', 'bg-success'];
+
+        return $bg[random_int(0, count($bg) - 1)];
+    }
+@endphp

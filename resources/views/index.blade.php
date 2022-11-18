@@ -33,6 +33,7 @@
             <div class="tab-pane fade show active" id="pills-login" role="tabpanel" aria-labelledby="tab-login">
                 <form action="{{route('auth')}}" method="POST">
                     @csrf
+                    <input type="hidden" name="role" value="4"/>
                     <!-- Email input -->
                     <div class="form-outline mb-4">
                         <input type="email" name="email" id="email" class="form-control" value=""/>
@@ -62,8 +63,8 @@
                         <div class="col-md-6 d-flex justify-content-center">
                             <!-- Checkbox -->
                             <div class="form-check mb-3 mb-md-0">
-                                <input class="form-check-input" type="checkbox" value="" id="loginCheck"/>
-                                <label class="form-check-label" for="loginCheck"> Remember me </label>
+                                <input class="form-check-input" type="checkbox" name="remember" id="loginCheck"/>
+                                <label class="form-check-label" for="loginCheck"> Remember Me </label>
                             </div>
                         </div>
                 

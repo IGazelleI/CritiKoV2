@@ -3,16 +3,17 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -20,6 +21,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'type',
         'name',
         'email',
         'password',
@@ -59,6 +61,42 @@ class User extends Authenticatable
             
             default: return false;
         }
+    }
+
+    public static function createByRole($request, $userID)
+    {
+        if($request['type'] != 1)
+        {
+            $formFields = [
+                'user_id' => $userID,
+                'fname' => $request['fname'],
+                'mname' => $request['mname'],
+                'lname' => $request['lname'],
+                'suffix' => $request['suffix']
+            ];
+        }
+        switch($request['type'])
+        {
+            case 1: while(!Admin::create([
+                        'user_id' => $userID
+                    ])){}
+                    
+                    break;
+            case 2: while(!Sast::create($formFields)){}
+
+                    break;
+            case 3: $formFields['department_id'] = $request['department_id'];
+
+                    while(!Faculty::create($formFields)){}
+
+                    break;
+            case 4: $formFields['course_id'] = $request['course_id'];
+                
+                    while(!Student::create($formFields)){}
+                    break;
+        }
+
+        return true;
     }
     //student relationship
     public function students()

@@ -33,6 +33,22 @@ class UserController extends Controller
         return redirect(route('index'))->with('message', 'Account registered.');
     }
 
+    public function create(Request $request)
+    {
+        $request['password'] = Hash::make($request->password);
+        $user = User::create($request->all());
+
+        if(!$user)
+            return back()->with('message', 'Error in creating user. Try again later.');
+        else
+        {
+            while(!User::createByRole($request->all(), $user->id)){}
+        }
+
+        return back()->with('message', 'Account added.');
+    }
+
+
     public function auth(Request $request)
     {
         $formFields = $request->validate([
@@ -43,11 +59,11 @@ class UserController extends Controller
             'password.required' => 'Required'
         ]);
 
-        if(auth()->attempt($formFields))
+        if(auth()->attempt($formFields, $request->remember))
         {
             $request->session()->regenerate();
 
-            return redirect(route(auth()->user()->role() . '.home'))->with('message', 'You are now logged in.');
+            return redirect(route('home'))->with('message', 'You are now logged in.');
         }
         else
             return back()->withErrors(['email' => 'Invalid login attempt.'])->onlyInput('email');

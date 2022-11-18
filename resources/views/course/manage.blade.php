@@ -4,63 +4,64 @@
             <div class="table-wrapper">
                 <div class="table-title">
                     <div class="row">
-                        <div class="col-sm-5">
-                            <h2>User <b>Management</b></h2>
+                        <div class="col">
+                            <h2>
+                                @if(isset($department))
+                                {{$department->name}} Courses
+                                @else
+                                Course <b>Management</b>
+                                @endif
+                            </h2>
                         </div>
-                        <div class="col-sm-7">
-                            <button type="button" class="btn btn-primary" data-bs-target="#addUserModal" data-bs-toggle="modal">
+                        <div class="col-2">
+                            <button type="button" class="btn btn-primary" data-bs-target="#addCourseModal" data-bs-toggle="modal">
                                 <span>
                                     New
                                 </span>
-                            </button>				
+                            </button>
                         </div>
                     </div>
                 </div>
                 <table class="table table-striped table-hover">
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Email</th>			
-                            <th>Role</th>
-                            <th colspan="2">Status</th>
+                            <th> <strong> Name </strong> </th>			
+                            <th colspan="2"> <strong> Descriptive Title </strong> </th>
                         </tr>
                     </thead>
                     <tbody>
-                        @unless($user->isEmpty())
-                            @foreach($user as $det)
+                        @unless($course->isEmpty())
+                            @foreach($course as $det)
                             <tr>
-                                <td>{{$det->id}}</td>
-                                <td>
-                                    <a href="#">
-                                        <img src="{{getAvatar($det)}}" class="img-fluid img-thumbnail rounded-circle" alt="Avatar" style="width: 5%"> 
-                                        {{$det->email}}
+                                <td>{{$det->name}}</td>                
+                                <td class="col-8">{{$det->description}}</td>
+                                <td class="col-1 d-flex justify-self-center align-self-center">
+                                    <a href="{{route('course.manage', $det->id)}}" class="btn btn-warning p-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                                        </svg>
                                     </a>
-                                </td>                  
-                                <td>{{ucfirst($det->role())}}</td>
-                                <td class="col-1">
-                                    <span class="status text-success">
-                                        &bull;
-                                    </span> 
-                                    Active
-                                </td>
-                                <td class="col-2 justify-self-end">
                                     <div class="dropdown">
-                                        <button class="btn bg-transparent" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 5%">
+                                        <button class="btn bg-transparent" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
                                                 <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
                                             </svg>
                                         </button>
                                         <ul class="dropdown-menu">
                                             <li>
-                                                <button type="button" class="dropdown-item" data-bs-target="#Modal" data-bs-toggle="modal" 
+                                                <button type="button" class="dropdown-item" data-bs-target="#editCourseModal" data-bs-toggle="modal"
                                                     data-bs-id="{{$det->id}}"
+                                                    data-bs-department_id="{{$det->department_id}}"
+                                                    data-bs-name="{{$det->name}}"
+                                                    data-bs-description="{{$det->description}}"
                                                 >
-                                                    Reset Password
+                                                    Edit
                                                 </button>
                                             </li>
                                             <li>
-                                                <button type="button" class="dropdown-item text-danger" data-bs-target="#Modal" data-bs-toggle="modal"
+                                                <button type="button" class="dropdown-item text-danger" data-bs-target="#delCourseModal" data-bs-toggle="modal"
                                                     data-bs-id="{{$det->id}}"
+                                                    data-bs-description="{{$det->description}}"
                                                 >
                                                     Delete
                                                 </button>
@@ -72,7 +73,7 @@
                             @endforeach
                         @else
                             <tr>
-                                <td> User is empty. </td>
+                                <td> Course is empty. </td>
                             </tr>
                         @endunless
                     </tbody>
@@ -91,26 +92,6 @@
                 </div> --}}
             </div>
         </div>
-    </x-general-card>     
+    </x-general-card>
     <x-admin-canvas/>
 </x-layout>
-@php
-    function getAvatar($det)
-    {
-        $default = 'https://www.pngitem.com/pimgs/m/226-2267516_male-shadow-circle-default-profile-image-round-hd.png';
-        switch($det->type)
-        {
-            case 1: return $default;
-                    break;
-            case 2: return $default;
-                    break;
-            case 3: return $default;
-                    break;
-            case 4: if(isset($det->students[0]->imgPath))
-                        return '../' . $det->students[0]->imgPath();
-                    else
-                        return $default;
-                    break;
-        }
-    }
-@endphp
