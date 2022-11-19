@@ -6,6 +6,7 @@ use App\Models\Course;
 use App\Models\Department;
 use Illuminate\Http\Request;
 use App\Http\Requests\CourseStoreRequest;
+use App\Models\Period;
 
 class CourseController extends Controller
 {

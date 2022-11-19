@@ -98,8 +98,13 @@ class PeriodController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        $period = Period::find($request->id);
+
+        if(!$period->delete())
+            return back()->with('message', 'Error in deleting period. Please try again.');
+        
+        return back()->with('message', 'Period deleted.');
     }
 }
