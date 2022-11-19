@@ -133,9 +133,15 @@ class UserController extends Controller
                     : back()->withErrors(['email' => [__($status)]]);
     }
 
-    public function manage()
+    public function manage($type)
     {
-        $user = User::latest('id')->get();
+        $user = User::where(function ($query) use ($type)
+        {
+            if($type != 0)
+                $query->where('type', $type);
+        })
+        ->latest('id')
+        ->get();
 
         return view('user.manage', compact('user'));
     }

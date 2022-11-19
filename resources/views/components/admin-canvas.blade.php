@@ -26,7 +26,7 @@
                 <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
                     <div class="accordion-body">
                         <div class="list-group">
-                            <a href="{{route('user.manage')}}" class="list-group-item list-group-item-action">
+                            <a href="{{route('user.manage',0)}}" class="list-group-item list-group-item-action">
                                 User
                             </a>
                             <button type="button" class="list-group-item list-group-item-action" data-bs-toggle="modal" data-bs-target="#departmentModal">
