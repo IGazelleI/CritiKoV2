@@ -55,6 +55,7 @@
                 </tbody>
               </table>
             </div>
-          </div>
+        </div>
     </x-general-card> 
+    <x-student-canvas/>
 </x-layout>

@@ -114,7 +114,9 @@ class StudentController extends Controller
 
     public function enrollment(Request $request)
     {
-        $det = Student::find(auth()->user()->students[0]->user_id);
+        $det = Student::where('user_id', auth()->user()->students[0]->user_id)
+                    -> get()
+                    -> first();
         $course = Course::orderBy('name')->get();
         
         return view('student.enrollment', compact('det', 'course'));

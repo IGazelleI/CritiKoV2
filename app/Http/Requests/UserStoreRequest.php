@@ -32,6 +32,7 @@ class UserStoreRequest extends FormRequest
     public function rules()
     {
         return [
+            'type' => 'required',
             'id_number' => ['required', Rule::unique('students', 'id_number')],
             'fname' => 'required',
             'lname' => 'required',

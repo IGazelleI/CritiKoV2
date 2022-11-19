@@ -21,7 +21,9 @@ class UserController extends Controller
     public function store(UserStoreRequest $request)
     {
         $request['password'] = Hash::make($request->password);
+        
         $user = User::create($request->all());
+
 
         if(!$user)
             return back()->with('message', 'Error in creating user. Try again later.');

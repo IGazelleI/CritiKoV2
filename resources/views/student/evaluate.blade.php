@@ -29,6 +29,7 @@
                                 @endforeach
                             @else
                                 <option selected disabled> Current block has no instructor. </option>
+                                <option> Brown </option>
                             @endunless
                         </select>
         

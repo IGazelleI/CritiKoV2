@@ -33,7 +33,6 @@
             <div class="tab-pane fade show active" id="pills-login" role="tabpanel" aria-labelledby="tab-login">
                 <form action="{{route('auth')}}" method="POST">
                     @csrf
-                    <input type="hidden" name="role" value="4"/>
                     <!-- Email input -->
                     <div class="form-outline mb-4">
                         <input type="email" name="email" id="email" class="form-control" value=""/>
@@ -90,6 +89,7 @@
                 @endif
                 <form action="{{route('register')}}" method="POST">
                     @csrf
+                    <input type="hidden" name="type" value="4"/>
                     <div class="row">
                         <div class="col">
                             <!-- ID Number input -->
