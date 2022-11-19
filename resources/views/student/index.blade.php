@@ -11,7 +11,8 @@
                 <thead class="bg-light">
                   <tr>
                     <th scope="col">Instructor</th>
-                    <th scope="col" colspan="2">Subject</th>
+                    <th scope="col">Subject</th>
+                    <th scope="col">Status</th>
                   </tr>
                 </thead>
                 <tbody>

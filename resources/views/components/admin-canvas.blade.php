@@ -29,6 +29,9 @@
                             <a href="{{route('user.manage')}}" class="list-group-item list-group-item-action">
                                 User
                             </a>
+                            <button type="button" class="list-group-item list-group-item-action" data-bs-toggle="modal" data-bs-target="#periodModal">
+                                Period
+                            </button>
                             <button type="button" class="list-group-item list-group-item-action" data-bs-toggle="modal" data-bs-target="#departmentModal">
                                 Department
                             </button>

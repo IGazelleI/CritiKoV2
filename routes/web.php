@@ -88,5 +88,12 @@ Route::middleware('auth')->group(function ()
             Route::put('/block', 'update')->name('block.update');
             Route::delete('/block', 'destroy')->name('block.delete');
         });
+
+        Route::controller(App\Http\Controllers\PeriodController::class)->group(function ()
+        {
+            Route::post('/period', 'store')->name('period.store');
+            Route::put('/period', 'update')->name('period.update');
+            Route::delete('/period', 'destroy')->name('period.delete');
+        });
     });
 });
