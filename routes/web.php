@@ -62,7 +62,7 @@ Route::middleware('auth')->group(function ()
     {
         Route::controller(App\Http\Controllers\UserController::class)->group(function ()
         {
-            Route::get('/u/manage', 'manage')->name('user.manage');
+            Route::get('/u/manage/{type}', 'manage')->name('user.manage');
             Route::post('/user/create', 'create')->name('user.add');
         });
 
