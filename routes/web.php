@@ -95,5 +95,12 @@ Route::middleware('auth')->group(function ()
             Route::put('/period', 'update')->name('period.update');
             Route::delete('/period', 'destroy')->name('period.delete');
         });
+
+        Route::controller(App\Http\Controllers)->group(function ()
+        {
+            Route::
+            Route::
+            Route::
+        });
     });
 });
