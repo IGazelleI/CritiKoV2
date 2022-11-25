@@ -56,7 +56,7 @@ Route::middleware('auth')->group(function ()
             Route::post('/enroll', 'enroll')->name('student.submitEnroll');
         });
     });
-    
+
 
     Route::middleware('user-access: admin')->group(function ()
     {
@@ -64,6 +64,13 @@ Route::middleware('auth')->group(function ()
         {
             Route::get('/u/manage/{type}', 'manage')->name('user.manage');
             Route::post('/user/create', 'create')->name('user.add');
+        });
+
+        Route::controller(App\Http\Controllers\PeriodController::class)->group(function ()
+        {
+            Route::post('/period', 'store')->name('period.store');
+            Route::put('/period', 'update')->name('period.update');
+            Route::delete('/period', 'destroy')->name('period.delete');
         });
 
         Route::controller(App\Http\Controllers\DepartmentController::class)->group(function ()
@@ -89,11 +96,12 @@ Route::middleware('auth')->group(function ()
             Route::delete('/block', 'destroy')->name('block.delete');
         });
 
-        Route::controller(App\Http\Controllers\PeriodController::class)->group(function ()
+        Route::controller(App\Http\Controllers\SubjectController::class)->group(function ()
         {
-            Route::post('/period', 'store')->name('period.store');
-            Route::put('/period', 'update')->name('period.update');
-            Route::delete('/period', 'destroy')->name('period.delete');
+            Route::get('s/{course}', 'index')->name('subject.manage');
+            Route::post('/subject', 'store')->name('subject.store');
+            Route::put('/subject', 'update')->name('subject.update');
+            Route::delete('/subject', 'destroy')->name('subject.delete');
         });
     });
 });

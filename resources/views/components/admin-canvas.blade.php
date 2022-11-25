@@ -38,7 +38,7 @@
                             <a href="{{route('course.manage', 0)}}" class="list-group-item list-group-item-action">
                                 Course
                             </a>
-                            <a href="#" class="list-group-item list-group-item-action">
+                            <a href="{{route('subject.manage', 0)}}" class="list-group-item list-group-item-action">
                                 Subject
                             </a>
                             <a href="{{route('block.manage', 0)}}" class="list-group-item list-group-item-action">

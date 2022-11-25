@@ -10,11 +10,11 @@ class Subject extends Model
     use HasFactory;
 
     protected $fillable = [
-        'course_id', 
-        'name', 
-        'descriptive_title', 
-        'year_level', 
-        'semester', 
+        'course_id',
+        'code',
+        'descriptive_title',
+        'year_level',
+        'semester',
         'status'
     ];
     //course relationship

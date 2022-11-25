@@ -9,9 +9,9 @@
         <div class="modal-header">
             <h1 class="modal-title fs-5 ms-5" id="exampleModalLabel">Periods</h1>
             <div class="col-sm me-5">
-                <button type="button" class="btn btn-primary float-end" data-bs-target="#addPerModal" data-bs-toggle="modal"> 
+                <button type="button" class="btn btn-primary float-end" data-bs-target="#addPerModal" data-bs-toggle="modal">
                     <span>New</span>
-                </button>					
+                </button>
             </div>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
@@ -54,7 +54,7 @@
                             @endforeach
                         @else
                             <tr>
-                                <th scope="row">Period is empty.</th>
+                                <th scope="row" class="text-center" colspan="2">Period is empty.</th>
                             </tr>
                         @endunless
                     </tbody>

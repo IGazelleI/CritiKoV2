@@ -27,7 +27,7 @@ class CourseController extends Controller
 
         $department = ($department != 0)? Department::find($department) : null;
 
-        return view('course.manage', compact('course', 'department'));
+        return view('course.index', compact('course', 'department'));
     }
 
     /**

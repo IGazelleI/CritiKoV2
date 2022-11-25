@@ -9,9 +9,9 @@
         <div class="modal-header">
             <h1 class="modal-title fs-5 ms-5" id="exampleModalLabel">Departments</h1>
             <div class="col-sm me-5">
-                <button type="button" class="btn btn-primary float-end" data-bs-target="#addDeptModal" data-bs-toggle="modal"> 
+                <button type="button" class="btn btn-primary float-end" data-bs-target="#addDeptModal" data-bs-toggle="modal">
                     <span>New</span>
-                </button>					
+                </button>
             </div>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
@@ -28,7 +28,7 @@
                         @unless($dept->isEmpty())
                             @foreach($dept as $det)
                             <tr>
-                                <th scope="row">{{$det->name}}</th> 
+                                <th scope="row">{{$det->name}}</th>
                                 <td>{{$det->description}}</td>
                                 <td>
                                     <a href="{{route('course.manage', $det->id)}}" class="btn btn-warning p-1">
@@ -59,7 +59,7 @@
                             @endforeach
                         @else
                             <tr>
-                                <th scope="row">Department is empty.</th>
+                                <th scope="row" class="text-center" colspan="2">Department is empty.</th>
                             </tr>
                         @endunless
                     </tbody>

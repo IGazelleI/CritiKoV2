@@ -6,15 +6,15 @@
                     <div class="row">
                         <div class="col">
                             <h2>
-                                @if(isset($department))
-                                {{$department->name}} Courses
+                                @if(isset($course))
+                                {{$course->name}} Subjects
                                 @else
-                                Course <b>Management</b>
+                                Subject <b>Management</b>
                                 @endif
                             </h2>
                         </div>
                         <div class="col-2">
-                            <button type="button" class="btn btn-primary" data-bs-target="#addCourseModal" data-bs-toggle="modal">
+                            <button type="button" class="btn btn-primary" data-bs-target="#addSubModal" data-bs-toggle="modal">
                                 <span>
                                     New
                                 </span>
@@ -25,16 +25,18 @@
                 <table class="table table-striped table-hover">
                     <thead>
                         <tr>
-                            <th> <strong> Name </strong> </th>			
-                            <th colspan="2"> <strong> Descriptive Title </strong> </th>
+                            <th> Course </th>
+                            <th> <strong> Code </strong> </th>
+                            <th class="text-start"> <strong> Name </strong> </th>
                         </tr>
                     </thead>
                     <tbody>
-                        @unless($course->isEmpty())
-                            @foreach($course as $det)
+                        @unless($subject->isEmpty())
+                            @foreach($subject as $det)
                             <tr>
-                                <td>{{$det->name}}</td>                
-                                <td class="col-8">{{$det->description}}</td>
+                                <td>{{$det->course->name}}</td>
+                                <td>{{$det->code}}</td>
+                                <td class="col-8">{{$det->descriptive_title}}</td>
                                 <td class="col-1 d-flex justify-self-center align-self-center">
                                     <a href="{{route('course.manage', $det->id)}}" class="btn btn-warning p-1">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
@@ -49,19 +51,20 @@
                                         </button>
                                         <ul class="dropdown-menu">
                                             <li>
-                                                <button type="button" class="dropdown-item" data-bs-target="#editCourseModal" data-bs-toggle="modal"
+                                                <button type="button" class="dropdown-item" data-bs-target="#editSubModal" data-bs-toggle="modal"
                                                     data-bs-id="{{$det->id}}"
-                                                    data-bs-department_id="{{$det->department_id}}"
-                                                    data-bs-name="{{$det->name}}"
-                                                    data-bs-description="{{$det->description}}"
+                                                    data-bs-course="{{$det->course_id}}"
+                                                    data-bs-code="{{$det->code}}"
+                                                    data-bs-description="{{$det->descriptive_title}}"
+                                                    data-bs-semester="{{$det->semester}}"
                                                 >
                                                     Edit
                                                 </button>
                                             </li>
                                             <li>
-                                                <button type="button" class="dropdown-item text-danger" data-bs-target="#delCourseModal" data-bs-toggle="modal"
+                                                <button type="button" class="dropdown-item text-danger" data-bs-target="#delSubModal" data-bs-toggle="modal"
                                                     data-bs-id="{{$det->id}}"
-                                                    data-bs-description="{{$det->description}}"
+                                                    data-bs-description="{{$det->descriptive_title}}"
                                                 >
                                                     Delete
                                                 </button>
@@ -73,7 +76,7 @@
                             @endforeach
                         @else
                             <tr>
-                                <td> Course is empty. </td>
+                                <td class="text-center" colspan="2"> Subject is empty. </td>
                             </tr>
                         @endunless
                     </tbody>
