@@ -104,11 +104,5 @@ Route::middleware('auth')->group(function ()
             Route::delete('/subject', 'destroy')->name('subject.delete');
         });
 
-        Route::controller(App\Http\Controllers)->group(function ()
-        {
-            Route::
-            Route::
-            Route::
-        });
     });
 });

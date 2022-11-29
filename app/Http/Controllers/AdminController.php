@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -13,7 +14,10 @@ class AdminController extends Controller
      */
     public function index()
     {
-        return view('admin.index');
+        return view('admin.index', ['user' => User::count(), 
+        'admins' => User::where('type', '=', 1)->get()->count(),
+        'students' => User::where('type','=', 4)->get()->count(),
+        ]);
     }
 
     /**
