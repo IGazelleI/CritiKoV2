@@ -100,14 +100,23 @@
                     <tbody>
                         @foreach($user as $det)
                         <tr>
-                            <td>{{$det->id}}</td>
+                            <td>{{$det->name}}</td>
                             <td>
                                 <a href="#">
                                     <img src="{{getAvatar($det)}}" class="img-fluid img-thumbnail rounded-circle" alt="Avatar" style="width: 5%">
-                                    {{$det->department->name}}
+                                    @php
+                                        $dean = checkDean($det);
+                                    @endphp
+                                    @if (isset($dean))
+                                        {{$dean}}
+                                    @else
+                                        Unset
+                                        <a href="{{route('dean.assign', $det->id)}}" class="btn btn-primary btn-sm">
+                                            Assign
+                                        </a>
+                                    @endif
                                 </a>
                             </td>
-                            <td>{{ucfirst($det->fullName(0))}}</td>
                             <td class="col-2">
                                 <span class="status text-success">
                                     &bull;
@@ -200,5 +209,18 @@
                         return $default;
                     break;
         }
+    }
+    function checkDean($det)
+    {
+        if(!$det->faculties->isEmpty())
+        {
+            foreach($det->faculties as $facs)
+            {
+                if($facs->isDean)
+                    return $facs->fullName(0);
+            }
+        }
+
+        return null;
     }
 @endphp

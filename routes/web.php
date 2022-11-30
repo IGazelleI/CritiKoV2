@@ -64,6 +64,7 @@ Route::middleware('auth')->group(function ()
         {
             Route::get('/u/m/{type?}', 'manage')->name('user.manage');
             Route::post('/u/create', 'create')->name('user.add');
+            Route::get('/a/{$department}', 'assignDean')->name('dean.assign');
         });
 
         Route::controller(App\Http\Controllers\PeriodController::class)->group(function ()
@@ -104,7 +105,6 @@ Route::middleware('auth')->group(function ()
             Route::delete('/subject ', 'destroy')->name('subject.delete');
         });
 
-<<<<<<< HEAD
         /* Route::controller(App\Http\Controllers)->group(function ()
         {
             Route::
@@ -122,7 +122,5 @@ Route::middleware('auth')->group(function ()
             Route::put('/question', 'update')->name('question.update');
             Route::delete('/question', 'destroy')->name('question.delete');
         });
-=======
->>>>>>> ecbe8d5fd6cb099388f61857d84d813e538e2e20
     });
 });

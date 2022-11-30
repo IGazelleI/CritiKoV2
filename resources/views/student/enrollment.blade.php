@@ -75,30 +75,30 @@
                             </button>
                         </div>
                     </div>
-                    <!-- Modal -->
-                    <div class="modal fade" id="confirm" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Confirmation</h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                            <div class="modal-body">
-                                I hereby enroll chu chu.
-                            </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-primary rounded-pill">Proceed</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </form>
             </div>
         </div>
     </x-general-card>
     <x-student-canvas/>
 </x-layout>
+<!-- Modal -->
+<div class="modal fade" id="confirm" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Confirmation</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+        <div class="modal-body">
+            I hereby enroll chu chu.
+        </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary rounded-pill">Proceed</button>
+            </div>
+        </div>
+    </div>
+</div>
 @php
     function getEnrollmentBg($status)
     {

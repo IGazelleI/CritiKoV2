@@ -19,7 +19,7 @@ class FacultySeeder extends Seeder
         $faculty = [
             [
                 'type' => 3,/* 
-                'name' => 'Jose Marie Garcia', */
+                'name' => 'Jose Maria Garcia', */
                 'email' => 'jose@gmail.com',
                 'password' => bcrypt('amores15')
             ],
@@ -59,15 +59,46 @@ class FacultySeeder extends Seeder
                 'email' => 'joey@gmail.com',
                 'password' => bcrypt('amores15')
             ]
-        ]; 
+        ];
+
+        /* $name = [
+            [
+                'fname' => 'Jose Maria',
+                'lname' => 'Garcia'
+            ],
+            [
+                'fname' => 'Bell',
+                'lname' => 'Campanilla'
+            ],
+            [
+                'fname' => 'Pet Andrew',
+                'lname' => 'Nacua'
+            ],
+            [
+                'fname' => 'Noreen',
+                'lname' => 'Fuentes'
+            ],
+            [
+                'fname' => 'Dindo',
+                'lname' => 'Logpit'
+            ],
+            [
+                'fname' => 'Starzy Bicare',
+                'lname' => 'Baluarte-Bacus'
+            ],
+            [
+                'fname' => 'Joey',
+                'lname' => 'Sayson'
+            ]
+        ]; */
 
         foreach($faculty as $facs)
         {
             $user = User::factory()->create($facs);
 
-            if($user->type == 'faculty')
+            if($user->type == 3)
             {
-                Faculty::factory()->create([
+                Faculty::create([
                     'user_id' => $user->id,
                     'department_id' => 1
                 ]);

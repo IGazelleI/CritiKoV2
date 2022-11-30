@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Student;
 use App\Models\Faculty;
+use App\Models\Department;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -149,11 +150,22 @@ class UserController extends Controller
         }
         else
         {
-            $user = Faculty::where('isDean', true)
-                        -> latest('id')
+            $user = Department::latest('id')
                         -> get();
         }
 
         return view('user.manage', compact('user', 'type'));
+    }
+
+    public function assignDean($department)
+    {
+        dd('asd');
+        $dept = Department::all();
+
+        $faculty = Faculty::where('department_id', $department)
+                        -> latest('id')
+                        -> get();
+
+        return view('dean.assign', compact('dept', 'faculty'));
     }
 }
