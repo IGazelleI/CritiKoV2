@@ -7,6 +7,13 @@
                 </header>
             </div>
         </div>
+        @if(isset($enrollment))
+        <div class="row">
+            <div class="col">
+                <h3 class="text-center {{getEnrollmentBg($enrollment->status)}} text-secondary m-2 rounded"> {{$enrollment->status}} </h3>
+            </div>
+        </div>
+        @endif
         <div class="row">
             <div class="col">
                 <form action="{{route('student.submitEnroll')}}" method="POST">
@@ -25,11 +32,11 @@
                         <label class="form-label ms-2">Program</label>
                         <div class="col">
                             <div class="form-outline mb-4">
-                                <select class="select form-select rounded-pill" name="course_id">
+                                <select class="select form-select rounded-pill" {{isset($enrollment)? 'disabled' : ''}} name="course_id">
                                     <option selected disabled>Course</option>
                                     @unless ($course->isEmpty())
                                         @foreach($course as $c)
-                                            <option value="{{$c->id}}"> {{$c->name}} {{$c->description}} </option>
+                                            <option value="{{$c->id}}" {{(isset($enrollment)? ($enrollment->course_id == $c->id? 'selected' : '') : '' )}}> {{$c->name}} {{$c->description}} </option>
                                         @endforeach
                                     @else
                                         <option disabled> Currently not offering any programs. </option>
@@ -45,10 +52,10 @@
                         </div>
                         <div class="col-3">
                             <div class="form-outline mb-4">
-                                <select class="select form-select rounded-pill" name="year_level">
+                                <select class="select form-select rounded-pill" {{isset($enrollment)? 'disabled' : ''}} name="year_level">
                                     <option selected disabled>Year Level</option>
                                     @for($i = 1; $i <= 4; $i++)
-                                        <option value="{{$i}}" >{{$i}}</option>
+                                        <option value="{{$i}}" {{(isset($enrollment)? ($enrollment->year_level == $i? 'selected' : '') : '' )}}>{{$i}}</option>
                                     @endfor
                                 </select>
 
@@ -63,7 +70,7 @@
                     <div class="row d-flex justify-content-end m-4">
                         <div class="col-2 mx-4">
                             <!-- Button trigger modal -->
-                            <button type="button" class="btn btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#confirm">
+                            <button type="button" class="btn btn-primary rounded-pill {{isset($enrollment)? 'disabled' : ''}}" data-bs-toggle="modal" data-bs-target="#confirm">
                                 Submit
                             </button>
                         </div>
@@ -92,3 +99,14 @@
     </x-general-card>
     <x-student-canvas/>
 </x-layout>
+@php
+    function getEnrollmentBg($status)
+    {
+        if($status == 'Pending')
+            return 'btn-outline-warning';
+        else if($status == 'Approved')
+            return 'btn-outline-success';
+        else if($status == 'Denied')
+            return 'btn-outline-danger';
+    }
+@endphp

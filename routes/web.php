@@ -62,8 +62,8 @@ Route::middleware('auth')->group(function ()
     {
         Route::controller(App\Http\Controllers\UserController::class)->group(function ()
         {
-            Route::get('/u/manage/{type}', 'manage')->name('user.manage');
-            Route::post('/user/create', 'create')->name('user.add');
+            Route::get('/u/m/{type?}', 'manage')->name('user.manage');
+            Route::post('/u/create', 'create')->name('user.add');
         });
 
         Route::controller(App\Http\Controllers\PeriodController::class)->group(function ()
@@ -82,7 +82,7 @@ Route::middleware('auth')->group(function ()
 
         Route::controller(App\Http\Controllers\CourseController::class)->group(function ()
         {
-            Route::get('/c/{department}', 'index')->name('course.manage');
+            Route::get('/c/{department?}', 'index')->name('course.manage');
             Route::post('/course', 'store')->name('course.store');
             Route::put('/course', 'update')->name('course.update');
             Route::delete('/course', 'destroy')->name('course.delete');
@@ -90,7 +90,7 @@ Route::middleware('auth')->group(function ()
 
         Route::controller(App\Http\Controllers\BlockController::class)->group(function ()
         {
-            Route::get('/b/{course}', 'index')->name('block.manage');
+            Route::get('/b/{course?}', 'index')->name('block.manage');
             Route::post('/block', 'store')->name('block.store');
             Route::put('/block', 'update')->name('block.update');
             Route::delete('/block', 'destroy')->name('block.delete');
@@ -98,17 +98,28 @@ Route::middleware('auth')->group(function ()
 
         Route::controller(App\Http\Controllers\SubjectController::class)->group(function ()
         {
-            Route::get('s/{course}', 'index')->name('subject.manage');
+            Route::get('s/{course?}', 'index')->name('subject.manage');
             Route::post('/subject', 'store')->name('subject.store');
             Route::put('/subject', 'update')->name('subject.update');
-            Route::delete('/subject', 'destroy')->name('subject.delete');
+            Route::delete('/subject ', 'destroy')->name('subject.delete');
         });
 
-        Route::controller(App\Http\Controllers)->group(function ()
+        /* Route::controller(App\Http\Controllers)->group(function ()
         {
             Route::
             Route::
             Route::
+        }); */
+    });
+
+    Route::middleware('user-access: sast')->group(function ()
+    {
+        Route::controller(App\Http\Controllers\QuestionController::class)->group(function ()
+        {
+            Route::get('/q/{type?}', 'index')->name('question.manage');
+            Route::post('/question', 'store')->name('question.store');
+            Route::put('/question', 'update')->name('question.update');
+            Route::delete('/question', 'destroy')->name('question.delete');
         });
     });
 });

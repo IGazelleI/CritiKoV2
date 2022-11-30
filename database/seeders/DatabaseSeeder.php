@@ -22,7 +22,11 @@ class DatabaseSeeder extends Seeder
         // ]);
         $this->call([
             AdminSeeder::class,
-            QuestionSeeder::class
+            DepartmentSeeder::class,
+            CourseSeeder::class,
+            SubjectSeeder::class,
+            QuestionSeeder::class,
+            FacultySeeder::class,
         ]);
     }
 }

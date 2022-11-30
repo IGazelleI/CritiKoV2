@@ -17,6 +17,7 @@
         </div>
         <div class="modal-body">
             <ul class="list-group list-group-flush">
+                @unless($dept->isEmpty())
                 <table class="table table-hover">
                     <thead>
                         <tr>
@@ -25,45 +26,53 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @unless($dept->isEmpty())
-                            @foreach($dept as $det)
-                            <tr>
-                                <th scope="row">{{$det->name}}</th>
-                                <td>{{$det->description}}</td>
-                                <td>
-                                    <a href="{{route('course.manage', $det->id)}}" class="btn btn-warning p-1">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-                                        </svg>
-                                    </a>
-                                    <button type="button" class="btn btn-info p-1" data-bs-target="#editDeptModal" data-bs-toggle="modal"
-                                        data-bs-id="{{$det->id}}"
-                                        data-bs-name="{{$det->name}}"
-                                        data-bs-description="{{$det->description}}"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
-                                            <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                        @foreach($dept as $det)
+                        <tr>
+                            <th scope="row">
+                                <a href="{{route('course.manage', $det->id)}}" class="link-dark">
+                                    {{$det->name}}
+                                </a>
+                            </th>
+                            <td>
+                                <a href="{{route('course.manage', $det->id)}}" class="link-dark">
+                                    {{$det->description}}
+                                </a>
+                            </td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="border border-0 bg-transparent" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 5%">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">
+                                            <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
                                         </svg>
                                     </button>
-                                    <button type="button" class="btn btn-danger p-1" data-bs-target="#delDeptModal" data-bs-toggle="modal"
-                                        data-bs-id="{{$det->id}}"
-                                        data-bs-description="{{$det->description}}"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                                          </svg>
-                                    </button>
-                                </td>
-                            </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                <th scope="row" class="text-center" colspan="2">Department is empty.</th>
-                            </tr>
-                        @endunless
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <button type="button" class="dropdown-item" data-bs-target="#editDeptModal" data-bs-toggle="modal"
+                                                data-bs-id="{{$det->id}}"
+                                                data-bs-name="{{$det->name}}"
+                                                data-bs-description="{{$det->description}}"
+                                            >
+                                                Edit
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button type="button" class="dropdown-item text-danger" data-bs-target="#delDeptModal" data-bs-toggle="modal"
+                                                data-bs-id="{{$det->id}}"
+                                                data-bs-description="{{$det->description}}"
+                                            >
+                                                Delete
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
                     </tbody>
                 </table>
+                @else
+                    <h3 class="text-center m-4 bg-light p-4 rounded text-uppercase">Department is empty</h3>
+                @endunless
             </ul>
         </div>
         <div class="modal-footer">

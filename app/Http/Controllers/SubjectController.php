@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Course;
 use App\Models\Subject;
 use App\Http\Requests\SubjectStoreRequest;
 
@@ -13,11 +14,18 @@ class SubjectController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($course)
+    public function index($course = null)
     {
-        $subject = Subject::all();
+        $course = Course::find($course);
+        $subject = Subject::where(function ($query) use ($course)
+                    {
+                        if($course != null)
+                            $query->where('course_id', $course->id);
+                    })
+                    ->latest('id')
+                    ->get();
 
-        return view('subject.index', compact('subject'));
+        return view('subject.index', compact('subject', 'course'));
     }
 
     /**

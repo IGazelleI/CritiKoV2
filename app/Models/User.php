@@ -90,8 +90,8 @@ class User extends Authenticatable
                     while(!Faculty::create($formFields)){}
 
                     break;
-            case 4: $formFields['course_id'] = $request['course_id'];
-                
+            case 4: /* $formFields['course_id'] = $request['course_id'];
+                 */
                     while(!Student::create($formFields)){}
                     break;
         }

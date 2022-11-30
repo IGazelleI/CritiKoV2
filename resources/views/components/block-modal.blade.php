@@ -76,10 +76,15 @@
                         <div class="col-4">
                             <div class="mb-3">
                                 <label for="section" class="col-form-label ms-2">Section</label>
-                                <input type="text" class="form-control rounded-pill" name="section">
+                                <select class="select form-select rounded-pill" name="section">
+                                    <option selected disabled>-Select-</option>
+                                    @for($i = 1; $i <= 4; $i++)
+                                        <option value="{{$i}}" >{{chr($i + 64)}}</option>
+                                    @endfor
+                                </select>
                             </div>
                         </div>
-                    </div>                        
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
@@ -119,7 +124,7 @@
                         <input type="hidden" class="id" name="id"/>
                         <div class="mb-3">
                             <label for="course_id" class="col-form-label ms-2">Course</label>
-                            <select class="form-control rounded-pill course" name="course_id" id="course_id">
+                            <select class="select form-select rounded-pill course" name="course_id" id="course_id">
                                 <option selected disabled> -Select- </option>
                                 @unless($course->isEmpty())
                                     @foreach($course as $det)
@@ -163,10 +168,15 @@
                         <div class="col-4">
                             <div class="mb-3">
                                 <label for="section" class="col-form-label ms-2">Section</label>
-                                <input type="text" class="form-control rounded-pill section" name="section">
+                                <select class="select form-select rounded-pill section" name="section">
+                                    <option selected disabled>-Select-</option>
+                                    @for($i = 1; $i <= 4; $i++)
+                                        <option value="{{$i}}" >{{chr($i + 64)}}</option>
+                                    @endfor
+                                </select>
                             </div>
                         </div>
-                    </div>                        
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
@@ -240,6 +250,7 @@
         // Extract info from data-bs-* attributes
         const id = button.getAttribute('data-bs-id');
         const description = button.getAttribute('data-bs-description');
+        const period = button.getAttribute('data-bs-period');
         // If necessary, you could initiate an AJAX request here
         // and then do the updating in a callback.
         //
@@ -248,7 +259,7 @@
         const message = delBlockModal.querySelector('.modal-body .message');
 
         idInput.value = id;
-        message.textContent = "All data inside the " + description + " will be deleted. Proceed with caution.";
+        message.textContent = "All data inside the " + description + " on " + period + " will be deleted. Proceed with caution.";
     });
     //End of Department Scripts
 </script>

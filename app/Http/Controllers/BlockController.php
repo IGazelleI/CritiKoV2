@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Block;
 use App\Models\Course;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Requests\BlockStoreRequest;
 
 class BlockController extends Controller
@@ -14,14 +15,15 @@ class BlockController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($course)
+    public function index($course = null)
     {
         $block = Block::where(function ($query) use ($course)
                         {
-                            if($course != 0)
+                            if($course != null)
                                 $query->where('course_id', $course);
                         })
-                        ->latest('id')
+                        ->groupBy('period_id', 'course_id', 'id', 'year_level', 'section', 'deleted_at', 'created_at', 'updated_at')
+                        ->orderBy('period_id', 'desc')
                         ->get();
 
         $course = ($course != 0)? Course::find($course) : null;

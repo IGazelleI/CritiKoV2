@@ -75,7 +75,7 @@
                                 <div class="col" id="faculty" style="display: none">
                                     <div class="mb-3">
                                         <label for="department_id" class="col-form-label ms-2">Department</label>
-                                        <select class="form-control rounded-pill" name="department_id">
+                                        <select class="select form-select rounded-pill" name="department_id">
                                             <option selected disabled> -Select- </option>
                                             @unless($dept->isEmpty())
                                                 @foreach($dept as $det)
@@ -90,7 +90,7 @@
                                 <div class="col" id="student" style="display: none">
                                     <div class="mb-3">
                                         <label for="course_id" class="col-form-label ms-2">Course</label>
-                                        <select class="form-control rounded-pill" name="course_id">
+                                        <select class="select form-select rounded-pill" name="course_id">
                                             <option selected disabled> -Select- </option>
                                             @unless($course->isEmpty())
                                                 @foreach($course as $det)
@@ -100,6 +100,15 @@
                                                 <option disabled> Course is empty. </option>
                                             @endunless
                                         </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-5" id="SID" style="display: none">
+                                    <!-- ID Number input -->
+                                    <div class="mb-4">
+                                        <label class="form-label ms-2" for="id_number">ID Number</label>
+                                        <input type="text" name="id_number" id="id_number" class="form-control rounded-pill" value="{{old('id_number')}}"/>
                                     </div>
                                 </div>
                             </div>
@@ -139,7 +148,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary rounded-pill" data-bs-target="#departmentModal" data-bs-toggle="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary rounded-pill">Add</button>
                 </div>
             </form>
@@ -156,24 +165,28 @@
         const divA = document.getElementById('notAdmin');
         const divF = document.getElementById('faculty');
         const divS = document.getElementById('student');
+        const divSID = document.getElementById('SID');
 
         if(currentSelected.value == 3)
         {
             divA.style.display = 'block';
             divF.style.display = 'block';
             divS.style.display = 'none';
+            divSID.style.display = 'none';
         }
         else if(currentSelected.value == 4)
         {
             divA.style.display = 'block';
             divF.style.display = 'none';
             divS.style.display = 'block';
+            divSID.style.display = 'block';
         }
         else if(currentSelected.value == 2)
         {
             divA.style.display = 'block';
             divF.style.display = 'none';
             divS.style.display = 'none';
+            divSID.style.display = 'none';
         }
         else
         {

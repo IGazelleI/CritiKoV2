@@ -46,7 +46,7 @@
                         <div class="mb-3">
                             <label for="semester" class="col-form-label ms-2">Semester</label>
                             <select class="select form-select rounded-pill" name="semester">
-                                <option selected disabled>Semester</option>
+                                <option selected disabled>-Select-</option>
                                 @for($i = 1; $i <= 3; $i++)
                                     <option value="{{$i}}" >{{$i}}</option>
                                 @endfor
@@ -99,7 +99,7 @@
                     <div class="mb-3">
                         <label for="semester" class="col-form-label ms-2">Semester</label>
                         <select class="select form-select rounded-pill semester" name="semester">
-                            <option selected disabled>Semester</option>
+                            <option selected disabled>-Select-</option>
                             @for($i = 1; $i <= 3; $i++)
                                 <option value="{{$i}}" >{{$i}}</option>
                             @endfor

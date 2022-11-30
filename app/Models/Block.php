@@ -10,15 +10,15 @@ class Block extends Model
     use HasFactory;
 
     protected  $fillable = [
-        'period_id', 
-        'course_id', 
-        'year_level', 
+        'period_id',
+        'course_id',
+        'year_level',
         'section',
         'status,'
     ];
-    public function getDescription()
+    public function getDescription($withCourse)
     {
-        return $this->course->name . ' ' . $this->year_level . '-' . $this->section;
+        return (($withCourse)? $this->course->name  . ' ' : '') . $this->year_level . '-' . $this->section;
     }
     //course relationship
     public function course()

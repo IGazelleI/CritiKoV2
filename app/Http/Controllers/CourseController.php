@@ -15,11 +15,11 @@ class CourseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($department)
+    public function index($department = null)
     {
         $course = Course::where(function ($query) use ($department)
                         {
-                            if($department != 0)
+                            if($department != null)
                                 $query->where('department_id', $department);
                         })
                         ->latest('id')

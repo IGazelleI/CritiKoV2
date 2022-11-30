@@ -4,10 +4,10 @@
 @endphp
 <!-- Period Modals -->
 <div class="modal fade" id="periodModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
-            <h1 class="modal-title fs-5 ms-5" id="exampleModalLabel">Periods</h1>
+            <h1 class="modal-title fs-5 ms-4" id="exampleModalLabel">Periods</h1>
             <div class="col-sm me-5">
                 <button type="button" class="btn btn-primary float-end" data-bs-target="#addPerModal" data-bs-toggle="modal">
                     <span>New</span>
@@ -16,50 +16,51 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
+            @unless($per->isEmpty())
             <ul class="list-group list-group-flush">
                 <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th colspan="2"> <strong> Description </strong> </th>
-                        </tr>
-                    </thead>
                     <tbody>
-                        @unless($per->isEmpty())
-                            @foreach($per as $det)
-                            <tr>
-                                <td>{{$det->getDescription()}}</td>
-                                <td>
-                                    <button type="button" class="btn btn-info p-1" data-bs-target="#editPerModal" data-bs-toggle="modal"
-                                        data-bs-id="{{$det->id}}"
-                                        data-bs-semester="{{$det->semester}}"
-                                        data-bs-batch="{{$det->batch}}"
-                                        data-bs-beginEval="{{$det->beginEval}}"
-                                        data-bs-endEval="{{$det->endEval}}"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
-                                            <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                        @foreach($per as $det)
+                        <tr>
+                            <td>{{$det->getDescription()}}</td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="border border-0 bg-transparent" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 5%">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">
+                                            <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
                                         </svg>
                                     </button>
-                                    <button type="button" class="btn btn-danger p-1" data-bs-target="#delPerModal" data-bs-toggle="modal"
-                                        data-bs-id="{{$det->id}}"
-                                        data-bs-description="{{$det->getDescription()}}"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                                          </svg>
-                                    </button>
-                                </td>
-                            </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                <th scope="row" class="text-center" colspan="2">Period is empty.</th>
-                            </tr>
-                        @endunless
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <button type="button" class="dropdown-item" data-bs-target="#editPerModal" data-bs-toggle="modal"
+                                                data-bs-id="{{$det->id}}"
+                                                data-bs-semester="{{$det->semester}}"
+                                                data-bs-batch="{{$det->batch}}"
+                                                data-bs-beginEval="{{$det->beginEval}}"
+                                                data-bs-endEval="{{$det->endEval}}"
+                                            >
+                                                Edit
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button type="button" class="dropdown-item text-danger" data-bs-target="#delPerModal" data-bs-toggle="modal"
+                                                data-bs-id="{{$det->id}}"
+                                                data-bs-description="{{$det->getDescription()}}"
+                                            >
+                                                Delete
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </ul>
+            @else
+                <h3 class="text-center m-4 bg-light p-4 rounded text-uppercase"> Period is empty </h3>
+            @endunless
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>

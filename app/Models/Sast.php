@@ -9,4 +9,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Sast extends Model
 {
     use HasFactory, SoftDeletes;
+
+    protected $fillable = ['user_id', 'fname', 'mname', 'lname', 'suffix'];
 }

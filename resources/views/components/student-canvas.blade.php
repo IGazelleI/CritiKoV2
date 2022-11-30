@@ -1,5 +1,4 @@
 <!-- OffCanvas -->
-<!-- OffCanvas -->
 <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasstudent" aria-labelledby="offcanvasScrollingLabel">
     <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasScrollingLabel">CritiKo</h5>
@@ -9,6 +8,9 @@
         <div>
             @php
                 $period = periods();
+
+                if(getSelected() == null)
+                    setSelected($period[0]->id);
             @endphp            
             <form action="{{route('student.changePeriod')}}" method="POST">
                 @csrf
@@ -70,6 +72,10 @@
     function periods()
     {
         return App\Models\Period::latest('id')->get();        
+    }
+    function setSelected($period)
+    {
+        Illuminate\Support\Facades\Session::put('period', $period);
     }
     function getSelected()
     {
