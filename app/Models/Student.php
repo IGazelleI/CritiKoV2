@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -60,8 +61,9 @@ class Student extends Model
     public static function storeEvaluate($request)
     {
         $eval = Evaluate::create([
+            'period_id' => Session::get('period'),
             'evaluator' => auth()->user()->id,
-            'evaluatee' => $request['user_id']
+            'evaluatee' => Session::get('selected')
         ]);
 
         if(!$eval)
@@ -73,13 +75,13 @@ class Student extends Model
         $catCount = 0;
 
         //insert the eval dets
-        for($i = 1; $i <= $request->totalQuestion; $i++)
+        for($i = 1; $i <= $request['totalQuestion']; $i++)
         {
             //insert to evaluation details table
             if(!EvaluateDetail::create([
                 'question_id' => $request['qID' . $i],
                 'answer' => $request['qAns' . $i],
-                'evaluation_id' => $eval->id
+                'evaluate_id' => $eval->id
             ]))
                 return back()->with('message', 'Error in creating evalation detail.');
             /* //update attribute of evaluatee based on points
@@ -129,9 +131,9 @@ class Student extends Model
     public function fullName($iniMid)
     {
         return ucfirst($this->fname) . ' ' . 
-               (empty($this->mname)? '' : (($iniMid)? ucfirst($this->mname[0]) . '.' : ucfirst($this->mname))) . ' ' .
-               ucfirst($this->lname) . ' ' . 
-               (empty($this->suffix)? '' : ucfirst($this->suffix) .'.' );
+            (empty($this->mname)? '' : (($iniMid)? ucfirst($this->mname[0]) . '.' : ucfirst($this->mname))) . ' ' .
+            ucfirst($this->lname) . ' ' . 
+            (empty($this->suffix)? '' : ucfirst($this->suffix) .'.' );
     } 
     //profile picture path
     public function imgPath()
@@ -147,6 +149,11 @@ class Student extends Model
     public function courses()
     {
         return $this->hasMany(Course::class, 'id');
+    }
+    //enrollment relationship
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class, 'user_id', 'user_id');
     }
     //blockstudent relationship
     public function blockStudent()

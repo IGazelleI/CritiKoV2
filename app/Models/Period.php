@@ -20,7 +20,7 @@ class Period extends Model
 
     public function getDescription()
     {
-        return self::str_ordinal($this->semester) . " Semester " . $this->batch;
+        return self::str_ordinal($this->semester) . " Semester SY " . $this->batch;
     }
 
     public function str_ordinal($value)

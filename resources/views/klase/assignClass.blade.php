@@ -2,34 +2,33 @@
     <x-general-card>
         <div class="row">
             <div class="col text-center p-5">
-                <h1 class="p-3 m-0 rounded-top {{randomBg()}}"> <span class="p-3"> {{$dept->name}} </span> </h1>
-                <p class="border border-dark rounded-bottom text-secondary p-1"> {{$dept->description}} </p>
+                <h1 class="p-3 m-0 rounded-top {{randomBg()}}"> <span class="p-3"> {{$klase->subject->code}} </span> </h1>
+                <p class="border border-dark rounded-bottom text-secondary p-1"> {{$klase->subject->descriptive_title}} </p>
             </div>
         </div>
         <div class="row">
             <div class="col">
-                <form action="{{route('user.assignDeanProcess')}}" method="POST">
+                <form action="{{route('klase.assignInstructorProcess', $klase->id)}}" method="POST">
                     @csrf
-                    <input type="hidden" name="department_id" value="{{$dept->id}}"/>
                     <div class="row m-4 d-flex justify-content-center">
                         <div class="col-8">
                             <div class="form-outline mb-4">
-                                <h4 class="ms-3"> Faculty </h4> 
+                                <h4 class="ms-3"> Instructor </h4> 
                                 <p class="text-secondary" style="font-size: 15px"> 
-                                    Select Faculty member to be assigned as the College Dean 
+                                    Select Faculty member to be assigned as the instructor of {{$klase->subject->descriptive_title}} 
                                 </p>
-                                <select class="select form-select rounded-pill" name="user_id" onchange="console.log(value)">
+                                <select class="select form-select rounded-pill" name="instructor">
                                     <option selected disabled>-Select-</option>
                                     @unless ($faculty->isEmpty())
                                         @foreach($faculty as $det)
-                                            <option value="{{$det->id}}" {{$det->isDean? 'selected' : ''}}> {{$det->fullName(1)}} </option>
+                                            <option value="{{$det->user_id}}"> {{$det->fullName(1)}} </option>
                                         @endforeach
                                     @else
                                         <option disabled> Current department has no faculty. </option>
                                     @endunless
                                   </select>
 
-                                  @error('user_id')
+                                  @error('instructor')
                                     <p class="text-sm text-danger ms-3">
                                         {{$message}}
                                     </p>

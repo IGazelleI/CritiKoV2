@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Block;
 use App\Models\Course;
+use App\Models\Period;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\BlockStoreRequest;
@@ -15,20 +16,20 @@ class BlockController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($course = null)
+    public function index($period = null)
     {
-        $block = Block::where(function ($query) use ($course)
+        /* $block = Block::where(function ($query) use ($course)
                         {
                             if($course != null)
                                 $query->where('course_id', $course);
                         })
-                        ->groupBy('period_id', 'course_id', 'id', 'year_level', 'section', 'deleted_at', 'created_at', 'updated_at')
-                        ->orderBy('period_id', 'desc')
-                        ->get();
+                        -> groupBy('period_id', 'course_id', 'id', 'year_level', 'section', 'deleted_at', 'created_at', 'updated_at')
+                        -> orderBy('period_id', 'desc')
+                        -> get(); */
 
-        $course = ($course != 0)? Course::find($course) : null;
+        /* $course = ($course != 0)? Course::find($course) : null; */
 
-        if(isset($course))
+       /*  if(isset($course))
             return view('block.index', compact('block', 'course'));
         else
         {
@@ -36,7 +37,41 @@ class BlockController extends Controller
                             -> get();
 
             return view('block.index', compact('block', 'course', 'courses'));
-        }
+        } */
+
+        $periods = Period::latest('id')
+                        -> get();
+
+        $period = (isset($period))? Period::find($period) : Period::latest('id')->get()->first();
+        
+        $block = Block::where(function ($query) use ($period)
+                        {
+                            if($period != null)
+                                $query->where('period_id', $period->id);
+                        })
+                        -> orderBy('course_id')
+                        -> get();
+
+        return view('block.index', compact('period', 'periods', 'block'));
+    }
+
+    public function show(Period $period, Course $course, $year_level = null)
+    {
+        $periods = Period::latest('id')
+                        -> get();
+        
+        $block = Block::where(function ($query) use ($year_level)
+                        {
+                            if($year_level != null)
+                                $query->where('year_level', $year_level);
+                        })
+                        -> where('course_id', $course->id)
+                        -> orderBy('year_level')
+                        -> get();
+
+        $year_level = ($year_level == null)? null : $block[0]->getYear();
+
+        return view('block.show', compact('period', 'course', 'periods', 'block', 'year_level'));
     }
 
     /**

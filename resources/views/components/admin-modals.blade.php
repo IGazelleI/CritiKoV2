@@ -4,3 +4,4 @@
 <x-course-modal/>
 <x-subject-modal/>
 <x-block-modal/>
+<x-klase-modal/>

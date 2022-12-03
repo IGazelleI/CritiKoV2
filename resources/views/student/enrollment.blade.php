@@ -1,5 +1,6 @@
 <x-layout>
     <x-general-card>
+        @if(Illuminate\Support\Facades\Session::get('period') != null)
         <div class="row">
             <div class="col bg-info text-white mx-3 rounded-top">
                 <header>
@@ -36,7 +37,7 @@
                                     <option selected disabled>Course</option>
                                     @unless ($course->isEmpty())
                                         @foreach($course as $c)
-                                            <option value="{{$c->id}}" {{(isset($enrollment)? ($enrollment->course_id == $c->id? 'selected' : '') : '' )}}> {{$c->name}} {{$c->description}} </option>
+                                            <option value="{{$c->id}}" {{(isset($enrollment)? ($enrollment->course_id == $c->id? 'selected' : '') : '' )}}> {{$c->description}} </option>
                                         @endforeach
                                     @else
                                         <option disabled> Currently not offering any programs. </option>
@@ -73,32 +74,40 @@
                             <button type="button" class="btn btn-primary rounded-pill {{isset($enrollment)? 'disabled' : ''}}" data-bs-toggle="modal" data-bs-target="#confirm">
                                 Submit
                             </button>
+                            
+                            <!-- Modal -->
+                            <div class="modal fade" id="confirm" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Confirmation</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                    <div class="modal-body">
+                                        I hereby enroll chu chu.
+                                    </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-primary rounded-pill">Proceed</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
+        @else
+            <div class="row">
+                <div class="col">
+                    <h3 class="text-center m-4 bg-light p-4 rounded text-uppercase"> Enrollment cannot proceed due to a system error. Please try again later </h3>
+                </div>
+            </div>
+        @endif
     </x-general-card>
     <x-student-canvas/>
 </x-layout>
-<!-- Modal -->
-<div class="modal fade" id="confirm" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">Confirmation</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-        <div class="modal-body">
-            I hereby enroll chu chu.
-        </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn-primary rounded-pill">Proceed</button>
-            </div>
-        </div>
-    </div>
-</div>
 @php
     function getEnrollmentBg($status)
     {

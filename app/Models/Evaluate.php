@@ -10,6 +10,7 @@ class Evaluate extends Model
     use HasFactory;
 
     protected $fillable = [
+        'period_id',
         'evaluator',
         'evaluatee'
     ];

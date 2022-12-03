@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('evaluates', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('period_id')->constrained()->onDelete('cascade');
             $table->unsignedBigInteger('evaluator');
             $table->foreign('evaluator')->references('id')->on('users');
             $table->unsignedBigInteger('evaluatee');

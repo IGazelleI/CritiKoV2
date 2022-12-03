@@ -19,187 +19,261 @@ class SubjectSeeder extends Seeder
             [
                 'course_id' => 1,
                 'code' => 'GEC-RPH',
-                'descriptive_title' => 'Readings in Philippine History'
+                'descriptive_title' => 'Readings in Philippine History',
+                'year_level' => 1,
+                'semester' => 1
             ],
             [
                 'course_id' => 1,
                 'code' => 'GEC-MMW',
-                'descriptive_title' => 'Mathematics in the Modern Word'
+                'descriptive_title' => 'Mathematics in the Modern Word',
+                'year_level' => 1,
+                'semester' => 1
             ],
             [
                 'course_id' => 1,
                 'code' => 'GEC-TEM',
-                'descriptive_title' => 'The Entrepreneurial Mind'
+                'descriptive_title' => 'The Entrepreneurial Mind',
+                'year_level' => 1,
+                'semester' => 1
             ],
             [
                 'course_id' => 1,
                 'code' => 'CC 111',
-                'descriptive_title' => 'Introduction to Computing'
+                'descriptive_title' => 'Introduction to Computing',
+                'year_level' => 1,
+                'semester' => 1
             ],
             [
                 'course_id' => 1,
                 'code' => 'CC 112',
-                'descriptive_title' => 'Programming 1 (Lec)'
+                'descriptive_title' => 'Programming 1 (Lec)',
+                'year_level' => 1,
+                'semester' => 1
             ],
             [
                 'course_id' => 1,
                 'code' => 'CC 112 L',
-                'descriptive_title' => 'Programming 1 (Lab)'
+                'descriptive_title' => 'Programming 1 (Lab)',
+                'year_level' => 1,
+                'semester' => 1
             ],
             [
                 'course_id' => 1,
                 'code' => 'AP 1',
-                'descriptive_title' => 'Multimedia'
+                'descriptive_title' => 'Multimedia',
+                'year_level' => 1,
+                'semester' => 1
             ],
             [
                 'course_id' => 1,
                 'code' => 'GEC-RPH',
-                'descriptive_title' => 'Readings in Philippine History'
+                'descriptive_title' => 'Readings in Philippine History',
+                'year_level' => 1,
+                'semester' => 1
             ],
             [
                 'course_id' => 1,
                 'code' => 'PE 1',
-                'descriptive_title' => 'Physical Education 1'
+                'descriptive_title' => 'Physical Education 1',
+                'year_level' => 1,
+                'semester' => 1
             ],
             [
                 'course_id' => 1,
                 'code' => 'NSTP 1',
-                'descriptive_title' => 'National Service Training Program 1'
+                'descriptive_title' => 'National Service Training Program 1',
+                'year_level' => 1,
+                'semester' => 1
             ], //2nd sem 1st year
             [
                 'course_id' => 1,
                 'code' => 'GEC-PC',
-                'descriptive_title' => 'Purposive Communication'
+                'descriptive_title' => 'Purposive Communication',
+                'year_level' => 1,
+                'semester' => 2
             ],
             [
                 'course_id' => 1,
                 'code' => 'GEC-STS',
-                'descriptive_title' => 'Science, Technology and Society'
+                'descriptive_title' => 'Science, Technology and Society',
+                'year_level' => 1,
+                'semester' => 2
             ],
             [
                 'course_id' => 1,
                 'code' => 'GEC-US',
-                'descriptive_title' => 'Understanding the Self'
+                'descriptive_title' => 'Understanding the Self',
+                'year_level' => 1,
+                'semester' => 2
             ],
             [
                 'course_id' => 1,
                 'code' => 'GEE-RRES',
-                'descriptive_title' => 'Religions, Religious Experiences and Spirituality'
+                'descriptive_title' => 'Religions, Religious Experiences and Spirituality',
+                'year_level' => 1,
+                'semester' => 2
             ],
             [
                 'course_id' => 1,
                 'code' => 'CC 123',
-                'descriptive_title' => 'Programming 2 (Lec)'
+                'descriptive_title' => 'Programming 2 (Lec)',
+                'year_level' => 1,
+                'semester' => 2
             ],
             [
                 'course_id' => 1,
                 'code' => 'CC 123 L',
-                'descriptive_title' => 'Programming 2 (Lab)'
+                'descriptive_title' => 'Programming 2 (Lab)',
+                'year_level' => 1,
+                'semester' => 2
             ],
             [
                 'course_id' => 1,
                 'code' => 'PC 121',
-                'descriptive_title' => 'Discrete Mathematics'
+                'descriptive_title' => 'Discrete Mathematics',
+                'year_level' => 1,
+                'semester' => 2
             ],
             [
                 'course_id' => 1,
                 'code' => 'AP 2',
-                'descriptive_title' => 'Digital Logic Design'
+                'descriptive_title' => 'Digital Logic Design',
+                'year_level' => 1,
+                'semester' => 2
             ],
             [
                 'course_id' => 1,
                 'code' => 'PE 2',
-                'descriptive_title' => 'Physical Education 2'
+                'descriptive_title' => 'Physical Education 2',
+                'year_level' => 1,
+                'semester' => 2
             ],
             [
                 'course_id' => 1,
                 'code' => 'NSTP 2',
-                'descriptive_title' => 'National Service Training Program 2'
+                'descriptive_title' => 'National Service Training Program 2',
+                'year_level' => 1,
+                'semester' => 2
             ],//2nd year
             [
                 'course_id' => 1,
                 'code' => 'GEC-E',
-                'descriptive_title' => 'Ethics'
+                'descriptive_title' => 'Ethics',
+                'year_level' => 2,
+                'semester' => 1
             ],
             [
                 'course_id' => 1,
                 'code' => 'GEE-ES',
-                'descriptive_title' => 'Environmental Science'
+                'descriptive_title' => 'Environmental Science',
+                'year_level' => 2,
+                'semester' => 1
             ],
             [
                 'course_id' => 1,
                 'code' => 'GEC-LWR',
-                'descriptive_title' => 'Life and Works of Rizal'
+                'descriptive_title' => 'Life and Works of Rizal',
+                'year_level' => 2,
+                'semester' => 1
             ],
             [
                 'course_id' => 1,
                 'code' => 'PC 212',
-                'descriptive_title' => 'Quantitative Methods (Modeling & Simulation)'
+                'descriptive_title' => 'Quantitative Methods (Modeling & Simulation)',
+                'year_level' => 2,
+                'semester' => 1
             ],
             [
                 'course_id' => 1,
                 'code' => 'CC 214',
-                'descriptive_title' => 'Data Structures and Algorithms (Lec)'
+                'descriptive_title' => 'Data Structures and Algorithms (Lec)',
+                'year_level' => 2,
+                'semester' => 1
             ],
             [
                 'course_id' => 1,
                 'code' => 'CC 214 L',
-                'descriptive_title' => 'Data Structures and Algorithms (Lab)'
+                'descriptive_title' => 'Data Structures and Algorithms (Lab)',
+                'year_level' => 2,
+                'semester' => 1
             ],
             [
                 'course_id' => 1,
                 'code' => 'P Elec 1',
-                'descriptive_title' => 'Professional Elective 1'
+                'descriptive_title' => 'Professional Elective 1',
+                'year_level' => 2,
+                'semester' => 1
             ],
             [
                 'course_id' => 1,
                 'code' => 'P Elec 2',
-                'descriptive_title' => 'Professional Elective 2'
+                'descriptive_title' => 'Professional Elective 2',
+                'year_level' => 2,
+                'semester' => 1
             ],
             [
                 'course_id' => 1,
                 'code' => 'PE 3',
-                'descriptive_title' => 'Physical Education 3'
+                'descriptive_title' => 'Physical Education 3',
+                'year_level' => 2,
+                'semester' => 1
             ],//2nd sem 
             [
                 'course_id' => 1,
                 'code' => 'GEC-TCW',
-                'descriptive_title' => 'The Contemporary World'
+                'descriptive_title' => 'The Contemporary World',
+                'year_level' => 2,
+                'semester' => 2
             ],
             [
                 'course_id' => 1,
                 'code' => 'PC 223',
-                'descriptive_title' => 'Integrative Programming and Technologies 1'
+                'descriptive_title' => 'Integrative Programming and Technologies 1',
+                'year_level' => 2,
+                'semester' => 2
             ],
             [
                 'course_id' => 1,
                 'code' => 'PC 224',
-                'descriptive_title' => 'Networking 1'
+                'descriptive_title' => 'Networking 1',
+                'year_level' => 2,
+                'semester' => 2
             ],
             [
                 'course_id' => 1,
                 'code' => 'CC 225',
-                'descriptive_title' => 'Information Management (Lec)'
+                'descriptive_title' => 'Information Management (Lec)',
+                'year_level' => 2,
+                'semester' => 2
             ],
             [
                 'course_id' => 1,
                 'code' => 'CC 225 L',
-                'descriptive_title' => 'Information Management (Lab)'
+                'descriptive_title' => 'Information Management (Lab)',
+                'year_level' => 2,
+                'semester' => 2
             ],
             [
                 'course_id' => 1,
                 'code' => 'P Elec 3',
-                'descriptive_title' => 'Professional Elective 3'
+                'descriptive_title' => 'Professional Elective 3',
+                'year_level' => 2,
+                'semester' => 2
             ],
             [
                 'course_id' => 1,
                 'code' => 'AP 3',
-                'descriptive_title' => 'ASP.NET'
+                'descriptive_title' => 'ASP.NET',
+                'year_level' => 2,
+                'semester' => 2
             ],
             [
                 'course_id' => 1,
                 'code' => 'PE 4',
-                'descriptive_title' => 'Physical Education 4'
+                'descriptive_title' => 'Physical Education 4',
+                'year_level' => 2,
+                'semester' => 2
             ],//3rd year */
             [
                 'course_id' => 1,

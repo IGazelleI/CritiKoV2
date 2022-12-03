@@ -16,7 +16,7 @@ class UserAccess
      */
     public function handle(Request $request, Closure $next, $userRole)
     {
-        if(strcmp(auth()->user()->role(), $userRole))
+        if(strcmp(auth()->user()->role(), $userRole) == 0 || $userRole == 'dean' && auth()->user()->faculties[0]->isDean)
         {
             return $next($request);
         }

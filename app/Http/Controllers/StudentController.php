@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
-use App\Models\Period;
 use App\Models\Faculty;
 use App\Models\Student;
 use App\Models\Question;
+use App\Models\Period;
 use App\Models\Enrollment;
+use App\Models\Evaluate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
@@ -17,30 +18,6 @@ use App\Http\Requests\StudentStoreRequest;
 
 class StudentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        return view('student.index');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StudentStoreRequest $request)
-    {
-        if(!Student::storeEvaluate($request->all()))
-            return back()->with('message', 'Error in submitting evaluation.');
-
-        return redirect('/student')->with('message', 'Evaluation submitted.');
-    }
-
     /**
      * Display the specified resource.
      *
@@ -62,15 +39,15 @@ class StudentController extends Controller
      */
     public function changeProfilePicture(ChangePicRequest $request, Student $student)
     {
-        $name = Hash::make($student->id) . '.' . $request->file('imgPath')->getClientOriginalExtension();
+        $name = encrypt($student->id) . '.' . $request->file('imgPath')->getClientOriginalExtension();
         $request->file('imgPath')->storeAs('public/images', $name);
         //update img
         $student->imgPath = $name;
 
         if(!$student->save())
-            return redirect(route('student.profile'))->with('message', 'Error in updating profile. Please try again.');
+            return back()->with('message', 'Error in updating profile. Please try again.');
 
-        return redirect(route('student.profile'))->with('message', 'Profile picture updated.');
+        return back()->with('message', 'Profile picture updated.');
     }
 
     /**
@@ -83,20 +60,56 @@ class StudentController extends Controller
     public function update(StudentStoreRequest $request)
     {
         if(!Student::updateInfo($request->all()))
-            return redirect(route('student.profile'))->with('message', 'Error in updating profile. Please try again');
+            return back()->with('message', 'Error in updating profile. Please try again');
 
-        return redirect(route('student.profile'))->with('message', 'Profile updated.');
+        return back()->with('message', 'Profile updated.');
     }
 
     public function evaluate()
     {
-        $question = Question::where('type', 4)
-                            -> orderBy('q_type_id')
-                            -> orderBy('q_category_id')
-                            -> get();
-        $instructor = Faculty::all();
+        $period = Period::find(Session::get('period'));
 
-        return view('student.evaluate', compact('question', 'instructor'));
+        $enrollment = Enrollment::where('user_id', auth()->user()->id)
+                            -> where('period_id', $period->id)
+                            -> latest('id')
+                            -> get()
+                            -> first();
+        
+        $question = Question::where('type', 4)
+                        -> orderBy('q_type_id')
+                        -> orderBy('q_category_id')
+                        -> get();
+
+        $instructor = isset($enrollment)? Faculty::join('klases', 'faculties.user_id', 'klases.instructor')
+                                            -> join('blocks', 'klases.block_id', 'blocks.id')
+                                            -> where('faculties.department_id', auth()->user()->students[0]->enrollments[0]->course->department_id)
+                                            -> latest('faculties.user_id')
+                                            -> get() : null;
+
+        $currentSelected = Session::get('selected');
+
+        $evaluation = $currentSelected != null? Evaluate::where('evaluator', auth()->user()->id)
+                                                        -> where('evaluatee', $currentSelected)
+                                                        -> where('period_id', Session::get('period'))
+                                                        -> latest('id')
+                                                        -> get()
+                                                        -> first() : null;
+
+        return view('student.evaluate', compact('enrollment', 'period', 'instructor', 'question', 'evaluation'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function evaluateProcess(Request $request)
+    {
+        if(!Student::storeEvaluate($request->all()))
+            return back()->with('message', 'Error in submitting evaluation.');
+
+        return redirect(route('student.evaluate'))->with('message', 'Evaluation submitted.');
     }
 
     public function changePeriod(Request $request)
@@ -106,12 +119,19 @@ class StudentController extends Controller
         return back()->with('message', 'Period changed.');
     }
 
+    public function changeSelected(Request $request)
+    {
+        $request->session()->put('selected', (int) $request->user_id);
+
+        return back()->with('message', 'Selected changed.');
+    }
+
     public function enrollment(Request $request)
     {
         $enrollment = Enrollment::where('user_id', auth()->user()->id)
-                                -> where('period_id', Session::get('period'))
-                                -> get()
-                                -> first();
+                            -> where('period_id', Session::get('period'))
+                            -> get()
+                            -> first();
         
         $det = Student::where('user_id', auth()->user()->students[0]->user_id)
                     -> get()

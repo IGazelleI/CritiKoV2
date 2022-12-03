@@ -1,0 +1,131 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Faculty;
+use App\Models\Course;
+use App\Models\Department;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\FacultyStoreRequest;
+use App\Http\Requests\ChangePicRequest;
+use Illuminate\Support\Collection;;
+use Illuminate\Support\Facades\DB;
+use App\Models\Enrollment;
+use Illuminate\Http\Request;
+
+class FacultyController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        return view('faculty.index');
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show()
+    {
+        $det = Faculty::with('user')
+                    -> where('user_id', '=', auth()->user()->id)
+                    -> get()
+                    -> first();
+
+        return view('faculty.profile', compact('det'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(FacultyStoreRequest $request)
+    {
+        if(!Faculty::updateInfo($request->all()))
+            return back()->with('message', 'Error in updating profile. Please try again');
+
+        return back()->with('message', 'Profile updated.');
+    }
+
+    public function changeProfilePicture(ChangePicRequest $request, Faculty $faculty)
+    {
+        $name = Hash::make($faculty->id) . '.' . $request->file('imgPath')->getClientOriginalExtension();
+        $request->file('imgPath')->storeAs('public/images', $name);
+        //update img
+        $faculty->imgPath = $name;
+
+        if(!$faculty->save())
+            return back()->with('message', 'Error in updating profile. Please try again.');
+
+        return back()->with('message', 'Profile picture updated.');
+    }
+
+    public function changePeriod(Request $request)
+    {
+        $request->session()->put('period', (int) $request->period);
+
+        return back()->with('message', 'Period changed.');
+    }
+
+    public function enrollment()
+    {
+        $courses = Department::find(auth()->user()->faculties[0]->department_id)
+                                -> courses;
+        $enrollment = new Collection;
+        $i = 0;
+        foreach($courses as $det)
+        {
+            $enrolls = $det->enrollments
+                        -> where('status', '=', 'Pending');
+            foreach($enrolls  as $cat)
+            {
+                $enrollment[$i] = $cat;
+                $i += 1;
+            }
+        }
+
+        return view('dean.enrollment', compact('enrollment'));
+    }
+
+    public function processEnrollment(Request $request, Enrollment $enroll)
+    {
+        $status = $request->decision? 'Approved' : 'Denied';
+
+        if(!DB::table('enrollments')
+            -> where('id', $enroll->id)
+            -> update(['status' => $status])
+        )
+            return back()->with('message', 'Error in updating enrollment.');
+
+        if(!Enrollment::process($request->all(), $enroll))
+        {
+            if(!DB::table('enrollments')
+                ->where('id', '=', $enroll->id)
+                ->update(['status' => 'Pending'])
+            )
+                return back()->with('message', 'Error in updating enrollment.');
+        }
+
+        return back()->with('message', 'Enrollment ' . $status . '.');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
+    }
+}

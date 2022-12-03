@@ -38,21 +38,29 @@
                         <tr>
                             <th>#</th>
                             <th>Email</th>
+                            @if($type == 0)
                             <th>Role</th>
+                            @endif
                             <th colspan="2">Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($user as $det)
                         <tr>
+                            @if($det->type != 4)
                             <td>{{$det->id}}</td>
+                            @else
+                            <td>{{$det->students[0]->id_number}}
+                            @endif
                             <td>
                                 <a href="#">
                                     <img src="{{getAvatar($det)}}" class="img-fluid img-thumbnail rounded-circle" alt="Avatar" style="width: 5%">
                                     {{$det->email}}
                                 </a>
                             </td>
+                            @if($type == 0)
                             <td>{{ucfirst($det->role())}}</td>
+                            @endif
                             <td class="col-2">
                                 <span class="status text-success">
                                     &bull;
@@ -94,7 +102,6 @@
                         <tr>
                             <th>Department</th>
                             <th>Dean</th>
-                            <th colspan="2">Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -102,26 +109,21 @@
                         <tr>
                             <td>{{$det->name}}</td>
                             <td>
-                                <a href="#">
+                                @php
+                                    $dean = checkDean($det);
+                                @endphp
+                                @if (isset($dean))
                                     <img src="{{getAvatar($det)}}" class="img-fluid img-thumbnail rounded-circle" alt="Avatar" style="width: 5%">
-                                    @php
-                                        $dean = checkDean($det);
-                                    @endphp
-                                    @if (isset($dean))
-                                        {{$dean}}
-                                    @else
-                                        Unset
-                                        <a href="{{route('dean.assign', $det->id)}}" class="btn btn-primary btn-sm">
-                                            Assign
-                                        </a>
-                                    @endif
-                                </a>
-                            </td>
-                            <td class="col-2">
-                                <span class="status text-success">
-                                    &bull;
-                                </span>
-                                Active
+                                    {{$dean->fullName(1)}}
+                                    <a href="{{route('user.assignDean', $det->id, $dean->user_id)}}" class="btn btn-primary btn-sm">
+                                        Change
+                                    </a>
+                                @else
+                                    Unset
+                                    <a href="{{route('user.assignDean', $det->id)}}" class="btn btn-primary btn-sm">
+                                        Assign
+                                    </a>
+                                @endif
                             </td>
                             <td class="col-2 justify-self-end">
                                 <div class="dropdown">
@@ -217,7 +219,7 @@
             foreach($det->faculties as $facs)
             {
                 if($facs->isDean)
-                    return $facs->fullName(0);
+                    return $facs;
             }
         }
 

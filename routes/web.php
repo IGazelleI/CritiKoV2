@@ -32,7 +32,7 @@ Route::middleware('auth')->group(function ()
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::post('/logout', [App\Http\Controllers\UserController::class, 'logout'])->name('logout');
 
-    Route::controller(App\Http\Controllers\AdminController::class)->group(function ()
+    /* Route::controller(App\Http\Controllers\AdminController::class)->group(function ()
     {
         Route::get('/profile', 'show')->name('student.profile');
         Route::put('/update', 'update')->name('student.update');
@@ -41,30 +41,16 @@ Route::middleware('auth')->group(function ()
         Route::post('/changePeriod', 'changePeriod')->name('student.changePeriod');
         Route::get('/enrollment', 'enrollment')->name('student.enrollment');
         Route::post('/enroll', 'enroll')->name('student.submitEnroll');
-    });
+    }); */
 
-    Route::middleware('user-access: student')->group(function ()
-    {
-        Route::controller(App\Http\Controllers\StudentController::class)->group(function ()
-        {
-            Route::get('/profile', 'show')->name('student.profile');
-            Route::put('/update', 'update')->name('student.update');
-            Route::get('/evaluate', 'evaluate')->name('student.evaluate');
-            Route::post('/changePic/{student}', 'changeProfilePicture')->name('student.changePic');
-            Route::post('/changePeriod', 'changePeriod')->name('student.changePeriod');
-            Route::get('/enrollment', 'enrollment')->name('student.enrollment');
-            Route::post('/enroll', 'enroll')->name('student.submitEnroll');
-        });
-    });
-
-
-    Route::middleware('user-access: admin')->group(function ()
+    Route::middleware('user-access:admin')->group(function ()
     {
         Route::controller(App\Http\Controllers\UserController::class)->group(function ()
         {
             Route::get('/u/m/{type?}', 'manage')->name('user.manage');
             Route::post('/u/create', 'create')->name('user.add');
-            Route::get('/a/{$department}', 'assignDean')->name('dean.assign');
+            Route::get('/assign/{department}', 'assignDean')->name('user.assignDean');
+            Route::post('/assignDeanProcess', 'assignDeanProcess')->name('user.assignDeanProcess');
         });
 
         Route::controller(App\Http\Controllers\PeriodController::class)->group(function ()
@@ -91,7 +77,8 @@ Route::middleware('auth')->group(function ()
 
         Route::controller(App\Http\Controllers\BlockController::class)->group(function ()
         {
-            Route::get('/b/{course?}', 'index')->name('block.manage');
+            Route::get('/b/{period?}', 'index')->name('block.manage');
+            Route::get('/b/p/{period}/{course}/{year_level?}', 'show')->name('block.show');
             Route::post('/block', 'store')->name('block.store');
             Route::put('/block', 'update')->name('block.update');
             Route::delete('/block', 'destroy')->name('block.delete');
@@ -105,15 +92,15 @@ Route::middleware('auth')->group(function ()
             Route::delete('/subject ', 'destroy')->name('subject.delete');
         });
 
-        /* Route::controller(App\Http\Controllers)->group(function ()
+        Route::controller(App\Http\Controllers\KlaseController::class)->group(function ()
         {
-            Route::
-            Route::
-            Route::
-        }); */
+            Route::get('/k/{block}', 'index')->name('klase.manage');
+            Route::get('/k', 'assignInstructor')->name('klase.assignInstructor');
+            Route::post('/k/{klase}', 'assignInstructorProcess')->name('klase.assignInstructorProcess');
+        });
     });
 
-    Route::middleware('user-access: sast')->group(function ()
+    Route::middleware('user-access:sast')->group(function ()
     {
         Route::controller(App\Http\Controllers\QuestionController::class)->group(function ()
         {
@@ -121,6 +108,39 @@ Route::middleware('auth')->group(function ()
             Route::post('/question', 'store')->name('question.store');
             Route::put('/question', 'update')->name('question.update');
             Route::delete('/question', 'destroy')->name('question.delete');
+        });
+    });
+    /* DILI PA MUGAWAS ANG ENROLLMENT SA DEAN */
+    Route::middleware('user-access:faculty')->group(function ()
+    {
+        Route::controller(App\Http\Controllers\FacultyController::class)->group(function ()
+        {
+            
+            Route::middleware('user-access:dean')->group(function ()
+            {
+                Route::get('/enrollments', 'enrollment')->name('dean.enrollment');
+                Route::post('/enrollment/{enroll}', 'processEnrollment')->name('dean.processEnrollment');
+            });
+
+            Route::get('/mf/profile', 'show')->name('faculty.profile');
+            Route::put('/faculty', 'update')->name('faculty.update');
+            Route::post('/changePicf/{faculty}', 'changeProfilePicture')->name('faculty.changePic');
+        });
+    });
+
+    Route::middleware('user-access:student')->group(function ()
+    {
+        Route::controller(App\Http\Controllers\StudentController::class)->group(function ()
+        {
+            Route::get('/ms/profile', 'show')->name('student.profile');
+            Route::put('/student', 'update')->name('student.update');
+            Route::get('/evaluate', 'evaluate')->name('student.evaluate');
+            Route::post('/evaluate/process', 'evaluateProcess')->name('student.evaluateProcess');
+            Route::post('/changePics/{student}', 'changeProfilePicture')->name('student.changePic');
+            Route::post('/changePeriod', 'changePeriod')->name('student.changePeriod');
+            Route::post('/changeSelected', 'changeSelected')->name('student.changeSelected');
+            Route::get('/enrollment', 'enrollment')->name('student.enrollment');
+            Route::post('/enroll', 'enroll')->name('student.submitEnroll');
         });
     });
 });

@@ -20,48 +20,48 @@ class FacultySeeder extends Seeder
             [
                 'type' => 3,/* 
                 'name' => 'Jose Maria Garcia', */
-                'email' => 'jose@gmail.com',
+                'email' => 'josemaria.garcia@ctu.edu.ph',
                 'password' => bcrypt('amores15')
             ],
             [
                 'type' => 3,/* 
                 'name' => 'Bell Campanilla', */
-                'email' => 'bell@gmail.com',
+                'email' => 'bell.campanilla@ctu.edu.ph',
                 'password' => bcrypt('amores15')
             ],
             [
                 'type' => 3,/* 
                 'name' => 'Pet Andrew Nacua', */
-                'email' => 'pet@gmail.com',
+                'email' => 'petandrew.nacua@ctu.edu.ph',
                 'password' => bcrypt('amores15')
             ],
             [
                 'type' => 3,/* 
                 'name' => 'Noreen Fuentes', */
-                'email' => 'noreen@gmail.com',
+                'email' => 'noreen.fuentes@ctu.edu.ph',
                 'password' => bcrypt('amores15')
             ],
             [
                 'type' => 3,/* 
                 'name' => 'Dindo Logpit', */
-                'email' => 'dindo@gmail.com',
+                'email' => 'dindo.logpit@ctu.edu.ph',
                 'password' => bcrypt('amores15')
             ],
             [
                 'type' => 3,/* 
                 'name' => 'Starzy Bicare Baluarte-Bacus', */
-                'email' => 'starzy@gmail.com',
+                'email' => 'starzy.bacus@ctu.edu.ph',
                 'password' => bcrypt('amores15')
             ],
             [
                 'type' => 3,/* 
                 'name' => 'Joey Sayson', */
-                'email' => 'joey@gmail.com',
+                'email' => 'joey.sayson@ctu.edu.ph',
                 'password' => bcrypt('amores15')
             ]
         ];
 
-        /* $name = [
+        $name = [
             [
                 'fname' => 'Jose Maria',
                 'lname' => 'Garcia'
@@ -90,19 +90,21 @@ class FacultySeeder extends Seeder
                 'fname' => 'Joey',
                 'lname' => 'Sayson'
             ]
-        ]; */
+        ];
+
+        $i = 0;
 
         foreach($faculty as $facs)
         {
             $user = User::factory()->create($facs);
 
-            if($user->type == 3)
-            {
-                Faculty::create([
-                    'user_id' => $user->id,
-                    'department_id' => 1
-                ]);
-            }
+            Faculty::create([
+                'user_id' => $user->id,
+                'fname' => $name[$i]['fname'],
+                'lname' => $name[$i]['lname'],
+                'department_id' => 1
+            ]);
+            $i += 1;
         }
     }
 }

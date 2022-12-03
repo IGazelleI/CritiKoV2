@@ -1,58 +1,47 @@
-@inject('Period', 'App\Models\Period')
-@php
-    $period = $Period->latest('id')->get()->first();
-@endphp
 <x-layout>
-    <x-general-card>
-        <div class="table">
-            <div class="table-wrapper">
-                <div class="table-title">
-                    <div class="row">
-                        <div class="col">
-                            <h2>
-                                @if(isset($department))
-                                {{$department->name}} Courses
-                                @else
-                                Course <b>Management</b>
-                                @endif
-                            </h2>
-                        </div>
-                        <div class="col-5">
-                            <button type="button" class="btn btn-primary" data-bs-target="#addCourseModal" data-bs-toggle="modal">
-                                <span>
-                                    New
-                                </span>
-                            </button>
-                            <button type="button" class="btn btn-success" data-bs-target="#addCourseModal" data-bs-toggle="modal">
-                                <span>
-                                    Upload Data
-                                </span>
-                            </button>
-                        </div>
-                    </div>
+    <x-medium-card>
+        <div class="container">
+            <div class="row d-flex justify-content-center text-center">
+                <div class="col border border-dark text-uppercase bg-info p-2 mt-3 rounded-top">
+                    <h3> Class </h3>
                 </div>
-                @unless($course->isEmpty())
+            </div>
+            <div class="row">
+                <div class="col">
+                    @unless($klase->isEmpty())
                 <table class="table table-striped table-hover">
                     <thead>
                         <tr>
-                            <th> <strong> Name </strong> </th>
-                            <th colspan="2"> <strong> Descriptive Title </strong> </th>
+                            <th> <strong> Code </strong> </th>
+                            <th> <strong> Description </strong> </th>
+                            <th> <strong> Schedule </strong> </th>
+                            <th colspan="2"> <strong> Instructor </strong> </th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($course as $det)
+                        @foreach($klase as $det)
                         <tr>
                             <td>
-                                <a href="{{route('block.show', ['period' => $period->id, 'course' => $det->id])}}" class="link-dark">
-                                    {{$det->name}}
+                                <a href="#" class="link-dark">
+                                    {{$det->subject->code}}
                                 </a>
                             </td>
-                            <td class="col-8">
-                                <a href="{{route('block.show',  ['period' => $period->id, 'course' => $det->id])}}" class="link-dark">
-                                    {{$det->description}}
+                            <td class="col-4">
+                                <a href="#" class="link-dark">
+                                    {{$det->subject->descriptive_title}}
                                 </a>
                             </td>
-                            <td class="col d-flex justify-self-center align-self-center">
+                            <td>
+                                Monday, 7:00 AM - 10:00 AM
+                            </td>
+                            <td>
+                                @if(isset($det->instructor))
+                                {{$det->faculties[0]->fullName(1)}}
+                                @else
+                                <span class="text-uppercase text-danger fw-bold"> Unassigned </span>
+                                @endif
+                            </td>
+                            <td class="d-flex justify-self-center align-self-center">
                                 <div class="dropdown">
                                     <button class="border border-0 bg-transparent" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 5%">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">
@@ -61,13 +50,18 @@
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li>
+                                            <a href="{{route('klase.assignInstructor', ['department' => encrypt($det->subject->course->department_id), 'klase' => encrypt($det->id)])}}" class="dropdown-item">
+                                                Assign Instructor
+                                            </a>
+                                        </li>
+                                        <li>
                                             <button type="button" class="dropdown-item" data-bs-target="#editCourseModal" data-bs-toggle="modal"
                                                 data-bs-id="{{$det->id}}"
                                                 data-bs-department_id="{{$det->department_id}}"
                                                 data-bs-name="{{$det->name}}"
                                                 data-bs-description="{{$det->description}}"
                                             >
-                                                Edit
+                                                Modify
                                             </button>
                                         </li>
                                         <li>
@@ -88,20 +82,9 @@
                 @else
                     <h3 class="text-center m-4 bg-light p-4 rounded text-uppercase">Course is empty</h3>
                 @endunless
-                {{-- <div class="clearfix">
-                    <div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
-                    <ul class="pagination">
-                        <li class="page-item disabled"><a href="#">Previous</a></li>
-                        <li class="page-item"><a href="#" class="page-link">1</a></li>
-                        <li class="page-item"><a href="#" class="page-link">2</a></li>
-                        <li class="page-item active"><a href="#" class="page-link">3</a></li>
-                        <li class="page-item"><a href="#" class="page-link">4</a></li>
-                        <li class="page-item"><a href="#" class="page-link">5</a></li>
-                        <li class="page-item"><a href="#" class="page-link">Next</a></li>
-                    </ul>
-                </div> --}}
+                </div>
             </div>
         </div>
-    </x-general-card>
+    </x-medium-card>
     <x-admin-canvas/>
 </x-layout>

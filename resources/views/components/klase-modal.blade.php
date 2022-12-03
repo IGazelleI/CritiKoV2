@@ -1,13 +1,9 @@
-@inject('Course', 'App\Models\Course')
-@php
-    $course = $Course->latest('id')->get();
-@endphp
-<!-- Add Subject -->
-<div class="modal fade" id="addSubModal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
+<!-- Assign Instructor to Subject -->
+<div class="modal fade" id="assInsClassModal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">New Subject</h1>
+                <h1 class="modal-title fs-5" id="exampleModalToggleLabel2"></h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="{{route('subject.store')}}" method="POST">
@@ -23,16 +19,9 @@
                         </div>
                         @endif
                         <div class="mb-3">
-                            <label for="course_id" class="col-form-label ms-2"> Course </label>
-                            <select class="select form-select rounded-pill" name="course_id">
-                                <option selected disabled>Course</option>
-                                @unless ($course->isEmpty())
-                                    @foreach($course as $c)
-                                        <option value="{{$c->id}}"> {{$c->name}} {{$c->description}} </option>
-                                    @endforeach
-                                @else
-                                    <option disabled> Course is empty. </option>
-                                @endunless
+                            <label for="instructor" class="col-form-label ms-2"> Instructor </label>
+                            <select class="select form-select rounded-pill instructor" name="instructor">
+                                <option selected disabled>-Faculty-</option>
                               </select>
                         </div>
                         <div class="mb-3">
@@ -61,8 +50,8 @@
         </div>
     </div>
 </div>
-<!-- Add Subject -->
-<!-- Edit Subject -->
+<!-- Assign Instructor to Subject -->
+<!-- Edit Class -->
 <div class="modal fade" id="editSubModal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
@@ -79,14 +68,7 @@
                         <label for="course_id" class="col-form-label ms-2"> Course </label>
                         <select class="select form-select rounded-pill course" name="course_id">
                             <option selected disabled>Course</option>
-                            @unless ($course->isEmpty())
-                                @foreach($course as $c)
-                                    <option value="{{$c->id}}"> {{$c->name}} {{$c->description}} </option>
-                                @endforeach
-                            @else
-                                <option disabled> Course is empty. </option>
-                            @endunless
-                          </select>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label for="code" class="col-form-label ms-2">Code</label>
@@ -114,8 +96,8 @@
         </div>
     </div>
 </div>
-<!-- Edit Subject -->
-<!-- Delete Subject -->
+<!-- Edit Class -->
+<!-- Delete Class -->
 <div class="modal fade" id="delSubModal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -138,11 +120,34 @@
         </div>
     </div>
 </div>
-<!-- Subject -->
-<!-- Subject Modals -->
+<!-- Class -->
+<!-- ClassModals -->
 <script>
-    //Subject Scripts
-    const editSubModal = document.getElementById('editSubModal')
+    //Class Scripts
+    const assInsClassModal = document.getElementById('assInsClassModal');
+
+    assInsClassModal.addEventListener('show.bs.modal', event => {
+        // Button that triggered the modal
+        const button = event.relatedTarget;
+
+        var instructors = button.getAttribute('data-bs-instructors');
+        
+        const modalTitle = assInsClassModal.querySelector('.modal-title');
+        const instructorSelect = assInsClassModal.querySelector('.modal-body .instructor');
+        
+        console.log(instructors);
+        for(var i in instructors)
+        {
+            console.log(i.id);
+           /*  var newOption = new Option(instructors[i]['fname'], instructors[i].id);
+
+            instructorSelect.add(newOption, undefined); */
+        }
+
+        modalTitle.textContent = 'Assign New Instructor';
+    });
+
+    /* const editSubModal = document.getElementById('editSubModal')
 
     editSubModal.addEventListener('show.bs.modal', event => {
         // Button that triggered the modal
@@ -187,6 +192,6 @@
 
         idInput.value = id;
         message.textContent = "All data involving " + description + " will be deleted. Proceed with caution.";
-    });
-    //End of Department Scripts
+    }); */
+    //End of Class Scripts
 </script>

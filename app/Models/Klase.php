@@ -29,9 +29,9 @@ class Klase extends Model
         return $this->belongsTo(Block::class, 'block_id');
     }
     //faculty relationship
-    public function faculty()
+    public function faculties()
     {
-        return $this->belongsTo(Faculty::class, 'instructor');
+        return $this->hasMany(Faculty::class, 'user_id', 'instructor');
     }
     //klase student relationship
     public function klaseStudents()

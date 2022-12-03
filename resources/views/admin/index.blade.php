@@ -26,7 +26,7 @@
                           <div class="card-body">
                               <div class="d-md-flex align-items-center">
                                   <div>
-                                      <h4 class="card-title">Evaluation Summary</h4>
+                                      <h4 class="card-title">Statistics</h4>
                                       <h6 class="card-subtitle"></h6>
                                   </div>
                                   <div class="ms-auto d-flex no-block align-items-center">
@@ -54,7 +54,7 @@
                                 <div class="card text-bg-danger mb-3" style="max-width: 15rem; max-height: 9rem;">
                                     <div class="card-header">Student</div>
                                     <div class="card-body">
-                                      <h5 class="card-title"></h5>
+                                        <h5 class="card-title">Some Data</h5>
                                     </div>
                                 </div>
                                 </div>
@@ -63,7 +63,7 @@
                                 <div class="card text-bg-warning mb-3" style="max-width: 15rem; max-height: 9rem;">
                                     <div class="card-header">Admin</div>
                                     <div class="card-body">
-                                      <h5 class="card-title"></h5>
+                                      <h5 class="card-title">Some Data</h5>
                                     </div>
                                 </div>
                               </div>
@@ -71,7 +71,7 @@
                                 <div class="card text-bg-success mb-3" style="max-width: 15rem; max-height: 9rem;">
                                     <div class="card-header">Faculty</div>
                                     <div class="card-body">
-                                      <h5 class="card-title">Primary card title</h5>
+                                      <h5 class="card-title">Some Data</h5>
                                     </div>
                                 </div>
                               </div>
@@ -79,7 +79,7 @@
                                 <div class="card text-bg-dark mb-3" style="max-width: 15rem; max-height: 9rem;">
                                     <div class="card-header">SAST</div>
                                     <div class="card-body">
-                                      <h5 class="card-title">Primary card title</h5>
+                                      <h5 class="card-title">Some Data</h5>
                                     </div>
                                 </div>
                               </div>
@@ -88,7 +88,7 @@
                                 <div class="card text-bg-info mb-3" style="max-width: 15rem; max-height: 9rem;">
                                     <div class="card-header">Dean</div>
                                     <div class="card-body">
-                                      <h5 class="card-title">Primary card title</h5>
+                                      <h5 class="card-title">Some Data</h5>
                                     </div>
                                 </div>
                               </div>

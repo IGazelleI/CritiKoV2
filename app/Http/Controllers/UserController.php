@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\UserStoreRequest;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -159,13 +160,32 @@ class UserController extends Controller
 
     public function assignDean($department)
     {
-        dd('asd');
-        $dept = Department::all();
+        $dept = Department::find($department);
+
+        if(!$dept)
+            return back()->with('message', 'Department not found.');
 
         $faculty = Faculty::where('department_id', $department)
-                        -> latest('id')
-                        -> get();
+                        ->latest('id')
+                        ->get();
 
-        return view('dean.assign', compact('dept', 'faculty'));
+        return view('dean.assign', compact('faculty', 'dept'));
+    }
+
+    public function assignDeanProcess(Request $request)
+    {
+        DB::table('faculties')
+            -> where('department_id', $request->department_id)
+            -> update(['isDean' => false]);
+
+        $faculty = Faculty::find($request->user_id);
+        
+        if(!$faculty->update([
+            'isDean' => true
+        ]))
+            return back()->with('message', 'Error in assigning dean. Please try again. 2');
+
+        return redirect(route('user.manage', 5))->with('message', 'New College Dean assigned.');
+            
     }
 }

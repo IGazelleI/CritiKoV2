@@ -32,4 +32,9 @@ class Course extends Model
     {
         return $this->hasMany(Subject::class, 'course_id');
     }
+    //enrollment relationship
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class, 'course_id');
+    }
 }

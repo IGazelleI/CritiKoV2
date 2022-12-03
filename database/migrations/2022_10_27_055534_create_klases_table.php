@@ -15,12 +15,12 @@ return new class extends Migration
     {
         Schema::create('klases', function (Blueprint $table) {
             $table->id();
-            $table->string('day');
-            $table->time('begin');
-            $table->time('end');
+            $table->string('day')->nullable();
+            $table->time('begin')->nullable();
+            $table->time('end')->nullable();
             $table->foreignId('subject_id')->constrained()->onDelete('cascade');
             $table->foreignId('block_id')->constrained()->onDelete('cascade');
-            $table->unsignedBigInteger('instructor');
+            $table->unsignedBigInteger('instructor')->nullable();
             $table->foreign('instructor')->references('user_id')->on('faculties');
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();

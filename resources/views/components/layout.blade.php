@@ -32,20 +32,49 @@
                     <i class="fas fa-bars"></i>
                 </button>
                 <div class="collapse navbar-collapse d-flex float-end" id="navbarExample01">
-                    <ul class="navbar-nav me-3 mb-2 mb-lg-0 position-absolute end-0">
+                    <ul class="navbar-nav me-3 mb-2 mb-lg-0 position-absolute d-flex align-items-center end-0">
                         @auth
                         <li>
-                            <span class="nav-link me-3" style="font-size: 25px"> <b> {{ucfirst(auth()->user()->role())}} </b> </span>
+                            <span class="nav-link mt-4 text-light"> 
+                                <b> 
+                                    <p style="font-size: 16px">
+                                        @if(auth()->user()->type != 3)
+                                        {{ucfirst(auth()->user()->role())}}
+                                        @else
+                                        {{auth()->user()->faculties[0]->isDean? 'Dean' : 'Faculty'}}
+                                        @endif
+                                        @if(auth()->user()->type == 3)
+                                        , 
+                                        {{ucfirst(auth()->user()->faculties[0]->fname[0])}}. {{ucfirst(auth()->user()->faculties[0]->lname)}}
+                                        @elseif(auth()->user()->type == 4)
+                                        , 
+                                        {{ucfirst(auth()->user()->students[0]->fname[0])}}. {{ucfirst(auth()->user()->students[0]->lname)}}
+                                        @endif
+                                    </p>
+                                </b> 
+                            </span>
                         </li>
                         <li class="nav-link">
                             <form action="{{route('logout')}}" method="POST">
                                 @csrf
-                                <button type="submit" class="btn bg-transparent text-white border border-danger rounded shadow-none">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-power" viewBox="0 0 16 16">
-                                        <path d="M7.5 1v7h1V1h-1z"/>
-                                        <path d="M3 8.812a4.999 4.999 0 0 1 2.578-4.375l-.485-.874A6 6 0 1 0 11 3.616l-.501.865A5 5 0 1 1 3 8.812z"/>
-                                    </svg>
-                                </button>
+                                <div class="dropdown-start">
+                                    <button class="btn btn-transparent shadow-none text-light ms-n4" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 5%">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">
+                                            <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
+                                        </svg>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <button type="submit" class="btn bg-transparent rounded shadow-none">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-power text-danger" viewBox="0 0 16 16">
+                                                    <path d="M7.5 1v7h1V1h-1z"/>
+                                                    <path d="M3 8.812a4.999 4.999 0 0 1 2.578-4.375l-.485-.874A6 6 0 1 0 11 3.616l-.501.865A5 5 0 1 1 3 8.812z"/>
+                                                </svg>
+                                                Logout
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
                             </form>
                         </li>
                         @endauth

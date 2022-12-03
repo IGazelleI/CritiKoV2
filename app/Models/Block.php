@@ -16,10 +16,32 @@ class Block extends Model
         'section',
         'status,'
     ];
+
     public function getDescription($withCourse)
     {
-        return (($withCourse)? $this->course->name  . ' ' : '') . $this->year_level . '-' . $this->section;
+        return (($withCourse)? $this->course->name  . ' ' : '') . $this->year_level . '-' . chr($this->section + 64);
     }
+
+    public function getYear()
+    {
+        return self::str_ordinal($this->year_level) . ' Year';
+    }
+
+    public function str_ordinal($value)
+    {
+        $superscript = false;
+        $number = abs($value);
+ 
+        $indicators = ['th','st','nd','rd','th','th','th','th','th','th'];
+ 
+        $suffix = $superscript ? '<sup>' . $indicators[$number % 10] . '</sup>' : $indicators[$number % 10];
+        if ($number % 100 >= 11 && $number % 100 <= 13) {
+            $suffix = $superscript ? '<sup>th</sup>' : 'th';
+        }
+ 
+        return number_format($number) . $suffix;
+    }
+
     //course relationship
     public function course()
     {
@@ -34,5 +56,10 @@ class Block extends Model
     public function blockStudents()
     {
         return $this->hasMany(BlockStudent::class, 'block_id');
+    }
+    //klase relationship
+    public function klases()
+    {
+        return $this->hasMany(Klase::class, 'block_id');
     }
 }

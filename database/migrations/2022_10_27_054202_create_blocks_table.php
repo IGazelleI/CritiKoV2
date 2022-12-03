@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('blocks', function (Blueprint $table) {
             $table->id();
             $table->integer('year_level');
-            $table->char('section');
+            $table->integer('section');
             $table->foreignId('period_id')->constrained()->onDelete('cascade');
             $table->foreignId('course_id')->constrained()->onDelete('cascade');
             $table->timestamp('deleted_at')->nullable();

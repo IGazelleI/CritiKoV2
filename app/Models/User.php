@@ -90,8 +90,8 @@ class User extends Authenticatable
                     while(!Faculty::create($formFields)){}
 
                     break;
-            case 4: /* $formFields['course_id'] = $request['course_id'];
-                 */
+            case 4: $formFields['id_number'] = $request['id_number'];
+                
                     while(!Student::create($formFields)){}
                     break;
         }
@@ -117,5 +117,10 @@ class User extends Authenticatable
     public function evaluates()
     {
         return $this->hasMany(Evaluate::class, 'evaluator');
+    }
+    //enrollment relationship
+    public function enrollment()
+    {
+        return $this->hasMany(Enrollment::class, 'user_id');
     }
 }
