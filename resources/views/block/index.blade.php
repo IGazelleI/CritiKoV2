@@ -4,14 +4,16 @@
             <div class="row my-3 d-flex">
                 <div class="col-6">
                     <header>
-                        <h4>
-                            @if(isset($period))
-                            {{$period->getDescription()}}
-                            @endif
-                        </h4>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                @if(isset($period))
+                                    <li class="breadcrumb-item active" aria-current="page">{{$period->getDescription()}}</li>
+                                @endif
+                            </ol>
+                        </nav>
                     </header>
                 </div>
-                <div class="col">
+                <div class="col text-end">
                     <div class="dropend">
                         <button type="button" class="btn btn-info" data-bs-toggle="dropdown" aria-expanded="false">
                             Period
@@ -26,11 +28,6 @@
                             @endunless
                         </ul>
                     </div>
-                </div>
-                <div class="col">
-                    <button type="button" class="btn btn-primary" data-bs-target="#addBlockModal" data-bs-toggle="modal">
-                        New
-                    </button>
                 </div>
                 <hr/>
             </div>
@@ -76,7 +73,30 @@
                                             </div>
                                         </div>
                                         <div class="card-body">
-                                            <h5 class="card-title">Blocks: <b> {{countBlocks($block, $det->course_id)}} </b></h5>
+                                            <h5 class="card-title">
+                                                <div class="row">
+                                                    <div class="col text-secondary">
+                                                        Blocks
+                                                    </div>
+                                                    <div class="col text-end">
+                                                        <span class="fw-bold badge bg-primary text-wrap"> 
+                                                            {{countBlocks($block, $det->course_id)}} 
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </h5>
+                                            <h5 class="card-title">
+                                                <div class="row">
+                                                    <div class="col text-secondary">
+                                                        Students
+                                                    </div>
+                                                    <div class="col text-end">
+                                                        <span class="fw-bold badge bg-secondary text-wrap">
+                                                            {{$det->blockStudents->count()}} 
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </h5>
                                         </div>
                                     </div>
                                 </div>

@@ -125,6 +125,9 @@ Route::middleware('auth')->group(function ()
             Route::get('/mf/profile', 'show')->name('faculty.profile');
             Route::put('/faculty', 'update')->name('faculty.update');
             Route::post('/changePicf/{faculty}', 'changeProfilePicture')->name('faculty.changePic');
+            Route::post('/changePeriodf', 'changePeriod')->name('faculty.changePeriod');
+            Route::post('/changeSelectedf', 'changeSelected')->name('faculty.changeSelected');
+            Route::get('/evaluatef', 'evaluate')->name('faculty.evaluate');
         });
     });
 
@@ -134,11 +137,11 @@ Route::middleware('auth')->group(function ()
         {
             Route::get('/ms/profile', 'show')->name('student.profile');
             Route::put('/student', 'update')->name('student.update');
-            Route::get('/evaluate', 'evaluate')->name('student.evaluate');
+            Route::get('/evaluates', 'evaluate')->name('student.evaluate');
             Route::post('/evaluate/process', 'evaluateProcess')->name('student.evaluateProcess');
             Route::post('/changePics/{student}', 'changeProfilePicture')->name('student.changePic');
-            Route::post('/changePeriod', 'changePeriod')->name('student.changePeriod');
-            Route::post('/changeSelected', 'changeSelected')->name('student.changeSelected');
+            Route::post('/changePeriods', 'changePeriod')->name('student.changePeriod');
+            Route::post('/changeSelecteds', 'changeSelected')->name('student.changeSelected');
             Route::get('/enrollment', 'enrollment')->name('student.enrollment');
             Route::post('/enroll', 'enroll')->name('student.submitEnroll');
         });

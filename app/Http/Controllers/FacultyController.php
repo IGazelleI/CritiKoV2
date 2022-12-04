@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Faculty;
 use App\Models\Course;
 use App\Models\Department;
+use App\Models\Period;
+use App\Models\Question;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\FacultyStoreRequest;
 use App\Http\Requests\ChangePicRequest;
 use Illuminate\Support\Collection;;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
 use App\Models\Enrollment;
 use Illuminate\Http\Request;
@@ -58,7 +61,7 @@ class FacultyController extends Controller
 
     public function changeProfilePicture(ChangePicRequest $request, Faculty $faculty)
     {
-        $name = Hash::make($faculty->id) . '.' . $request->file('imgPath')->getClientOriginalExtension();
+        $name = encrypt($faculty->id) . '.' . $request->file('imgPath')->getClientOriginalExtension();
         $request->file('imgPath')->storeAs('public/images', $name);
         //update img
         $faculty->imgPath = $name;
@@ -80,12 +83,15 @@ class FacultyController extends Controller
     {
         $courses = Department::find(auth()->user()->faculties[0]->department_id)
                                 -> courses;
+        
         $enrollment = new Collection;
         $i = 0;
+
         foreach($courses as $det)
         {
             $enrolls = $det->enrollments
-                        -> where('status', '=', 'Pending');
+                        -> where('status', '=', 'Pending')
+                        -> where('period_id', Session::get('period'));
             foreach($enrolls  as $cat)
             {
                 $enrollment[$i] = $cat;
@@ -118,14 +124,26 @@ class FacultyController extends Controller
         return back()->with('message', 'Enrollment ' . $status . '.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function evaluate()
     {
-        //
+        $period = Period::find(Session::get('period'));
+
+        $question = Question::where('type', 3)
+                        -> orderBy('q_type_id')
+                        -> orderBy('q_category_id')
+                        -> get();
+
+        $faculty = Faculty::where('department_id', auth()->user()->faculties[0]->department_id)
+                        -> latest('id')
+                        -> get();
+
+        return view('faculty.evaluate', compact('period', 'question', 'faculty'));
+    }
+
+    public function changeSelected(Request $request)
+    {
+        $request->session()->put('selected', (int) $request->user_id);
+
+        return redirect(route('faculty.evaluate'))->with('message', 'Selected changed.');
     }
 }

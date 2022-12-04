@@ -65,7 +65,7 @@ class StudentController extends Controller
         return back()->with('message', 'Profile updated.');
     }
 
-    public function evaluate()
+    public function evaluate(Request $request)
     {
         $period = Period::find(Session::get('period'));
 
@@ -86,6 +86,9 @@ class StudentController extends Controller
                                             -> latest('faculties.user_id')
                                             -> get() : null;
 
+        if(isset($request->instructor))
+            $request->session()->put('selected', (int) decrypt($request->instructor));
+        
         $currentSelected = Session::get('selected');
 
         $evaluation = $currentSelected != null? Evaluate::where('evaluator', auth()->user()->id)
@@ -123,7 +126,7 @@ class StudentController extends Controller
     {
         $request->session()->put('selected', (int) $request->user_id);
 
-        return back()->with('message', 'Selected changed.');
+        return redirect(route('student.evaluate'))->with('message', 'Selected changed.');
     }
 
     public function enrollment(Request $request)

@@ -1,9 +1,32 @@
 <x-layout>
     <x-medium-card>
         <div class="container">
-            <div class="row d-flex justify-content-center text-center">
-                <div class="col border border-dark text-uppercase bg-info p-2 mt-3 rounded-top">
-                    <h3> Class </h3>
+            <div class="row my-3">
+                <div class="col">
+                    <header>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item">
+                                    <a href="{{route('block.manage', $klase[0]->block->period->id)}}">
+                                        {{$klase[0]->block->period->getDescription()}}
+                                    </a>
+                                </li>
+                                <li class="breadcrumb-item">
+                                    <a href="{{route('block.show', ['period' => $klase[0]->block->period->id, 'course' => $klase[0]->block->course->id])}}">
+                                        {{$klase[0]->block->course->name}}
+                                    </a>
+                                </li>
+                                <li class="breadcrumb-item">
+                                    <a href="{{route('block.show', ['period' => $klase[0]->block->period->id, 'course' => $klase[0]->block->course->id, 'year_level' => $klase[0]->block->year_level])}}">
+                                        {{$klase[0]->block->getYear()}}
+                                    </a>
+                                </li>
+                                <li class="breadcrumb-item">
+                                    {{chr($klase[0]->block->section + 64)}}
+                                </li>
+                            </ol>
+                          </nav>
+                    </header>
                 </div>
             </div>
             <div class="row">

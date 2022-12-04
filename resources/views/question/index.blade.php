@@ -1,15 +1,22 @@
 <x-layout>
     <x-medium-card>
         <div class="container">
-            <div class="row d-flex">
+            <div class="row d-flex justify-content-evenly">
                 <div class="col-2">
                     <div class="my-3">
-                        <a href="{{route('question.manage', 3)}}" class="btn btn-primary {{$type == 3? 'btn-outline-dark' : ''}} rounded-pill"> Faculty </a>
+                        <a href="{{route('question.manage', 3)}}" class="btn btn-primary {{$type == 3? 'btn-outline-dark' : ''}} rounded"> 
+                            
+                        <img src="https://th.bing.com/th/id/R.6aa612d3f9435b5a1a95edc15f3faa95?rik=x2i2bJsBt8cEAA&riu=http%3a%2f%2fcdn.onlinewebfonts.com%2fsvg%2fimg_113883.png&ehk=fl9OjR1mQW%2bBT%2b4AswM4WKqIOMgjRWF%2flWNkS6vy%2bVw%3d&risl=&pid=ImgRaw&r=0" class="img-fluid"/>
+                            Faculty 
+                        </a>
                     </div>
                 </div>
                 <div class="col-2">
                     <div class="my-3">
-                        <a href="{{route('question.manage', 4)}}" class="btn btn-secondary {{$type == 4? 'btn-outline-dark' : ''}} rounded-pill"> Student </a>
+                        <a href="{{route('question.manage', 4)}}" class="btn btn-secondary {{$type == 4? 'btn-outline-dark' : ''}} rounded-pill"> 
+                            <img src="https://th.bing.com/th/id/R.d7acea21ed4b3cc715ee76523ae07ea5?rik=0xINHGLJFlnycg&riu=http%3a%2f%2fcdn.onlinewebfonts.com%2fsvg%2fimg_506204.png&ehk=ZPeW01pXH9pNoOMjg%2fLdndPfQWJhhcf%2b7ehTNfm6%2bIk%3d&risl=&pid=ImgRaw&r=0" class="img-fluid"/>
+                            Student 
+                        </a>
                     </div>
                 </div>
                 {{-- <div class="col-2">
@@ -22,8 +29,13 @@
                 </div> --}}
             </div>
             <div class="row">
+                {{-- <div class="col">
+                    <img src="https://th.bing.com/th/id/R.8f33ef158b29953c1c11184d199c7921?rik=Ympx47C0xW6Z4w&riu=http%3a%2f%2fcdn.onlinewebfonts.com%2fsvg%2fimg_464411.png&ehk=LLBCHUiw6mAUcDBa3OWj8VMohdEXzRoK09LJVkPaJ7E%3d&risl=&pid=ImgRaw&r=0" class="img-fluid"/>
+                </div> --}}
                 <div class="col border-bottom border-dark bg-light shadow-3">
-                    <h3> {{$type == 3? 'Faculty' : 'Student'}} Questionnaire </h3>
+                    <h3>  
+                        {{$type == 3? 'Faculty' : 'Student'}} Questionnaire 
+                    </h3>
                 </div>
             </div>
             @unless ($question->isEmpty())
@@ -70,7 +82,7 @@
                             @php
                                 $count = 0;
                             @endphp
-                            <div class="row {{randomBg()}}">
+                            <div class="row {{randomBg()}} pt-2 b-2">
                                 <div class="col border-bottom border-dark text-white rounded-bottom">
                                     <strong> {{$det->qCat->name}} </strong>
                                 </div>
