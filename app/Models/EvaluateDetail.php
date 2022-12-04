@@ -22,6 +22,6 @@ class EvaluateDetail extends Model
     //question relationship
     public function question()
     {
-        return $this->hasMany(Question::class, 'question_id');
+        return $this->belongsTo(Question::class, 'question_id');
     }
 }

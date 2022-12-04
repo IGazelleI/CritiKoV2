@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Faculty;
 use App\Models\Course;
-use App\Models\Department;
 use App\Models\Period;
+use App\Models\Faculty;
 use App\Models\Question;
-use Illuminate\Support\Facades\Hash;
-use App\Http\Requests\FacultyStoreRequest;
-use App\Http\Requests\ChangePicRequest;
-use Illuminate\Support\Collection;;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\DB;
+use App\Models\Department;
 use App\Models\Enrollment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\ChangePicRequest;
+use Illuminate\Support\Facades\Session;
+use App\Http\Requests\FacultyStoreRequest;
 
 class FacultyController extends Controller
 {
@@ -115,8 +115,8 @@ class FacultyController extends Controller
         if(!Enrollment::process($request->all(), $enroll))
         {
             if(!DB::table('enrollments')
-                ->where('id', '=', $enroll->id)
-                ->update(['status' => 'Pending'])
+                -> where('id', '=', $enroll->id)
+                -> update(['status' => 'Pending'])
             )
                 return back()->with('message', 'Error in updating enrollment.');
         }
@@ -124,7 +124,7 @@ class FacultyController extends Controller
         return back()->with('message', 'Enrollment ' . $status . '.');
     }
 
-    public function evaluate()
+    public function evaluate(Request $request)
     {
         $period = Period::find(Session::get('period'));
 
@@ -134,10 +134,14 @@ class FacultyController extends Controller
                         -> get();
 
         $faculty = Faculty::where('department_id', auth()->user()->faculties[0]->department_id)
+                        -> where('user_id', '!=', auth()->user()->id)
                         -> latest('id')
                         -> get();
 
-        return view('faculty.evaluate', compact('period', 'question', 'faculty'));
+        if(isset($request->faculty))
+            $request->session()->put('selected', (int) decrypt($request->faculty));
+
+        return view('faculty.evaluate', compact('period', 'question', 'faculty', 'chart'));
     }
 
     public function changeSelected(Request $request)

@@ -4,8 +4,7 @@
             <div class="row d-flex justify-content-evenly">
                 <div class="col-2">
                     <div class="my-3">
-                        <a href="{{route('question.manage', 3)}}" class="btn btn-primary {{$type == 3? 'btn-outline-dark' : ''}} rounded"> 
-                            
+                        <a href="{{route('question.manage', 3)}}" class="btn btn-primary {{$type == 3? 'btn-outline-dark' : ''}} rounded">
                         <img src="https://th.bing.com/th/id/R.6aa612d3f9435b5a1a95edc15f3faa95?rik=x2i2bJsBt8cEAA&riu=http%3a%2f%2fcdn.onlinewebfonts.com%2fsvg%2fimg_113883.png&ehk=fl9OjR1mQW%2bBT%2b4AswM4WKqIOMgjRWF%2flWNkS6vy%2bVw%3d&risl=&pid=ImgRaw&r=0" class="img-fluid"/>
                             Faculty 
                         </a>

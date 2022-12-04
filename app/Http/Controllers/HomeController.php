@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Period;
-use App\Models\Enrollment;
-use App\Models\Question;
 use App\Models\Faculty;
 use App\Models\Evaluate;
+use App\Models\Question;
+use App\Models\QCategory;
+use App\Models\Enrollment;
+use App\Charts\FacultyChart;
+use App\Models\EvaluateDetail;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
 class HomeController extends Controller
@@ -20,7 +23,65 @@ class HomeController extends Controller
                     break;
             case 2: return view('sast.index');
                     break;
-            case 3: return view('faculty.index');
+            case 3: $chart = new FacultyChart();
+
+                    $labels = [];
+                    $attributes = [];
+                    $i = 0;
+
+                    $category = QCategory::latest('id')
+                                -> get();
+
+                    foreach($category as $det)
+                    {
+                        $labels[$i] = $det->name;
+                        $cat[$i] = $det->id;
+
+                        $i += 1;
+                    }
+
+                    $evaluation = Evaluate::where('evaluatee', auth()->user()->id)
+                                        -> latest('id')
+                                        -> get();
+
+                    if($evaluation->isEmpty())
+                        $points = [random_int(1, 100), random_int(1, 100), random_int(1, 100), random_int(1, 100), random_int(1, 100)];
+                    else
+                    {
+                        foreach($evaluation as $det)
+                        {     /* IADD ang points sa category base sa evaldetail */
+                            foreach($det->evalDetails as $detail)
+                                $points[$i] = $detail;
+
+                            $i += 1;
+                        }
+                    }
+                    
+                    $chart-> labels($labels)
+                        -> dataset('Latest', 'radar', $points)
+                        -> options([
+                        'pointBorderColor' => 'Blue',
+                        'scales' => [
+                                        'r' => [
+                                        'min' => 50,
+                                        'max' => 100,
+                                        'ticks' => [
+                                                'stepSize' => 20,
+                                                'display' => false
+                                        ]
+                                ]
+                        ],
+                        'responsive' => true
+                    ]);
+
+                    $period = Session::get('period') == null? Period::latest('id')->get()->first() : Period::find(Session::get('period'));
+
+                    $faculty = Faculty::where('department_id', auth()->user()->faculties[0]->department_id)
+                                -> where('user_id', '!=', auth()->user()->id)
+                                -> latest('id')
+                                -> get();
+                
+                    return view('faculty.index', compact('period', 'faculty', 'chart'));
                     break;
             case 4: $period = Session::get('period') == null? Period::latest('id')->get()->first() : Period::find(Session::get('period'));
 
