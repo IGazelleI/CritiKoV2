@@ -29,7 +29,7 @@
                     </div>
                 </form>
             </header>
-            <form action="{{route('student.evaluateProcess')}}" method="POST">
+            <form action="{{route('faculty.evaluateProcess')}}" method="POST">
                 @csrf
                 <input type="hidden" name="totalQuestion" value="{{$question->count()}}"/>
                 <div class="row rounded border border-dark bg-info d-flex justify-content-center align-items-center my-3">
@@ -132,27 +132,52 @@
                                 </div>
                                 <div class="col-md-auto p-2">
                                     <input type="radio" name="{{'qAns' . $qnum}}" value="1" 
-                                        {{isset($evaluation)? checkQuestion($q->id, $evaluation->evalDetails[$i], 1) : null}}
+                                        @if(isset($evaluation))
+                                            @if(isset($evaluation->evalDetails[$i]))
+                                                {{checkQuestion($q->id, $evaluation->evalDetails[$i], 1)}}{{-- 
+                                        {{isset($evaluation)? (isset($evaluation->evalDetails[$i])? (checkQuestion($q->id, $evaluation->evalDetails[$i], 1) : null)) : null}} --}}
+                                            @endif
+                                        @endif
                                     />
                                 </div>
                                 <div class="col-md-auto p-2">
                                     <input type="radio" name="{{'qAns' . $qnum}}" value="2"
-                                        {{isset($evaluation)? checkQuestion($q->id, $evaluation->evalDetails[$i], 2) : null}}
+                                        @if(isset($evaluation))
+                                            @if(isset($evaluation->evalDetails[$i]))
+                                                {{checkQuestion($q->id, $evaluation->evalDetails[$i], 2)}}{{-- 
+                                        {{isset($evaluation)? (isset($evaluation->evalDetails[$i])? (checkQuestion($q->id, $evaluation->evalDetails[$i], 1) : null)) : null}} --}}
+                                            @endif
+                                        @endif
                                     />
                                 </div>
                                 <div class="col-md-auto p-2">
                                     <input type="radio" name="{{'qAns' . $qnum}}" value="3" 
-                                        {{isset($evaluation)? checkQuestion($q->id, $evaluation->evalDetails[$i], 3) : null}}
+                                        @if(isset($evaluation))
+                                            @if(isset($evaluation->evalDetails[$i]))
+                                                {{checkQuestion($q->id, $evaluation->evalDetails[$i], 3)}}{{-- 
+                                        {{isset($evaluation)? (isset($evaluation->evalDetails[$i])? (checkQuestion($q->id, $evaluation->evalDetails[$i], 1) : null)) : null}} --}}
+                                            @endif
+                                        @endif
                                     />
                                 </div>
                                 <div class="col-md-auto p-2">
                                     <input type="radio" name="{{'qAns' . $qnum}}" value="4" 
-                                        {{isset($evaluation)? checkQuestion($q->id, $evaluation->evalDetails[$i], 4) : null}}
+                                        @if(isset($evaluation))
+                                            @if(isset($evaluation->evalDetails[$i]))
+                                                {{checkQuestion($q->id, $evaluation->evalDetails[$i], 4)}}{{-- 
+                                        {{isset($evaluation)? (isset($evaluation->evalDetails[$i])? (checkQuestion($q->id, $evaluation->evalDetails[$i], 1) : null)) : null}} --}}
+                                            @endif
+                                        @endif
                                     />
                                 </div>
                                 <div class="col-md-auto p-2">
                                     <input type="radio" name="{{'qAns' . $qnum}}" value="5" 
-                                        {{isset($evaluation)? checkQuestion($q->id, $evaluation->evalDetails[$i], 5) : null}}
+                                        @if(isset($evaluation))
+                                            @if(isset($evaluation->evalDetails[$i]))
+                                                {{checkQuestion($q->id, $evaluation->evalDetails[$i], 5)}}{{-- 
+                                        {{isset($evaluation)? (isset($evaluation->evalDetails[$i])? (checkQuestion($q->id, $evaluation->evalDetails[$i], 1) : null)) : null}} --}}
+                                            @endif
+                                        @endif
                                     />
                                 </div>
                             </div>

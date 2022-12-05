@@ -4,9 +4,9 @@
             @if(isset($period->beginEval))
                 @if($period->beginEval <= NOW()->format('Y-m-d'))
                 <header>
-                    <div class="d-flex justify-content-center align-items-center h-100">
+                    <div class="text-center">
                         <h1 class="mb-3" style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif">
-                            Evaluate Instructor
+                            Evaluate Instructor <br/> <span class="text-danger text-uppercase alert-danger"> Bisag nakadisabled makailis gapon sila sa radio </span>
                         </h1>
                     </div>
                     <form action="{{route('student.changeSelected')}}" method="POST">
@@ -144,28 +144,53 @@
                                     </div>
                                     <div class="col-md-auto p-2">
                                         <input type="radio" name="{{'qAns' . $qnum}}" value="1" 
-                                            {{isset($evaluation)? checkQuestion($q->id, $evaluation->evalDetails[$i], 1) : null}}
-                                        />
+                                            @if(isset($evaluation))
+                                                @if(isset($evaluation->evalDetails[$i]))
+                                                    {{checkQuestion($q->id, $evaluation->evalDetails[$i], 1)}}{{-- 
+                                            {{isset($evaluation)? (isset($evaluation->evalDetails[$i])? (checkQuestion($q->id, $evaluation->evalDetails[$i], 1) : null)) : null}} --}}
+                                                @endif
+                                            @endif
+                                            />
                                     </div>
                                     <div class="col-md-auto p-2">
-                                        <input type="radio" name="{{'qAns' . $qnum}}" value="2"
-                                            {{isset($evaluation)? checkQuestion($q->id, $evaluation->evalDetails[$i], 2) : null}}
-                                        />
+                                        <input type="radio" name="{{'qAns' . $qnum}}" value="2" 
+                                            @if(isset($evaluation))
+                                                @if(isset($evaluation->evalDetails[$i]))
+                                                    {{checkQuestion($q->id, $evaluation->evalDetails[$i], 2)}}{{-- 
+                                            {{isset($evaluation)? (isset($evaluation->evalDetails[$i])? (checkQuestion($q->id, $evaluation->evalDetails[$i], 2) : null)) : null}} --}}
+                                                @endif
+                                            @endif
+                                            />
                                     </div>
                                     <div class="col-md-auto p-2">
                                         <input type="radio" name="{{'qAns' . $qnum}}" value="3" 
-                                            {{isset($evaluation)? checkQuestion($q->id, $evaluation->evalDetails[$i], 3) : null}}
-                                        />
+                                            @if(isset($evaluation))
+                                                @if(isset($evaluation->evalDetails[$i]))
+                                                    {{checkQuestion($q->id, $evaluation->evalDetails[$i], 3)}}{{-- 
+                                            {{isset($evaluation)? (isset($evaluation->evalDetails[$i])? (checkQuestion($q->id, $evaluation->evalDetails[$i], 3) : null)) : null}} --}}
+                                                @endif
+                                            @endif
+                                            />
                                     </div>
-                                    <div class="col-md-auto p-2">
+                                    <div class="col-md-auto p-2">   
                                         <input type="radio" name="{{'qAns' . $qnum}}" value="4" 
-                                            {{isset($evaluation)? checkQuestion($q->id, $evaluation->evalDetails[$i], 4) : null}}
-                                        />
+                                            @if(isset($evaluation))
+                                                @if(isset($evaluation->evalDetails[$i]))
+                                                    {{checkQuestion($q->id, $evaluation->evalDetails[$i], 4)}}{{-- 
+                                            {{isset($evaluation)? (isset($evaluation->evalDetails[$i])? (checkQuestion($q->id, $evaluation->evalDetails[$i], 4) : null)) : null}} --}}
+                                                @endif
+                                            @endif
+                                            />
                                     </div>
                                     <div class="col-md-auto p-2">
                                         <input type="radio" name="{{'qAns' . $qnum}}" value="5" 
-                                            {{isset($evaluation)? checkQuestion($q->id, $evaluation->evalDetails[$i], 5) : null}}
-                                        />
+                                            @if(isset($evaluation))
+                                                @if(isset($evaluation->evalDetails[$i]))
+                                                    {{checkQuestion($q->id, $evaluation->evalDetails[$i], 5)}}{{-- 
+                                            {{isset($evaluation)? (isset($evaluation->evalDetails[$i])? (checkQuestion($q->id, $evaluation->evalDetails[$i], 5) : null)) : null}} --}}
+                                                @endif
+                                            @endif
+                                            />
                                     </div>
                                 </div>
                                 @php
@@ -180,7 +205,18 @@
                                 </div>
                                 <div class="row">
                                     <div class="col d-flex align-items-center">
-                                        <input type="text" class="form-control w-100" name="{{'qAns' . $qnum}}"/>
+                                        <input type="text" class="form-control w-100" name="{{'qAns' . $qnum}}"
+                                            @if(isset($evaluation))
+                                                @if(isset($evaluation->evalDetails[$i]))
+                                                    value="{{$evaluation->evalDetails[$i]->answer}}"
+                                                    disabled{{-- 
+                                            {{isset($evaluation)? (isset($evaluation->evalDetails[$i])? (checkQuestion($q->id, $evaluation->evalDetails[$i], 5) : null)) : null}} --}}
+                                                @else
+                                                    value="Not Answered"
+                                                    disabled
+                                                @endif
+                                            @endif
+                                        />
                                     </div>
                                 </div>
                             @endif

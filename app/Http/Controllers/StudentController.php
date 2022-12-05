@@ -101,12 +101,6 @@ class StudentController extends Controller
         return view('student.evaluate', compact('enrollment', 'period', 'instructor', 'question', 'evaluation'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function evaluateProcess(Request $request)
     {
         if(!Student::storeEvaluate($request->all()))

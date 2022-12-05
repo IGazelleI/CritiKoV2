@@ -23,65 +23,108 @@ class HomeController extends Controller
                     break;
             case 2: return view('sast.index');
                     break;
-            case 3: $chart = new FacultyChart();
+            case 3: //chart 
+                    $chart = new FacultyChart();
 
                     $labels = [];
                     $attributes = [];
+                    $lowestAttribute = 0;
                     $i = 0;
-
-                    $category = QCategory::latest('id')
-                                -> get();
-
+                    //get all categories
+                    $category = QCategory::all();
+                    //get all categories
                     foreach($category as $det)
                     {
                         $labels[$i] = $det->name;
-                        $cat[$i] = $det->id;
-
-                        $i += 1;
+                        $attributes[$i++] = 0;
                     }
-
+                    $baseAttribute = 0;
+                    //get evaluations of user
                     $evaluation = Evaluate::where('evaluatee', auth()->user()->id)
                                         -> latest('id')
                                         -> get();
-
+                    //randomize if mempty
                     if($evaluation->isEmpty())
-                        $points = [random_int(1, 100), random_int(1, 100), random_int(1, 100), random_int(1, 100), random_int(1, 100)];
+                        $attributes = [random_int(1, 100), random_int(1, 100), random_int(1, 100), random_int(1, 100), random_int(1, 100)];
                     else
                     {
+                        //get statistics based on evaluation
                         foreach($evaluation as $det)
-                        {     /* IADD ang points sa category base sa evaldetail */
-                            foreach($det->evalDetails as $detail)
-                                $points[$i] = $detail;
+                        {
+                            $catCount = 0;
+                            $catPts = 0;
+                            $prevCat = 0;
 
-                            $i += 1;
+                            foreach($det->evalDetails as $detail)
+                            {
+                                //only gets the quantitative question
+                                if($detail->question->q_type_id == 1)
+                                {
+                                    //update current points
+                                    if($prevCat == $detail->question->qcat->id - 1)
+                                    {
+                                        $catPts += $detail->answer;
+                                        $catCount += 1;
+                                    }
+                                    //get the points by percent
+                                    if($prevCat != $detail->question->qcat->id - 1)
+                                    {
+                                        $final = ($catPts / ($catCount * 5)) * 100;
+
+                                        $attributes[$prevCat] = $attributes[$prevCat] == 0? round($final, 0) : round($attributes[$prevCat] + $final / 2, 0);
+
+                                        if($attributes[$prevCat] < $attributes[$lowestAttribute])
+                                            $lowestAttribute = $prevCat;
+
+                                        dump( //BUANG PA ANG CHART SA DEAN
+                                                'Previous Category: ' . $prevCat .
+                                                ' Current Answer: ' . $detail->answer .
+                                                ' Total: ' . $catPts .
+                                                ' Overall: ' . ($catCount * 5) .
+                                                ' Current Attribute: ' . $attributes[$detail->question->qcat->id - 1] .
+                                                ' Final:  ' . $final .
+                                                ' Final of ' . $detail->question->qcat->name . ': ' . $attributes[$prevCat]
+                                            );
+                                            dump($attributes);
+                                            dump('Current: ' . $attributes[$prevCat] . ' Lowest: ' . $attributes[$lowestAttribute] . ' ' . $lowestAttribute);
+                                        $catPts = 0;
+                                        $catCount = 0;
+                                    }
+
+                                    $prevCat = $detail->question->qcat->id - 1;
+                                } 
+                            }
+                            dump($lowestAttribute);
+                            $recommendation = Question::where('q_category_id', $lowestAttribute + 1)
+                                                    -> where('q_type_id', 1)
+                                                    -> latest('id')
+                                                    -> get();
                         }
                     }
-                    
+                    //chart details
                     $chart-> labels($labels)
-                        -> dataset('Latest', 'radar', $points)
+                        -> dataset('Latest', 'radar', $attributes)
                         -> options([
                         'pointBorderColor' => 'Blue',
                         'scales' => [
-                                        'r' => [
-                                        'min' => 50,
-                                        'max' => 100,
-                                        'ticks' => [
-                                                'stepSize' => 20,
-                                                'display' => false
-                                        ]
-                                ]
-                        ],
+                            'r' => [
+                            'min' => 50,
+                            'max' => 100,
+                            'ticks' => [
+                                'stepSize' => 20,
+                                'display' => false
+                        ]]],
                         'responsive' => true
                     ]);
-
+                    //get current period
                     $period = Session::get('period') == null? Period::latest('id')->get()->first() : Period::find(Session::get('period'));
-
+                    //get faculties in same department
                     $faculty = Faculty::where('department_id', auth()->user()->faculties[0]->department_id)
                                 -> where('user_id', '!=', auth()->user()->id)
                                 -> latest('id')
                                 -> get();
                 
-                    return view('faculty.index', compact('period', 'faculty', 'chart'));
+                    return view('faculty.index', compact('period', 'faculty', 'chart', 'recommendation'));
                     break;
             case 4: $period = Session::get('period') == null? Period::latest('id')->get()->first() : Period::find(Session::get('period'));
 

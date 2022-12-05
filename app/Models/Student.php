@@ -114,14 +114,17 @@ class Student extends Model
                 $catPts = 0;
             } */
             //get points from evaluation
-            if($prevCat == $request['qCatID' . $i])
+            if(isset($request['qCatID' . $i]))
             {
-                $catPts += (int) $request['qAns' . $i];
+                if($prevCat == $request['qCatID' . $i])
+                {
+                    $catPts += (int) $request['qAns' . $i];
 
-                $catCount++;
+                    $catCount++;
+                }
+                
+                $prevCat = $request['qCatID' . $i];
             }
-
-            $prevCat = $request['qCatID' . $i];
         }
 
         return true;

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Models\Period;
 use App\Models\Faculty;
+use App\Models\Evaluate;
 use App\Models\Question;
 use App\Models\Department;
 use App\Models\Enrollment;
@@ -44,13 +45,6 @@ class FacultyController extends Controller
         return view('faculty.profile', compact('det'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(FacultyStoreRequest $request)
     {
         if(!Faculty::updateInfo($request->all()))
@@ -128,7 +122,7 @@ class FacultyController extends Controller
     {
         $period = Period::find(Session::get('period'));
 
-        $question = Question::where('type', 3)
+        $question = Question::where('type', 4)
                         -> orderBy('q_type_id')
                         -> orderBy('q_category_id')
                         -> get();
@@ -141,7 +135,24 @@ class FacultyController extends Controller
         if(isset($request->faculty))
             $request->session()->put('selected', (int) decrypt($request->faculty));
 
-        return view('faculty.evaluate', compact('period', 'question', 'faculty', 'chart'));
+        $currentSelected = Session::get('selected');
+
+        $evaluation = $currentSelected != null? Evaluate::where('evaluator', auth()->user()->id)
+                                                        -> where('evaluatee', $currentSelected)
+                                                        -> where('period_id', Session::get('period'))
+                                                        -> latest('id')
+                                                        -> get()
+                                                        -> first() : null;
+
+        return view('faculty.evaluate', compact('period', 'question', 'faculty'));
+    }
+
+    public function evaluateProcess(Request $request)
+    {
+        if(!Faculty::storeEvaluate($request->all()))
+            return back()->with('message', 'Error in submitting evaluation.');
+
+        return redirect(route('faculty.evaluate'))->with('message', 'Evaluation submitted.');
     }
 
     public function changeSelected(Request $request)
