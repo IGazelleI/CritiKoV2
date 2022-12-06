@@ -27,22 +27,20 @@
                               <div class="d-md-flex align-items-center">
                                   <div>
                                       <h4 class="card-title">Statistics</h4>
-                                      <h6 class="card-subtitle"></h6>
+                                      <h6 class="card-subtitle">asd</h6>
                                   </div>
                                   <div class="ms-auto d-flex no-block align-items-center">
                                       <ul class="list-inline dl d-flex align-items-center m-r-15 m-b-0">
-                                          <li class="list-inline-item d-flex align-items-center text-info"><i class="fa fa-circle font-10 me-1"></i>
+                                          <li class="list-inline-item d-flex align-items-center text-info"><i class="fa fa-circle font-10 me-1"></i>a
                                           </li>
-                                          <li class="list-inline-item d-flex align-items-center text-primary"><i class="fa fa-circle font-10 me-1"></i> 
+                                          <li class="list-inline-item d-flex align-items-center text-primary"><i class="fa fa-circle font-10 me-1"></i> a
                                           </li>
                                       </ul>
                                   </div>
                               </div>
-                              <!---
-                              <div class="amp-pxl mt-4" style="height: 350px;">
-                                  <div class="chartist-tooltip"></div>
+                              <div class="mt-4">
+                                    {!! $chart->container() !!}
                               </div>
-                              --->
                           </div>
                       </div>
                   </div>
@@ -66,7 +64,7 @@
                                       <h5 class="card-title">Some Data</h5>
                                     </div>
                                 </div>
-                              </div>
+                              </div>{{-- 
                               <div class="py-3 d-flex align-items-center">
                                 <div class="card text-bg-success mb-3" style="max-width: 15rem; max-height: 9rem;">
                                     <div class="card-header">Faculty</div>
@@ -91,7 +89,7 @@
                                       <h5 class="card-title">Some Data</h5>
                                     </div>
                                 </div>
-                              </div>
+                              </div> --}}
                           </div>
                       </div>
                   </div>
@@ -385,3 +383,4 @@
     </x-medium-card>
     <x-admin-canvas/>
 </x-layout>
+{!! $chart->script() !!}

@@ -2,8 +2,8 @@
     <x-profile-card>
         <div class="rounded-top text-white d-flex flex-row" style="height:200px; background-image: url('{{asset('images/profile-background.png')}}')">
             <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px; height: 150px; opacity:1.0">
-            <img src="{{isset($det->imgPath)? $det->imgPath() : 'https://www.pngitem.com/pimgs/m/226-2267516_male-shadow-circle-default-profile-image-round-hd.png'}}"
-                alt="Profile Image" class="img-fluid img-thumbnail h-100 mt-4 mb-2"
+            <img src="{{isset($det->imgPath)? '../' . $det->imgPath() : 'https://www.pngitem.com/pimgs/m/226-2267516_male-shadow-circle-default-profile-image-round-hd.png'}}"
+                alt="Profile Image" class="img-fluid img-thumbnail border border-2 border-dark h-100 mt-4 mb-2"
                 style="width: 150px; z-index: 1">
                 <!-- Button trigger modal -->
                 <button type="button" class="btn btn-outline pb-2 mt-n5 changeBg" data-bs-toggle="modal" data-bs-target="#changeProfileModal" style="z-index: 1">

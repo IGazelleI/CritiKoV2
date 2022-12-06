@@ -12,6 +12,13 @@
                 </div>
                 <div class="col-2">
                     <div class="my-3">
+                        <button class="btn btn-outline-info rounded" data-bs-target="#qCatModal" data-bs-toggle="modal">
+                            Categories
+                        </button>
+                    </div>
+                </div>
+                <div class="col-2">
+                    <div class="my-3">
                         <a href="{{route('question.manage', 4)}}" class="btn btn-secondary {{$type == 4? 'btn-outline-dark' : ''}} rounded-pill"> 
                             <img src="https://th.bing.com/th/id/R.d7acea21ed4b3cc715ee76523ae07ea5?rik=0xINHGLJFlnycg&riu=http%3a%2f%2fcdn.onlinewebfonts.com%2fsvg%2fimg_506204.png&ehk=ZPeW01pXH9pNoOMjg%2fLdndPfQWJhhcf%2b7ehTNfm6%2bIk%3d&risl=&pid=ImgRaw&r=0" class="img-fluid"/>
                             Student 
@@ -87,7 +94,7 @@
                                 </div>
                                 <div class="col-1 border-bottom border-dark text-white rounded-bottom">
                                     <button type="button" 
-                                        class="btn btn-transparent btn-outline-primary shadow-none text-white btn-sm ms-4" data-bs-target="#addQModal"    data-bs-toggle="modal"
+                                        class="btn btn-transparent btn-outline-primary shadow-none text-white btn-sm ms-4" data-bs-target="#addQModal" data-bs-toggle="modal"
                                         data-bs-answer="{{$type}}"
                                         data-bs-type="{{$det->q_type_id}}"
                                         data-bs-category="{{$det->q_category_id}}"
@@ -100,7 +107,9 @@
 
                         <div class="row ms-1 d-flex align-items-center">
                             <div class="col border-end">
-                                <b> {{++$count}}. </b> {{$det->sentence}}
+                                <span data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{$det->keyword}}">
+                                    <b> {{++$count}}. </b> {{$det->sentence}}
+                                </span>
                                 <button type="button" class="btn btn-sm shadow-none text-secondary" data-bs-target="#editQModal" data-bs-toggle="modal"
                                     data-bs-id={{$det->id}}
                                     data-bs-answer="{{$type}}"
@@ -145,9 +154,9 @@
                         @endphp
                     @else
                         <div class="row">
-                            <div class="col d-flex align-items-center ms-5 mt-5 mb-2">
+                            <div class="col d-flex align-items-center ms-5 mt-5 mb-2 disappear">
                                 {{$det->sentence}}
-                                <button type="button" class="btn btn-sm shadow-none text-secondary" data-bs-target="#editQModal" data-bs-toggle="modal"
+                                <button type="button" class="btn btn-sm shadow-none text-secondary disappear" data-bs-target="#editQModal" data-bs-toggle="modal"
                                     data-bs-id={{$det->id}}
                                     data-bs-answer="{{$type}}"
                                     data-bs-type="{{$det->q_type_id}}"
@@ -205,3 +214,7 @@
         return $bg[random_int(0, count($bg) - 1)];
     }
 @endphp
+<script>
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+</script>

@@ -123,4 +123,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Enrollment::class, 'user_id');
     }
+    //klase student relationship
+    public function klaseStudent()
+    {
+        return $this->belongsTo(KlaseStudent::class, 'id');
+    }
 }
