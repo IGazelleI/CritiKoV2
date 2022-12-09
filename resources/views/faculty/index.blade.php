@@ -15,19 +15,19 @@
                                     Recommendation
                                 </h5>
                                 <hr/>
-                                @unless($recommendation->isEmpty())
+                                {{-- @unless($recommendation->isEmpty())
                                 <table class="table table-hover text-danger">
                                   <thead>
                                     @foreach($recommendation as $det)
                                     <tr>
-                                      <th scope="col">{{$det->keyword}}</th>
+                                      <th scope="col" id="rec">{{$det->keyword}}</th>
                                     </tr>
                                     @endforeach
                                   </thead>
                                 </table>
                                 @else
                                 Wa recommendation undang
-                                @endunless
+                                @endunless --}}
                             </div>  
                         </div>
                     </div>
@@ -142,6 +142,23 @@
 </x-layout>
 {!! $chart->script() !!}
 <script>
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+    /* var recEl = document.getElementById('rec');
+    var open = true;
+
+    setInterval(() => {
+      open = false;
+    }, 3000);
+    while(open)
+    {
+      setInterval(() => {
+          recEl.style.color = 'red';
+
+          setInterval(() => {
+            recEl.style.color = 'black';
+          }, 500);
+      }, 500);
+    } */
 </script> 

@@ -15,7 +15,7 @@ class CourseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($department = null)
+    public function index($department = null, Request $request)
     {
         $course = Course::where(function ($query) use ($department)
                         {
@@ -27,7 +27,9 @@ class CourseController extends Controller
 
         $department = ($department != 0)? Department::find($department) : null;
 
-        return view('course.index', compact('course', 'department'));
+        $open = $request->open;
+                    
+        return view('course.index', compact('course', 'department', 'open'));
     }
 
     /**

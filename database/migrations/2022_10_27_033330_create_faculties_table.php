@@ -27,15 +27,18 @@ return new class extends Migration
             $table->string('emergency_cPName')->nullable();
             $table->string('emergency_cPNumber')->nullable();
             $table->string('emergency_cPRelationship')->nullable();
+            $table->string('emergency_cPAddress')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('department_id')->constrained()->onDelete('cascade');
+            $table->boolean('isChairman')->default(false);
             $table->boolean('isDean')->default(false);
+            $table->boolean('isAssDean')->default(false);
             $table->integer('status')->default(1);
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });
     }
-
+    
     /**
      * Reverse the migrations.
      *

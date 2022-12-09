@@ -67,13 +67,6 @@ class SubjectSeeder extends Seeder
             ],
             [
                 'course_id' => 1,
-                'code' => 'GEC-RPH',
-                'descriptive_title' => 'Readings in Philippine History',
-                'year_level' => 1,
-                'semester' => 1
-            ],
-            [
-                'course_id' => 1,
                 'code' => 'PE 1',
                 'descriptive_title' => 'Physical Education 1',
                 'year_level' => 1,

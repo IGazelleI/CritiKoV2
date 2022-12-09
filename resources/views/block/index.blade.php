@@ -106,7 +106,7 @@
                             @endphp
                         @endforeach
                     @else
-                        @for($i = 0; $i < 4; $i++)
+                        @for($i = 0; $i < 3; $i++)
                             <div class="col mb-3">
                                 <div class="card">
                                     <div class="card-header {{randomBg()}}">
@@ -118,7 +118,7 @@
                                         </a>
                                     </div>
                                     <div class="card-body">
-                                        <h5 class="card-title">Manually create from by clicking below:</h5>
+                                        <h5 class="card-title">Manually create by clicking below:</h5>
                                         <button type="button" class="btn btn-primary" data-bs-target="#addBlockModal" data-bs-toggle="modal">
                                             Click here
                                         </button>

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Block;
-use App\Models\Faculty;
 use App\Models\Klase;
+use App\Models\Period;
+use App\Models\Faculty;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 class Klasecontroller extends Controller
 {
@@ -26,12 +28,12 @@ class Klasecontroller extends Controller
 
     public function assignInstructor(Request $request)
     {
-       $klase = decrypt($request->klase);
-       $klase = Klase::find($klase);
+        $klase = decrypt($request->klase);
+        $klase = Klase::find($klase);
 
-       $faculty = Faculty::where('department_id', decrypt($request->department))
-                        -> latest('id')
-                        -> get();
+        $faculty = Faculty::where('department_id', decrypt($request->department))
+                            -> latest('id')
+                            -> get();
 
         return view('klase.assignClass', compact('klase', 'faculty'));
     }

@@ -108,6 +108,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(Faculty::class, 'user_id');
     }
+    //sast relationship
+    public function sasts()
+    {
+        return $this->hasMany(Sast::class, 'user_id');
+    }
     //admin relationship
     public function admins()
     {
@@ -122,6 +127,11 @@ class User extends Authenticatable
     public function enrollment()
     {
         return $this->hasMany(Enrollment::class, 'user_id');
+    }
+    //block student relationship
+    public function blockStudent()
+    {
+        return $this->hasMany(BlockStudent::class, 'user_id');
     }
     //klase student relationship
     public function klaseStudent()

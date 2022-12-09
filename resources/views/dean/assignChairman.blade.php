@@ -8,7 +8,7 @@
         </div>
         <div class="row">
             <div class="col">
-                <form action="{{route('user.assignDeanProcess')}}" method="POST">
+                <form action="{{route('user.assignChairmanProcess')}}" method="POST">
                     @csrf
                     <input type="hidden" name="department_id" value="{{$department->id}}"/>
                     <div class="row m-4 d-flex justify-content-center">
@@ -16,13 +16,13 @@
                             <div class="form-outline mb-4">
                                 <h4 class="ms-3"> Faculty </h4> 
                                 <p class="text-secondary" style="font-size: 15px"> 
-                                    Select Faculty member to be assigned as the College Dean 
+                                    Select Faculty member to be assigned as the College Chairman 
                                 </p>
                                 <select class="select form-select rounded-pill" name="user_id" onchange="console.log(value)">
                                     <option selected disabled>-Select-</option>
                                     @unless ($faculty->isEmpty())
                                         @foreach($faculty as $det)
-                                            <option value="{{$det->id}}" {{$det->isDean? 'selected' : ''}}> {{$det->fullName(true)}} </option>
+                                            <option value="{{$det->id}}" {{$det->isChairman? 'selected' : ''}}> {{$det->fullName(true)}} </option>
                                         @endforeach
                                     @else
                                         <option disabled> Current department has no faculty. </option>

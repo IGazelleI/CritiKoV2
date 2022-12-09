@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Sast;
+use App\Models\Period;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 class SASTController extends Controller
 {
@@ -16,47 +19,11 @@ class SASTController extends Controller
         return view('sast.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function show()
     {
-        //
-    }
+        $det = Sast::with('user')->where('user_id', '=', auth()->user()->id)->first();
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return view('sast.profile', compact('det'));
     }
 
     /**
@@ -66,19 +33,31 @@ class SASTController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        if(!Sast::updateInfo($request->all()))
+            return back()->with('message', 'Error in updating profile. Please try again');
+
+        return back()->with('message', 'Profile updated.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function changePeriod(Request $request)
     {
-        //
+        $request->session()->put('period', (int) $request->period);
+
+        return back()->with('message', 'Period changed.');
+    }
+
+    public function setEvaluationDate(Request $request)
+    {
+        $period = Session::get('period') == null? Period::latest('id')->get()->first() : Period::find(Session::get('period'));
+
+        if(!$period->update([
+            'beginEval' => $request->beginEval,
+            'endEval' => $request->endEval
+        ]))
+            return back()->with('message', 'Error in updating evaluation data. Please try again.');
+
+        return back()->with('message', ' Evaluation date set.');
     }
 }

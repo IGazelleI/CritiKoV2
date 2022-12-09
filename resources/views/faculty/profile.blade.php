@@ -45,14 +45,14 @@
                                 @csrf
                                 @method('PUT')
                                 <input type="hidden" name="user_id" value="{{$det->user_id}}"/>
-                                    {{-- <div class="row my-2">
-                                        <div class="col-4">
-                                            ID Number
-                                        </div>
-                                        <div class="col">
-                                            <input type="text" name="id_number" id="id_number" class="form-control rounded-pill" value="{{$det->id_number}}" disabled/>
-                                        </div>
-                                    </div> --}}
+                                <div class="row my-2">
+                                    <div class="col-4">
+                                        ID Number
+                                    </div>
+                                    <div class="col">
+                                        <input type="text" name="id_number" id="id_number" class="form-control rounded-pill" value="{{$det->id}}" disabled/>
+                                    </div>
+                                </div>
                                 <div class="row my-2">
                                     <div class="col-4">
                                         Name
@@ -109,7 +109,7 @@
                                 </div>
                                 <div class="row my-2">
                                     <div class="col-4">
-                                        Emergency Contact
+                                        Contact Person
                                     </div>
                                     <div class="col">
                                         <input type="text" name="emergency_cPName" id="emergency_cPName" class="form-control rounded-pill" placeholder="Name" value="{{$det->emergency_cPName}}"/>
@@ -124,6 +124,14 @@
                                     </div>
                                     <div class="col">
                                         <input type="text" name="emergency_cPNumber" id="emergency_cPNumber" class="form-control rounded-pill" placeholder="Contact Number" value="{{$det->emergency_cPNumber}}"/>
+                                    </div>
+                                </div>
+                                <div class="row my-2">
+                                    <div class="col-4">
+                                        
+                                    </div>
+                                    <div class="col">
+                                        <input type="text" name="emergency_cPName" id="emergency_cPName" class="form-control rounded-pill" placeholder="Address" value="{{$det->emergency_cPAddress}}"/>
                                     </div>
                                 </div>
                                 <div class="row justify-content-end mt-5 me-xl-5">

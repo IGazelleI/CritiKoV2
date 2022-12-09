@@ -37,13 +37,13 @@ class QuestionSeeder extends Seeder
                 'name' => 'Performance'
             ],
             [
-                'name' => 'Farm'
+                'name' => 'Behaviour'
             ],
             [
                 'name' => 'Support'
             ],
             [
-                'name' => 'Push'
+                'name' => 'Personality'
             ]
         ];
         $cats = [];

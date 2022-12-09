@@ -3,16 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Student;
 use App\Models\Faculty;
+use App\Models\Student;
 use App\Models\Department;
 use Illuminate\Support\Str;
+use App\Charts\FacultyChart;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\UserStoreRequest;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -151,25 +152,20 @@ class UserController extends Controller
         }
         else
         {
-            $user = Department::latest('id')
+            $user = Department::with('faculties')->latest('id')
                         -> get();
         }
 
         return view('user.manage', compact('user', 'type'));
     }
 
-    public function assignDean($department)
+    public function assignDean(Department $department)
     {
-        $dept = Department::find($department);
-
-        if(!$dept)
-            return back()->with('message', 'Department not found.');
-
         $faculty = Faculty::where('department_id', $department)
-                        ->latest('id')
-                        ->get();
+                        -> latest('id')
+                        -> get();
 
-        return view('dean.assign', compact('faculty', 'dept'));
+        return view('dean.assign', compact('faculty', 'department'));
     }
 
     public function assignDeanProcess(Request $request)
@@ -183,9 +179,79 @@ class UserController extends Controller
         if(!$faculty->update([
             'isDean' => true
         ]))
-            return back()->with('message', 'Error in assigning dean. Please try again. 2');
+            return back()->with('message', 'Error in assigning dean. Please try again.');
 
         return redirect(route('user.manage', 5))->with('message', 'New College Dean assigned.');
             
+    }
+
+    public function assignAssociate(Department $department)
+    {
+       $faculty = Faculty::where('department_id', $department->id)
+                        -> latest('id')
+                        -> get();
+
+        return view('dean.assignAssociate', compact('faculty', 'department'));
+    }
+
+    public function assignAssociateProcess(Request $request)
+    {
+        DB::table('faculties')
+            -> where('department_id', $request->department_id)
+            -> update(['isAssDean' => false]);
+        
+        if(!DB::table('faculties')
+            -> where('department_id', $request->department_id)
+            -> where('id', $request->user_id)
+            -> update(['isAssDean' => true])
+        )
+            return back()->with('message', 'Error in assigning associate dean. Please try again.');
+
+        return redirect(route('user.manage', 5))->with('message', 'New College Associate Dean assigned.');
+    }
+
+    public function assignChairman(Department $department)
+    {
+        $faculty = Faculty::where('department_id', $department->id)
+                        -> latest('id')
+                        -> get();
+
+        return view('dean.assignChairman', compact('faculty', 'department'));
+    }
+
+    public function assignChairmanProcess(Request $request)
+    {
+        DB::table('faculties')
+            -> where('department_id', $request->department_id)
+            -> update(['isChairman' => false]);
+
+        if(!DB::table('faculties')
+            -> where('department_id', $request->department_id)
+            -> where('id', $request->user_id)
+            -> update(['isChairman' => true])
+        )
+            return back()->with('message', 'Error in assigning college chairman. Please try again.');
+
+        return redirect(route('user.manage', 5))->with('message', 'New College Chairman assigned.');
+    }
+
+    
+    public function s()
+    {
+        //overall chart
+        $overAllChart = new FacultyChart();
+
+        $overAllChart-> labels(['One', 'Two', 'Three', 'Four'])
+            -> dataset('Chart Name', 'line', [50, 20, 70, 15]);
+
+        //evaluation progress chart
+        $evalProgress = new FacultyChart();
+
+        $evalProgress-> labels(['Pending', 'Finished'])
+            -> dataset('Progess', 'doughnut', [75, 25])
+            -> backgroundColor(['Yellow', 'Green'])
+            -> options(['responsive' => true]);
+        
+        return view('admin.s', compact('overAllChart', 'evalProgress'));
     }
 }

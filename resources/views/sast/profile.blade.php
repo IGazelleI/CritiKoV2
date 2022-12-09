@@ -42,7 +42,7 @@
                                       </ul>
                                   </div>
                               @endif
-                              <form action="{{route('student.update')}}" method="POST">
+                              <form action="{{route('sast.update')}}" method="POST">
                                   @csrf
                                   @method('PUT')
                                   <input type="hidden" name="user_id" value="{{$det->user_id}}"/>
@@ -51,7 +51,7 @@
                                           ID Number
                                       </div>
                                       <div class="col">
-                                          <input type="text" name="id_number" id="id_number" class="form-control rounded-pill" value="{{$det->id_number}}" disabled/>
+                                          <input type="text" name="id_number" id="id_number" class="form-control rounded-pill" value="{{$det->user_id}}" disabled/>
                                       </div>
                                   </div>
                                   <div class="row my-2">
@@ -149,5 +149,5 @@
             </div>
         </div>
     </x-profile-card>
-    <x-student-canvas/>
+    <x-sast-canvas/>
 </x-layout>

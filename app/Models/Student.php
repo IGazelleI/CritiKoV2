@@ -27,10 +27,10 @@ class Student extends Model
         'emergency_cPName',
         'emergency_cPNumber',
         'emergency_cPRelationship',
+        'emergency_cPAddress',
         'status',
         'course_id',
-        'user_id', 
-        'status'
+        'user_id',
     ];
     //create student from user
     public static function createFromUser($request, $userID)

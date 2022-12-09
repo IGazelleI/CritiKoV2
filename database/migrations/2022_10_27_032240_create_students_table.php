@@ -28,6 +28,7 @@ return new class extends Migration
             $table->string('emergency_cPName')->nullable();
             $table->string('emergency_cPNumber')->nullable();
             $table->string('emergency_cPRelationship')->nullable();
+            $table->string('emergency_cPAddress')->nullable();
             $table->integer('status')->default(1);
             /* $table->foreignId('course_id')->constrained()->onDelete('cascade'); */
             $table->foreignId('user_id')->constrained()->onDelete('cascade');

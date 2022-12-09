@@ -47,10 +47,15 @@ Route::middleware('auth')->group(function ()
     {
         Route::controller(App\Http\Controllers\UserController::class)->group(function ()
         {
+            Route::get('/asd', 's')->name('s');
             Route::get('/u/m/{type?}', 'manage')->name('user.manage');
             Route::post('/u/create', 'create')->name('user.add');
             Route::get('/assign/{department}', 'assignDean')->name('user.assignDean');
             Route::post('/assignDeanProcess', 'assignDeanProcess')->name('user.assignDeanProcess');
+            Route::get('/assign/associate/{department}', 'assignAssociate')->name('user.assignAssociate');
+            Route::post('/assignAssociateProcess', 'assignAssociateProcess')->name('user.assignAssociateProcess');
+            Route::get('/assign/chairman/{department}', 'assignChairman')->name('user.assignChairman');
+            Route::post('/assignChairmanProcess', 'assignChairmanProcess')->name('user.assignChairmanProcess');
         });
 
         Route::controller(App\Http\Controllers\PeriodController::class)->group(function ()
@@ -102,6 +107,14 @@ Route::middleware('auth')->group(function ()
 
     Route::middleware('user-access:sast')->group(function ()
     {
+        Route::controller(App\Http\Controllers\SASTController::class)->group(function ()
+        {
+            Route::get('/mss/profile', 'show')->name('sast.profile');
+            Route::post('/changePicss/{sast}', 'changeProfilePicture')->name('sast.changePic');
+            Route::put('/sast', 'update')->name('sast.update');
+            Route::post('/changePeriodsast', 'changePeriod')->name('sast.changePeriod');
+            Route::put('/setEvaluationDate', 'setEvaluationDate')->name('sast.setEvaluationDate');
+        });
         Route::controller(App\Http\Controllers\QuestionController::class)->group(function ()
         {
             Route::get('/q/{type?}', 'index')->name('question.manage');
@@ -110,7 +123,7 @@ Route::middleware('auth')->group(function ()
             Route::delete('/question', 'destroy')->name('question.delete');
         });
     });
-    /* DILI PA MUGAWAS ANG ENROLLMENT SA DEAN */
+    
     Route::middleware('user-access:faculty')->group(function ()
     {
         Route::controller(App\Http\Controllers\FacultyController::class)->group(function ()
@@ -120,6 +133,7 @@ Route::middleware('auth')->group(function ()
             {
                 Route::get('/enrollments', 'enrollment')->name('dean.enrollment');
                 Route::post('/enrollment/{enroll}', 'processEnrollment')->name('dean.processEnrollment');
+                Route::get('/report', 'report')->name('dean.report');
             });
 
             Route::get('/mf/profile', 'show')->name('faculty.profile');

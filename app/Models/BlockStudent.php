@@ -22,6 +22,6 @@ class BlockStudent extends Model
     //student relationship
     public function student()
     {
-        return $this->hasMmany(Student::class, 'user_id');
+        return $this->belongsTo(Student::class, 'user_id');
     }
 }

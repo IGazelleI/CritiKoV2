@@ -1,7 +1,7 @@
 <x-layout>
     <x-profile-card class="p-5">
         @if(isset($period->beginEval))
-            @if($period->beginEval <= NOW()->format('Y-m-d'))
+            @if($period->beginEval >= NOW()->format('Y-m-d'))
             <header>
                 <div class="d-flex justify-content-center align-items-center h-100">
                     <h1 class="mb-3" style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif">

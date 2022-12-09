@@ -359,6 +359,36 @@
     </div>
 </div>
 <!-- Delete Question -->
+<!-- Update Evaluation Date -->
+<div class="modal fade" id="setEvaluationDateModal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Set Evaluation Date</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{route('sast.setEvaluationDate')}}" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                        <input type="hidden" class="id" name="id"/>
+                        <div class="mb-3">
+                            <label for="description" class="col-form-label ms-2">Starts At</label>
+                            <input type="date" name="beginEval" id="beginEval" class="form-control rounded-pill"/>
+
+                            <label for="description" class="col-form-label ms-2">Ends At</label>
+                            <input type="date" name="endEval" id="endEval" class="form-control rounded-pill"/>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary rounded-pill">Set</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Update Evaluation Date -->
 <script>
     const editQCatModal = document.getElementById('editQCatModal')
 

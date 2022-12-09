@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Charts\FacultyChart;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -19,7 +20,6 @@ class AdminController extends Controller
         'students' => User::where('type','=', 4)->get()->count(),
         ]);
     }
-
     /**
      * Show the form for creating a new resource.
      *

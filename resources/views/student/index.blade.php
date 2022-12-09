@@ -7,7 +7,7 @@
                 <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-todo-list/check1.webp"
                   alt="Check" width="60">
                 <h2 class="my-4" style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif">
-                  Evaluation Status <br/><span class="text-danger"> NABUANG ANG ID SA EVALUATE IG ILIS UG INSTRUCTOR NGA DUHA SUBJECT KAY KATO RA USA PIRMI MAPILIAN</span>
+                  Evaluation Status {{-- <br/><span class="text-danger"> NABUANG ANG ID SA EVALUATE IG ILIS UG INSTRUCTOR NGA DUHA SUBJECT KAY KATO RA USA PIRMI MAPILIAN</span> --}}
                 </h2>
               </div>
               <table class="table mb-0">

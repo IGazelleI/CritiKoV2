@@ -2,11 +2,11 @@
     <x-profile-card class="p-5">
         @if(isset($enrollment))
             @if(isset($period->beginEval))
-                @if($period->beginEval <= NOW()->format('Y-m-d'))
+                @if($period->beginEval >= NOW()->format('Y-m-d'))
                 <header>
                     <div class="text-center">
                         <h1 class="mb-3" style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif">
-                            Evaluate Instructor <br/> <span class="text-danger text-uppercase alert-danger"> Bisag nakadisabled makailis gapon sila sa radio </span>
+                            Evaluate Instructor <br/>{{--  <span class="text-danger text-uppercase alert-danger"> Bisag nakadisabled makailis gapon sila sa radio </span> --}}
                         </h1>
                     </div>
                     <form action="{{route('student.changeSelected')}}" method="POST">
@@ -150,6 +150,7 @@
                                             {{isset($evaluation)? (isset($evaluation->evalDetails[$i])? (checkQuestion($q->id, $evaluation->evalDetails[$i], 1) : null)) : null}} --}}
                                                 @endif
                                             @endif
+                                            required
                                             />
                                     </div>
                                     <div class="col-md-auto p-2">

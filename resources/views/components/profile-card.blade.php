@@ -17,7 +17,16 @@
                 <h5 class="modal-title" id="exampleModalLabel">Change Profile Picture</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{route(auth()->user()->role() . '.changePic', auth()->user()->type == 3? auth()->user()->faculties[0]->id : auth()->user()->students[0]->id)}}" method="POST" enctype="multipart/form-data">
+            <form action="
+                @if(auth()->user()->type == 2)
+                {{route('sast.changePic', auth()->user()->sasts[0]->id)}}
+                @elseif(auth()->user()->type == 3)
+                {{route('faculty.changePic', auth()->user()->faculties[0]->id)}}
+                @else
+                {{route('student.changePic', auth()->user()->students[0]->id)}}
+                @endif
+                "
+                method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3 text-center">

@@ -58,13 +58,28 @@
         </div>
     </div>
     
-    @if(auth()->user()->students->isEmpty())
-    <div class="row mx-3">
-        <div class="col">
-            <strong> DEPARTMENT </strong> Department <br/>
-            <strong> COURSE </strong> Course <br/>
-        </div>
-    </div>
+    @if(!auth()->user()->enrollment->isEmpty())
+        @if(auth()->user()->enrollment[0]->where('period_id', Illuminate\Support\Facades\Session::get('period'))->first() !== null)
+            @if(auth()->user()->enrollment[0]->where('period_id', Illuminate\Support\Facades\Session::get('period'))->first() === 'Approved')
+            <div class="row mx-3 py-3 d-flex justify-content-between">
+                <div class="col">
+                    <strong> DEPARTMENT </strong> <br/>
+                    <strong> COURSE </strong>  <br/>
+                    <strong> BLOCK </strong>
+                </div>
+                <div class="col text-end">
+                    <span data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{auth()->user()->enrollment[0]->where('period_id', Illuminate\Support\Facades\Session::get('period'))->first()->course->department->description}}">
+                        {{auth()->user()->enrollment[0]->where('period_id', Illuminate\Support\Facades\Session::get('period'))->first()->course->department->name}} 
+                    </span>
+                    <br/>
+                    <span data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{auth()->user()->enrollment[0]->where('period_id', Illuminate\Support\Facades\Session::get('period'))->first()->course->description}}">
+                        {{auth()->user()->enrollment[0]->where('period_id', Illuminate\Support\Facades\Session::get('period'))->first()->course->name}} 
+                    </span> <br/>
+                    {{auth()->user()->blockStudent[0]->block->where('period_id', Illuminate\Support\Facades\Session::get('period'))->first()->getDescription(false)}}
+                </div>
+            </div>
+            @endif
+        @endif
     @endif
 </div>
 <!-- OffCanvas -->
@@ -82,3 +97,7 @@
         return Illuminate\Support\Facades\Session::get('period');
     }
 @endphp
+<script>
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+</script>

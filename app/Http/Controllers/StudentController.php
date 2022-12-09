@@ -26,7 +26,10 @@ class StudentController extends Controller
      */
     public function show()
     {
-        $det = Student::with('user')->where('user_id', '=', auth()->user()->id)->first();
+        $det = Student::with('user')
+                    -> where('user_id', '=', auth()->user()->id)
+                    -> get()
+                    -> first();
 
         return view('student.profile', compact('det'));
     }
