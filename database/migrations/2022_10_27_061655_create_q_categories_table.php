@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('q_categories', function (Blueprint $table) {
             $table->id();
+            $table->integer('type');
             $table->string('name');
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();

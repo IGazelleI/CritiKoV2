@@ -3,18 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\Period;
 use App\Models\Faculty;
 use App\Models\Student;
-use App\Models\Question;
-use App\Models\Period;
-use App\Models\Enrollment;
 use App\Models\Evaluate;
+use App\Models\Question;
+use App\Models\QCategory;
+use App\Models\Enrollment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Session;
 use App\Http\Requests\ChangePicRequest;
-use App\Http\Requests\EnrollmentSubmitRequest;
+use Illuminate\Support\Facades\Session;
 use App\Http\Requests\StudentStoreRequest;
+use App\Http\Requests\EnrollmentSubmitRequest;
 
 class StudentController extends Controller
 {
@@ -78,10 +80,17 @@ class StudentController extends Controller
                             -> get()
                             -> first();
         
-        $question = Question::where('type', 4)
-                        -> orderBy('q_type_id')
-                        -> orderBy('q_category_id')
-                        -> get();
+        $cat = QCategory::where('type', 4)
+                    -> latest('id')
+                    -> get();
+
+        $question = new Collection();
+        
+        foreach($cat as $det)
+        {
+            foreach($det->questions as $q)
+                $question->push($q);
+        }
 
         $instructor = isset($enrollment)? Faculty::join('klases', 'faculties.user_id', 'klases.instructor')
                                             -> join('blocks', 'klases.block_id', 'blocks.id')

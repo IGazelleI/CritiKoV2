@@ -1,7 +1,7 @@
 <x-layout>
     <x-profile-card class="p-5">
         @if(isset($period->beginEval))
-            @if($period->beginEval >= NOW()->format('Y-m-d'))
+            @if($period->beginEval <= NOW()->format('Y-m-d'))
             <header>
                 <div class="d-flex justify-content-center align-items-center h-100">
                     <h1 class="mb-3" style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif">
@@ -134,8 +134,7 @@
                                     <input type="radio" name="{{'qAns' . $qnum}}" value="1" 
                                         @if(isset($evaluation))
                                             @if(isset($evaluation->evalDetails[$i]))
-                                                {{checkQuestion($q->id, $evaluation->evalDetails[$i], 1)}}{{-- 
-                                        {{isset($evaluation)? (isset($evaluation->evalDetails[$i])? (checkQuestion($q->id, $evaluation->evalDetails[$i], 1) : null)) : null}} --}}
+                                                {{checkQuestion($q->id, $evaluation, 1)}}
                                             @endif
                                         @endif
                                     />
@@ -144,8 +143,7 @@
                                     <input type="radio" name="{{'qAns' . $qnum}}" value="2"
                                         @if(isset($evaluation))
                                             @if(isset($evaluation->evalDetails[$i]))
-                                                {{checkQuestion($q->id, $evaluation->evalDetails[$i], 2)}}{{-- 
-                                        {{isset($evaluation)? (isset($evaluation->evalDetails[$i])? (checkQuestion($q->id, $evaluation->evalDetails[$i], 1) : null)) : null}} --}}
+                                                {{checkQuestion($q->id, $evaluation, 2)}}
                                             @endif
                                         @endif
                                     />
@@ -154,8 +152,7 @@
                                     <input type="radio" name="{{'qAns' . $qnum}}" value="3" 
                                         @if(isset($evaluation))
                                             @if(isset($evaluation->evalDetails[$i]))
-                                                {{checkQuestion($q->id, $evaluation->evalDetails[$i], 3)}}{{-- 
-                                        {{isset($evaluation)? (isset($evaluation->evalDetails[$i])? (checkQuestion($q->id, $evaluation->evalDetails[$i], 1) : null)) : null}} --}}
+                                                {{checkQuestion($q->id, $evaluation, 3)}}
                                             @endif
                                         @endif
                                     />
@@ -164,8 +161,7 @@
                                     <input type="radio" name="{{'qAns' . $qnum}}" value="4" 
                                         @if(isset($evaluation))
                                             @if(isset($evaluation->evalDetails[$i]))
-                                                {{checkQuestion($q->id, $evaluation->evalDetails[$i], 4)}}{{-- 
-                                        {{isset($evaluation)? (isset($evaluation->evalDetails[$i])? (checkQuestion($q->id, $evaluation->evalDetails[$i], 1) : null)) : null}} --}}
+                                                {{checkQuestion($q->id, $evaluation, 4)}}
                                             @endif
                                         @endif
                                     />
@@ -174,8 +170,7 @@
                                     <input type="radio" name="{{'qAns' . $qnum}}" value="5" 
                                         @if(isset($evaluation))
                                             @if(isset($evaluation->evalDetails[$i]))
-                                                {{checkQuestion($q->id, $evaluation->evalDetails[$i], 5)}}{{-- 
-                                        {{isset($evaluation)? (isset($evaluation->evalDetails[$i])? (checkQuestion($q->id, $evaluation->evalDetails[$i], 1) : null)) : null}} --}}
+                                                {{checkQuestion($q->id, $evaluation, 5)}}
                                             @endif
                                         @endif
                                     />
@@ -193,9 +188,22 @@
                             </div>
                             <div class="row">
                                 <div class="col d-flex align-items-center">
-                                    <input type="text" class="form-control w-100" name="{{'qAns' . $qnum}}"/>
+                                    <input type="text" class="form-control w-100" name="{{'qAns' . $qnum}}"
+                                        @if(isset($evaluation))
+                                            @if(isset($evaluation->evalDetails[$i]))
+                                                value="{{$evaluation->evalDetails[$i]->answer}}"    
+                                                disabled
+                                            @else
+                                                value="Not Answered"
+                                                disabled
+                                            @endif
+                                        @endif
+                                    />
                                 </div>
                             </div>
+                            @php
+                                $qnum++;
+                            @endphp
                         @endif
                         @php
                             $i += 1;
@@ -215,7 +223,7 @@
                 </div>
                 @endunless
             </form>
-            @elseif($period->endEval < NOW()->format('Y-m-d'))
+            @elseif($period->endEval > NOW()->format('Y-m-d'))
             <h3 class="text-center text-uppercase bg-light p-3 rounded"> Evaluation ended on {{date('F d, Y @ D', strToTime($period->endEval))}} </h3>
             @else
             <h3 class="text-center text-uppercase bg-light p-3 rounded"> Evaluation will open on {{date('F d, Y @ D', strToTime($period->beginEval))}} </h3>
@@ -227,10 +235,13 @@
     <x-faculty-canvas/>
 </x-layout>
 @php
-    function checkQuestion($question, $det, $value)
+    function checkQuestion($question, $evaluation, $value)
     {
-        if($question == $det->question_id && $det->answer == $value)
-            return 'checked disabled';
+        foreach($evaluation->evalDetails as $det)
+        {
+            if($question == $det->question_id && $det->answer == $value)
+                return 'checked disabled';
+        }
 
         return null;
     }

@@ -2,7 +2,7 @@
     <x-profile-card class="p-5">
         @if(isset($enrollment))
             @if(isset($period->beginEval))
-                @if($period->beginEval >= NOW()->format('Y-m-d'))
+                @if($period->beginEval <= NOW()->format('Y-m-d'))
                 <header>
                     <div class="text-center">
                         <h1 class="mb-3" style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif">
@@ -146,8 +146,7 @@
                                         <input type="radio" name="{{'qAns' . $qnum}}" value="1" 
                                             @if(isset($evaluation))
                                                 @if(isset($evaluation->evalDetails[$i]))
-                                                    {{checkQuestion($q->id, $evaluation->evalDetails[$i], 1)}}{{-- 
-                                            {{isset($evaluation)? (isset($evaluation->evalDetails[$i])? (checkQuestion($q->id, $evaluation->evalDetails[$i], 1) : null)) : null}} --}}
+                                                    {{checkQuestion($q->id, $evaluation, 1)}}
                                                 @endif
                                             @endif
                                             required
@@ -157,8 +156,7 @@
                                         <input type="radio" name="{{'qAns' . $qnum}}" value="2" 
                                             @if(isset($evaluation))
                                                 @if(isset($evaluation->evalDetails[$i]))
-                                                    {{checkQuestion($q->id, $evaluation->evalDetails[$i], 2)}}{{-- 
-                                            {{isset($evaluation)? (isset($evaluation->evalDetails[$i])? (checkQuestion($q->id, $evaluation->evalDetails[$i], 2) : null)) : null}} --}}
+                                                    {{checkQuestion($q->id, $evaluation, 2)}}
                                                 @endif
                                             @endif
                                             />
@@ -167,8 +165,7 @@
                                         <input type="radio" name="{{'qAns' . $qnum}}" value="3" 
                                             @if(isset($evaluation))
                                                 @if(isset($evaluation->evalDetails[$i]))
-                                                    {{checkQuestion($q->id, $evaluation->evalDetails[$i], 3)}}{{-- 
-                                            {{isset($evaluation)? (isset($evaluation->evalDetails[$i])? (checkQuestion($q->id, $evaluation->evalDetails[$i], 3) : null)) : null}} --}}
+                                                    {{checkQuestion($q->id, $evaluation, 3)}}
                                                 @endif
                                             @endif
                                             />
@@ -177,8 +174,7 @@
                                         <input type="radio" name="{{'qAns' . $qnum}}" value="4" 
                                             @if(isset($evaluation))
                                                 @if(isset($evaluation->evalDetails[$i]))
-                                                    {{checkQuestion($q->id, $evaluation->evalDetails[$i], 4)}}{{-- 
-                                            {{isset($evaluation)? (isset($evaluation->evalDetails[$i])? (checkQuestion($q->id, $evaluation->evalDetails[$i], 4) : null)) : null}} --}}
+                                                    {{checkQuestion($q->id, $evaluation, 4)}}
                                                 @endif
                                             @endif
                                             />
@@ -187,8 +183,7 @@
                                         <input type="radio" name="{{'qAns' . $qnum}}" value="5" 
                                             @if(isset($evaluation))
                                                 @if(isset($evaluation->evalDetails[$i]))
-                                                    {{checkQuestion($q->id, $evaluation->evalDetails[$i], 5)}}{{-- 
-                                            {{isset($evaluation)? (isset($evaluation->evalDetails[$i])? (checkQuestion($q->id, $evaluation->evalDetails[$i], 5) : null)) : null}} --}}
+                                                    {{checkQuestion($q->id, $evaluation, 5)}}
                                                 @endif
                                             @endif
                                             />
@@ -210,8 +205,7 @@
                                             @if(isset($evaluation))
                                                 @if(isset($evaluation->evalDetails[$i]))
                                                     value="{{$evaluation->evalDetails[$i]->answer}}"
-                                                    disabled{{-- 
-                                            {{isset($evaluation)? (isset($evaluation->evalDetails[$i])? (checkQuestion($q->id, $evaluation->evalDetails[$i], 5) : null)) : null}} --}}
+                                                    disabled
                                                 @else
                                                     value="Not Answered"
                                                     disabled
@@ -220,6 +214,9 @@
                                         />
                                     </div>
                                 </div>
+                                @php
+                                    $qnum++;
+                                @endphp
                             @endif
                             @php
                                 $i += 1;
@@ -254,10 +251,13 @@
     <x-student-canvas/>
 </x-layout>
 @php
-    function checkQuestion($question, $det, $value)
+    function checkQuestion($question, $evaluation, $value)
     {
-        if($question == $det->question_id && $det->answer == $value)
-            return 'checked disabled';
+        foreach($evaluation->evalDetails as $det)
+        {
+            if($question == $det->question_id && $det->answer == $value)
+                return 'checked disabled';
+        }
 
         return null;
     }

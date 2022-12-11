@@ -16,6 +16,6 @@ class QCategory extends Model
     //question relationship
     public function questions()
     {
-        return $this->hasMany(Queestion::class, 'q_category_id');
+        return $this->hasMany(Question::class, 'q_category_id');
     }
 }

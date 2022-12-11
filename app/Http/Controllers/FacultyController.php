@@ -13,7 +13,7 @@ use App\Models\Enrollment;
 use App\Charts\FacultyChart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Collection;;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\ChangePicRequest;
 use Illuminate\Support\Facades\Session;
@@ -124,12 +124,18 @@ class FacultyController extends Controller
     {
         $period = Period::find(Session::get('period'));
 
-        $question = Question::with('qType')
-                        -> with('qCat')
-                        -> where('type', 3)
-                        -> orderBy('q_type_id')
-                        -> orderBy('q_category_id')
-                        -> get();
+        $cat = QCategory::with('questions')
+                    -> where('type', 3)
+                    -> latest('id')
+                    -> get();
+
+        $question = new Collection();
+
+        foreach($cat as $det)
+        {
+            foreach($det->questions as $q)
+                $question->push($q);
+        }
 
         $faculty = Faculty::where('department_id', auth()->user()->faculties[0]->department_id)
                         -> where('user_id', '!=', auth()->user()->id)
@@ -142,13 +148,13 @@ class FacultyController extends Controller
         $currentSelected = Session::get('selected');
 
         $evaluation = $currentSelected != null? Evaluate::where('evaluator', auth()->user()->id)
-                                                        -> where('evaluatee', $currentSelected)
-                                                        -> where('period_id', Session::get('period'))
-                                                        -> latest('id')
-                                                        -> get()
-                                                        -> first() : null;
+                                                    -> where('evaluatee', $currentSelected)
+                                                    -> where('period_id', Session::get('period'))
+                                                    -> latest('id')
+                                                    -> get()
+                                                    -> first() : null;
 
-        return view('faculty.evaluate', compact('period', 'question', 'faculty'));
+        return view('faculty.evaluate', compact('period', 'question', 'faculty', 'evaluation'));
     }
 
     public function evaluateProcess(Request $request)
@@ -178,169 +184,304 @@ class FacultyController extends Controller
 
         foreach($faculty as $det)
         {
-            $chart[$det->id] = new FacultyChart();
+            //get report from faculty evaluations
+            $facultyChart[$det->id] = new FacultyChart();
+            $facultyChart[$det->id]->options([
+                'min' => 0,
+                'max' => 100,
+                'backgroundColor' => $this->colors(0)->bg, 
+                'pointBorderColor' => $this->colors(0)->pointer,
+                'scales' => [
+                    'min' => 0,
+                    'max' => 100,
+                    'ticks' => [
+                        'stepSize' => 20,
+                        'display' => false
+                ]],
+                'responsive' => true
+            ]);
+            //get current attributes
+            $details = $this->getDetails($period, 3, $det->user_id);
+
             
-            $labels = [];
-            $rawAtt = [];
-            $lowestAttribute = 0;
-            $i = 0;
-            //get all categories
-            $category = QCategory::all();
-            //get all categories
-            foreach($category as $cat)
-            {
-                $labels[$i++] = $cat->name;
-                $rawAtt[$cat->id] = 0;
-            }
 
-            $chart[$det->id]-> labels($labels);
+            $recommendation[$det->id] = isset($details)? Question::select('keyword')
+                                            -> where('q_category_id', $details->lowestAttribute)
+                                            -> where('q_type_id', 1)
+                                            -> latest('id')
+                                            -> get() : null;
+            //chart details
+            $cat = $this->getCategoriesAsArray(3);
+            $facultyChart[$det->id]->labels($cat)
+                -> dataset($period->getDescription(), 'radar', $details == null? $this->randomAttributes(count($cat)) : $details->attributes);
 
-            $period = Period::latest('id')
+            //Select all previous evaluations
+            $periods = Period::where('id', '<', $period->id)
+                        -> latest('id')
                         -> get();
 
-            $color = 0;
-
-            foreach($period as $p)
+            $averageFac[$det->id] = 0;
+            $prevAvgFac[$det->id] = 0;
+            
+            if(!$periods->isEmpty())
             {
-                if(isset($p->beginEval))
+                $i = 1;
+                foreach($periods as $p)
                 {
-                    //get evaluations of user
-                    $evaluation = Evaluate::where('evaluatee', $det->user_id)
-                                    -> whereDate('created_at', '>=', $p->beginEval)
-                                    -> whereDate('created_at', '<=', $p->endEval)
-                                    -> latest('id')
-                                    -> get();
-                    //randomize if mempty
-                    if($evaluation->isEmpty())
+                    $prevDetails = $this->getDetails($p, 3, $det->id);
+                    
+                    if($prevDetails == null)
                     {
-                        $attributes = [random_int(1, 100), random_int(1, 100), random_int(1, 100), random_int(1, 100), random_int(1, 100)];
-                        $prevAtt = [random_int(1, 100), random_int(1, 100), random_int(1, 100), random_int(1, 100), random_int(1, 100)];
+                        $random = $this->randomAttributes(count($cat));
+                        $facultyChart[$det->id]->dataset($p->getDescription(), 'radar', $random)->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
+                        $prevAvgFac[$det->id] = $prevAvgFac[$det->id] == 0? collect($random)->avg() : ($prevAvgFac[$det->id] + collect($random)->avg()) / 2;
                     }
                     else
-                    {  
-                        $catCount = 0;
-                        $catPts = 0;
-                        //get statistics based on evaluation
-                        foreach($evaluation as $eval)
-                        {
-                            $prevCat = 0;
-
-                            foreach($eval->evalDetails as $detail)
-                            {
-                                //only gets the quantitative question
-                                if($detail->question->q_type_id == 1)
-                                {
-                                    /* dump($prevCat . ' ' . $detail->question->qcat->id); */
-
-                                    if($prevCat != $detail->question->qcat->id && $prevCat != 0)
-                                    {
-                                        $final = ($catPts / ($catCount * 5)) * 100;
-                                        $before = $rawAtt[$prevCat];
-
-                                        $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? round($final, 0) : round(($rawAtt[$prevCat] + $final) / 2, 0);
-                                    
-                                        if($lowestAttribute == 0)
-                                            $lowestAttribute = $prevCat;
-                                        
-                                        if($rawAtt[$prevCat] < $rawAtt[$lowestAttribute])
-                                            $lowestAttribute = $detail->question->qcat->id;
-                                            /* dump( //BUANG PA ANG CHART SA DEAN
-                                                'Previous Category: ' . $prevCat .
-                                                ' Current Category: ' . $detail->question->qcat->id .
-                                                ' Current Answer: ' . $detail->answer .
-                                                ' Total: ' . $catPts .
-                                                ' Overall: ' . ($catCount * 5) .
-                                                ' Final:  ' . $final .
-                                                ' Before: ' . $before .
-                                                ' Current Attribute (' . $detail->question->qcat->name . '): ' . $rawAtt[$prevCat]
-                                            ); */
-                                        $catCount = 0;
-                                        $catPts = 0;
-                                    }
-
-                                    $prevCat = $detail->question->qcat->id;
-
-                                    if($prevCat == $detail->question->qcat->id || $prevCat == 0)
-                                    {
-                                        $catPts += $detail->answer;
-                                        $catCount += 1;
-                                    }
-                                }
-                            }
-                            if($catPts != 0)
-                            {
-                                $final = ($catPts / ($catCount * 5)) * 100;
-                                $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? round($final, 0) : round(($rawAtt[$prevCat] + $final) / 2, 0);
-                                    
-                                if($lowestAttribute == 0)
-                                    $lowestAttribute = $prevCat;
-                                
-                                if($rawAtt[$prevCat] < $rawAtt[$lowestAttribute])
-                                    $lowestAttribute = $detail->question->qcat->id;
-
-                                $catCount = 0;
-                                $catPts = 0;
-                            }
-                        }
-
-                        /* $recommendation = Question::where('q_category_id', $lowestAttribute)
-                                                -> where('q_type_id', 1)
-                                                -> latest('id')
-                                                -> get(); */
-                                                    
-                        $attributes = array();
-                        $attributes = array_merge($attributes, $rawAtt);
+                    {
+                        $facultyChart[$det->id]->dataset($p->getDescription(), 'radar', $prevDetails->attributes)->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
+                        $prevAvgFac[$det->id] = $prevAvgFac[$det->id] == 0? collect($prevDetails->attributes)->avg() : ($prevAvgFac[$det->id] + collect($prevDetails->attributes)->avg()) / 2;
                     }
-                    $average[$det->id] = collect($attributes)->avg();
-                    $prevAvg[$det->id] = collect($prevAtt)->avg();
-                    //chart details
-                    $chart[$det->id]-> dataset($p->getDescription(), 'radar', $attributes)
-                        -> options([
-                            'min' => 0,
-                            'max' => 100,
-                            'backgroundColor' => $this->colors($color),
-                            'pointBorderColor' => $this->colors($color),
-                            'scales' => [
-                                'min' => 0,
-                                'max' => 100,
-                                'r' => [
-                                    'suggestedMin' => 0,
-                                    'suggestedMax' => 100,
-                                ],
-                                'ticks' => [
-                                    'stepSize' => 20,
-                                    'display' => false
-                            ]
-                        ],
-                            'responsive' => true
-                    ]);/* 
-                    $chart[$det->id]-> dataset('Previous', 'radar', $prevAtt) 
-                        -> options([
-                            'min' => 0,
-                            'max' => 100,
-                            'backgroundColor' => 'rgba(255, 99, 132, 0.2)',
-                            'pointBorderColor' => 'Red',
-                            'scales' => [
-                                'min' => 0,
-                                'max' => 100,
-                                'ticks' => [
-                                    'stepSize' => 20,
-                                    'display' => false
-                            ]],
-                            'responsive' => true
-                    ]); */
+                    $i += 1;
                 }
-                $color += 1;
             }
+
+            if($details == null)
+                $averageFac[$det->id] = random_int(40, 80);
+            else
+                $averageFac[$det->id] = collect($details->attributes)->avg();
             
+            //get report from student
+            $studentChart[$det->id] = new FacultyChart();
+            $studentChart[$det->id]->options([
+                'min' => 0,
+                'max' => 100,
+                'backgroundColor' => $this->colors(0)->bg, 
+                'pointBorderColor' => $this->colors(0)->pointer,
+                'scales' => [
+                    'min' => 0,
+                    'max' => 100,
+                    'ticks' => [
+                        'stepSize' => 20,
+                        'display' => false
+                ]],
+                'responsive' => true
+            ]);
+            
+            $details = $this->getDetails($period, 4, $det->user_id);
+
+            if(isset($recommendation[$det->id]))
+            {
+                $additional = isset($details)? Question::select('keyword')
+                                    -> where('q_category_id', $details->lowestAttribute)
+                                    -> where('q_type_id', 1)
+                                    -> latest('id')
+                                    -> get() : null;
+                if($additional != null)
+                    $recommendation[$det->id] = $additional->concat($recommendation[$det->id]);
+            }
+            else
+            {
+                $recommendation[$det->id] = isset($details)? Question::select('keyword')
+                                    -> where('q_category_id', $details->lowestAttribute)
+                                    -> where('q_type_id', 1)
+                                    -> latest('id')
+                                    -> get() : null;
+            }
+
+            //chart details
+            $cat = $this->getCategoriesAsArray(4);
+            $studentChart[$det->id]->labels($cat)
+                -> dataset($period->getDescription(), 'radar', $details == null? $this->randomAttributes(count($cat)) : $details->attributes);
+
+            //Select all previous evaluations
+            $periods = Period::where('id', '<', $period->id)
+                        -> latest('id')
+                        -> get();
+            
+            $averageSt[$det->id] = 0;
+            $prevAvgSt[$det->id] = 0;
+            if(!$periods->isEmpty())
+            {
+                $i = 1;
+                foreach($periods as $p)
+                {
+                    $prevDetails = $this->getDetails($p, 4, $det->id);
+                    
+                    if($prevDetails == null)
+                    {
+                        $studentChart[$det->id]->dataset($p->getDescription(), 'radar', $this->randomAttributes(count($cat)))->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
+                        $prevAvgSt[$det->id] = $prevAvgSt[$det->id] == 0? collect($random)->avg() : ($prevAvgSt[$det->id] + collect($random)->avg()) / 2;
+                    }
+                    else
+                    {
+                        $studentChart[$det->id]->dataset($p->getDescription(), 'radar', $prevDetails->attributes)->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
+                        $prevAvgSt[$det->id] = $prevAvgSt[$det->id] == 0? collect($prevDetails->attributes)->avg() : ($prevAvgSt[$det->id] + collect($prevDetails->attributes)->avg()) / 2;
+                    }
+                    $i += 1;
+                }
+            }
+
+            if($details == null)
+                $averageSt[$det->id] = 40;
+            else
+                $averageSt[$det->id] = collect($details->attributes)->avg();
         }
 
-        return view('dean.facultyReport', compact('faculty', 'chart', 'average', 'prevAvg'));
+        return view('dean.facultyReport', compact('faculty', 'facultyChart', 'averageFac', 'prevAvgFac', 'studentChart', 'averageSt', 'prevAvgSt', 'recommendation'));
     }
+    
     function colors($i)
     {
         $bg = ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'Green', 'Yellow', 'Gray'];
+        $pointer = ['Red', 'Blue', 'Green', 'Yellow', 'Gray'];
+
+        $detail = new Collection();
+
+        $detail->bg = $bg[$i];
+        $detail->pointer = $pointer[$i];
         
-        return $bg[$i];
+        return $detail;
+    }
+    function getCategoriesAsArray($type)
+    {
+        $cat = QCategory::where('type', $type)
+                    -> latest('id')
+                    -> get();
+
+        $categories = [];
+
+        foreach($cat as $det)
+            $categories = array_merge($categories, [$det->name]);
+
+        return $categories;
+    }
+    function randomAttributes($number)
+    {
+        $attributes = [];
+
+        for($i = 0; $i < $number; $i++)
+            $attributes = array_merge($attributes, [random_int(40, 60)]);
+
+        return $attributes;
+    }
+    
+    function getDetails($period, $type, $faculty)
+    {
+        if(!isset($period->beginEval))
+            return null;
+            
+        $rawAtt = [];
+        $lowestAttribute = 0;
+        //get all categories
+        $category = QCategory::where('type', $type)
+                            -> latest('id')
+                            -> get();
+        //get all categories
+        foreach($category as $det)
+            $rawAtt[$det->id] = 0;
+
+        $evaluation = new Collection();
+        //get evaluations of user
+        if($type == 3)
+        {
+            $evaluation = Evaluate::where('evaluatee', $faculty)
+                            -> where('evaluator', auth()->user()->faculties[0]->department->faculties->where('isChairman', true)->first()->user_id)
+                            -> whereDate('created_at', '>=', $period->beginEval)
+                            -> whereDate('created_at', '<=', $period->endEval)
+                            -> latest('id')
+                            -> get();
+        }
+        else
+        {
+            //get students enrolled in selected semester
+            $enrolled = Enrollment::where('period_id', $period->id)
+                                -> latest('id')
+                                -> get();
+            
+            $students = [];
+
+            if($enrolled->isEmpty())
+                return null;
+            else
+            {
+                foreach($enrolled as $det)
+                    $students = array_merge($students, [$det->user_id]);
+            }
+
+            $evaluation = Evaluate::with('evalDetails')
+                            -> where('evaluatee', $faculty)
+                            -> whereIn('evaluator', $students)
+                            -> whereDate('created_at', '>=', $period->beginEval)
+                            -> whereDate('created_at', '<=', $period->endEval)
+                            -> latest('id')
+                            -> get();
+        }
+        //randomize if mempty
+        if($evaluation->isEmpty())
+            return null;
+        else
+        {
+            $catCount = 0;
+            $catPts = 0;
+            //get statistics based on evaluation
+            foreach($evaluation as $det)
+            {
+                $prevCat = 0;
+                foreach($det->evalDetails as $detail)
+                {
+                    //only gets the quantitative question
+                    if($detail->question->q_type_id == 1)
+                    {
+                        if($prevCat != $detail->question->qcat->id && $prevCat != 0)
+                        {
+                            $final = ($catPts / ($catCount * 5)) * 100;
+
+                            $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? round($final, 0) : round(($rawAtt[$prevCat] + $final) / 2, 0);
+                        
+                            if($lowestAttribute == 0)
+                                $lowestAttribute = $prevCat;
+                            
+                            if($rawAtt[$prevCat] < $rawAtt[$lowestAttribute])
+                                $lowestAttribute = $prevCat;
+
+                            $catCount = 0;
+                            $catPts = 0;
+                        }
+                        //sets previous category
+                        $prevCat = $detail->question->qcat->id;
+
+                        if($prevCat == $detail->question->qcat->id || $prevCat == 0)
+                        {
+                            $catPts += $detail->answer;
+                            $catCount += 1;
+                        }
+                    }
+                }
+                //continue reads the last uncounted pts
+                if($catPts != 0)
+                {
+                    $final = ($catPts / ($catCount * 5)) * 100;
+                    $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? round($final, 0) : round(($rawAtt[$prevCat] + $final) / 2, 0);
+                        
+                    if($lowestAttribute == 0)
+                        $lowestAttribute = $prevCat;
+                    
+                    if($rawAtt[$prevCat] < $rawAtt[$lowestAttribute])
+                        $lowestAttribute = $prevCat;
+
+                    $catCount = 0;
+                    $catPts = 0;
+                }
+            }
+        }
+        $attributes = array();
+        $attributes = array_merge($attributes, $rawAtt);
+
+        $details = new Collection();
+
+        $details->attributes = $attributes;
+        $details->lowestAttribute = $lowestAttribute;
+        
+        return $details;
     }
 }

@@ -31,173 +31,304 @@ class QuestionSeeder extends Seeder
 
         $qcat = [
             [
+                'type' => 3,
+                'name' => 'Teacher'
+            ],
+            [
+                'type' => 3,
+                'name' => 'Students'
+            ],
+            [
+                'type' => 3,
+                'name' => 'Learning Environment'
+            ],
+            [
+                'type' => 4,
                 'name' => 'Management'
             ],
             [
+                'type' => 4,
                 'name' => 'Performance'
             ],
             [
+                'type' => 4,
                 'name' => 'Behaviour'
             ],
             [
+                'type' => 4,
                 'name' => 'Support'
             ],
             [
+                'type' => 4,
                 'name' => 'Personality'
             ]
         ];
-        $cats = [];
-        $i = 0;
 
         foreach($qcat as $cat)
-        {
-            $cats[$i] = QCategory::create($cat);
-            $i++;
-        }
-        //factory management questions
-        $questions = [
+            QCategory::create($cat);
+
+        //faculty
+        //lab questions
+        $facultyLabQuestions = [
             [
                 'q_type_id' => 1,
                 'q_category_id' => 1,
-                'sentence' => 'gives reasonable course/subject assignments',
-                'keyword' => 'reasonable',
-                'type' => 4
+                'sentence' => 'laboratory planning and organizing skills',
+                'keyword' => 'organized'
             ],
             [
                 'q_type_id' => 1,
                 'q_category_id' => 1,
-                'sentence' => 'earns appreciation and kind attention from the students',
-                'keyword' => 'appreciative',
-                'type' => 4
+                'sentence' => 'ability to conduct laboratory classes logically and systematically',
+                'keyword' => 'logical and systematic'
             ],
             [
                 'q_type_id' => 1,
                 'q_category_id' => 1,
-                'sentence' => 'gives orientation about the subject and how the students are evaluated',
-                'keyword' => 'briefs subject',
-                'type' => 4
+                'sentence' => 'initiative and common sense',
+                'keyword' => 'initiative'
             ],
             [
                 'q_type_id' => 1,
                 'q_category_id' => 1,
-                'sentence' => 'gives test and/or projects which are within the objectives of the course',
-                'keyword' => 'test/projects given was discussed',
-                'type' => 4
+                'sentence' => 'resourcefulness',
+                'keyword' => 'resourceful'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 1,
+                'sentence' => 'ability to motivate students participation',
+                'keyword' => 'organized'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 1,
+                'sentence' => 'ability to motivate students for critical thinking and independent study during laboratory classes',
+                'keyword' => 'improve students critical thinking'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 1,
+                'sentence' => 'ability to motive students participation',
+                'keyword' => 'organized'
+            ],//2nd category
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 2,
+                'sentence' => 'student-teacher interaction',
+                'keyword' => 'interaction with student'
             ],
             [
                 'q_type_id' => 1,
                 'q_category_id' => 2,
-                'sentence' => 'shows concern in assisting the students',
-                'keyword' => 'helps students',
-                'type' => 4
+                'sentence' => 'preparedness for laboratory work',
+                'keyword' => 'preparedness'
             ],
             [
                 'q_type_id' => 1,
                 'q_category_id' => 2,
-                'sentence' => 'shows sympathetic insight into students’ feelings',
-                'keyword' => 'sympathetic',
-                'type' => 4
+                'sentence' => 'communication skills',
+                'keyword' => 'communication skills'
             ],
             [
                 'q_type_id' => 1,
                 'q_category_id' => 2,
-                'sentence' => 'checks and records test papers/term papers promptly',
-                'keyword' => 'dili tingubon check',
-                'type' => 4
+                'sentence' => 'interest',
+                'keyword' => 'interest'
             ],
             [
                 'q_type_id' => 1,
                 'q_category_id' => 2,
-                'sentence' => 'is on time and regular in meeting the class',
-                'keyword' => 'punctual',
-                'type' => 4
-            ],
+                'sentence' => 'awareness of new concepts',
+                'keyword' => 'new concept awareness'
+            ], //3rd category
             [
                 'q_type_id' => 1,
                 'q_category_id' => 3,
-                'sentence' => 'assigns fair subject/course requirements',
-                'keyword' => 'fair subject/course requirements',
-                'type' => 4
-            ],
+                'sentence' => 'availability and accessibility of equipment, supplies and materials',
+                'keyword' => 'availability'
+            ], 
             [
                 'q_type_id' => 1,
                 'q_category_id' => 3,
-                'sentence' => 'sustains the attention of the class for the whole period',
-                'keyword' => 'class is listening',
-                'type' => 4
-            ],
+                'sentence' => 'arrangement of equipment/furniture in the laboratory',
+                'keyword' => 'arrange equipments in laboratory'
+            ], 
             [
                 'q_type_id' => 1,
                 'q_category_id' => 3,
-                'sentence' => 'presents lesson clearly, methodically, and substantially',
-                'keyword' => 'clear presentation of lessons',
-                'type' => 4
-            ],
+                'sentence' => 'safety conditions',
+                'keyword' => 'promotes safety'
+            ], 
             [
                 'q_type_id' => 1,
                 'q_category_id' => 3,
-                'sentence' => 'motivates the students to learn',
-                'keyword' => 'motivator',
-                'type' => 4
-            ],
+                'sentence' => 'lighting and ventilation',
+                'keyword' => 'lighting and ventilation'
+            ], 
             [
                 'q_type_id' => 1,
-                'q_category_id' => 4,
-                'sentence' => 'facilitates learning with the application of appropriate educational methods and techniques',
-                'keyword' => 'teaching strategy',
-                'type' => 4
-            ],
+                'q_category_id' => 3,
+                'sentence' => 'water supply',
+                'keyword' => 'water supply'
+            ], 
             [
                 'q_type_id' => 1,
-                'q_category_id' => 4,
-                'sentence' => 'shows mastery of the lesson',
-                'keyword' => 'mastery of lesson',
-                'type' => 4
-            ],
+                'q_category_id' => 3,
+                'sentence' => 'housekeeping (orderliness & cleanliness)',
+                'keyword' => 'orderliness & cleanliness'
+            ], 
             [
                 'q_type_id' => 1,
-                'q_category_id' => 4,
-                'sentence' => 'is prepared for the class',
-                'keyword' => 'prepared',
-                'type' => 4
+                'q_category_id' => 3,
+                'sentence' => 'Student-teacher interaction',
+                'keyword' => 'interaction with student'
+            ], //qualitative questions
+            [
+                'q_type_id' => 2,
+                'sentence' => 'strong points',
             ],
             [
-                'q_type_id' => 1,
-                'q_category_id' => 4,
-                'sentence' => 'inspires students’ self-reliance in their quest for knowledge',
-                'keyword' => 'make students eager to learn',
-                'type' => 4
+                'q_type_id' => 2,
+                'sentence' => 'further improvements',
             ],
             [
-                'q_type_id' => 1,
-                'q_category_id' => 5,
-                'sentence' => 'knows when the students have difficulty understanding the lesson and finds ways to make it easy',
-                'keyword' => 'knows the limit of students understanding',
-                'type' => 4
-            ],
-            [
-                'q_type_id' => 1,
-                'q_category_id' => 5,
-                'sentence' => 'integrates values into the lesson',
-                'keyword' => 'values oriented',
-                'type' => 4
-            ],
-            [
-                'q_type_id' => 1,
-                'q_category_id' => 5,
-                'sentence' => 'Speaks the language of instruction (English or Filipino) clearly and fluently',
-                'keyword' => 'speaks language beingu used clearly',
-                'type' => 4
-            ],
-            [
-                'q_type_id' => 1,
-                'q_category_id' => 5,
-                'sentence' => 'delivers thought provoking questions',
-                'keyword' => 'makes student think more',
-                'type' => 4
+                'q_type_id' => 2,
+                'sentence' => 'suggestions',
             ]
         ];
-        foreach($questions as $q)
+
+        foreach($facultyLabQuestions as $q)
+            Question::create($q);
+
+        //student questions
+        $studentQuestions = [
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 4,
+                'sentence' => 'gives reasonable course/subject assignments',
+                'keyword' => 'reasonable'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 4,
+                'sentence' => 'earns appreciation and kind attention from the students',
+                'keyword' => 'appreciative'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 4,
+                'sentence' => 'gives orientation about the subject and how the students are evaluated',
+                'keyword' => 'briefs subject'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 4,
+                'sentence' => 'gives test and/or projects which are within the objectives of the course',
+                'keyword' => 'test/projects given was discussed'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 5,
+                'sentence' => 'shows concern in assisting the students',
+                'keyword' => 'helps students'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 5,
+                'sentence' => 'shows sympathetic insight into students’ feelings',
+                'keyword' => 'sympathetic'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 5,
+                'sentence' => 'checks and records test papers/term papers promptly',
+                'keyword' => 'dili tingubon check'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 5,
+                'sentence' => 'is on time and regular in meeting the class',
+                'keyword' => 'punctual'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 6,
+                'sentence' => 'assigns fair subject/course requirements',
+                'keyword' => 'fair subject/course requirements'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 6,
+                'sentence' => 'sustains the attention of the class for the whole period',
+                'keyword' => 'class is listening'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 6,
+                'sentence' => 'presents lesson clearly, methodically, and substantially',
+                'keyword' => 'clear presentation of lessons'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 6,
+                'sentence' => 'motivates the students to learn',
+                'keyword' => 'motivator'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 7,
+                'sentence' => 'facilitates learning with the application of appropriate educational methods and techniques',
+                'keyword' => 'teaching strategy'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 7,
+                'sentence' => 'shows mastery of the lesson',
+                'keyword' => 'mastery of lesson'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 7,
+                'sentence' => 'is prepared for the class',
+                'keyword' => 'prepared'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 7,
+                'sentence' => 'inspires students’ self-reliance in their quest for knowledge',
+                'keyword' => 'make students eager to learn'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 8,
+                'sentence' => 'knows when the students have difficulty understanding the lesson and finds ways to make it easy',
+                'keyword' => 'knows the limit of students understanding'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 8,
+                'sentence' => 'integrates values into the lesson',
+                'keyword' => 'values oriented'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 8,
+                'sentence' => 'Speaks the language of instruction (English or Filipino) clearly and fluently',
+                'keyword' => 'speaks language beingu used clearly'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 8,
+                'sentence' => 'delivers thought provoking questions',
+                'keyword' => 'makes student think more'
+            ],
+            [
+                'q_type_id' => 2,
+                'sentence' => 'Any thoughts on instructor?'
+            ]
+        ];
+        foreach($studentQuestions as $q)
             Question::create($q);
     }
 }

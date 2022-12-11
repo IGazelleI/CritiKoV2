@@ -69,33 +69,18 @@ class Faculty extends Model
         if(!$eval)
             return back()->with('message', 'Error in creating evaluation.');
 
-        //update faculty points
-        $prevCat = 0;
-        $catPts = 0;
-        $catCount = 0;
-
         //insert the eval dets
         for($i = 1; $i <= $request['totalQuestion']; $i++)
         {
             //insert to evaluation details table
-            if(!EvaluateDetail::create([
-                'question_id' => $request['qID' . $i],
-                'answer' => $request['qAns' . $i],
-                'evaluate_id' => $eval->id
-            ]))
-                return back()->with('message', 'Error in creating evalation detail.');
-           
-            //get points from evaluation
-            if(isset($request['qCatID' . $i]))
+            if(isset($request['qAns' . $i]))
             {
-                if($prevCat == $request['qCatID' . $i])
-                {
-                    $catPts += (int) $request['qAns' . $i];
-
-                    $catCount++;
-                }
-                
-                $prevCat = $request['qCatID' . $i];
+                if(!EvaluateDetail::create([
+                    'question_id' => $request['qID' . $i],
+                    'answer' => $request['qAns' . $i],
+                    'evaluate_id' => $eval->id
+                ]))
+                    return back()->with('message', 'Error in creating evalation detail.');
             }
         }
 

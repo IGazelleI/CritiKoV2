@@ -24,7 +24,6 @@ class QuestionStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'type' => 'required',
             'q_type_id' => 'required',
             'q_category_id' => 'required',
             'sentence' => 'required',
@@ -40,7 +39,6 @@ class QuestionStoreRequest extends FormRequest
     public function messages()
     {
         return [
-            'type.required' => 'Please select a questionnaire answeree.',
             'q_type_id.required' => 'Type field is required.',
             'q_category_id' => 'Category field is required.',
             'sentence' => 'Sentence field is required.',

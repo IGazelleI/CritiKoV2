@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Http\Requests\QuestionStoreRequest;
 use App\Models\Question;
+use App\Models\QCategory;
+use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use App\Http\Requests\QuestionStoreRequest;
 
 class QuestionController extends Controller
 {
@@ -15,14 +17,21 @@ class QuestionController extends Controller
      */
     public function index($type = null)
     {
-        $question = Question::where(function ($query) use ($type)
-                    {
-                        if($type != null)
-                            $query->where('type', $type);
-                    })
-                            -> orderBy('q_type_id')
-                            -> orderBy('q_category_id')
-                            -> get();
+        $cat = QCategory::where(function ($query) use ($type)
+                        {
+                            if($type != null)
+                                $query->where('type', $type);
+                        })
+                        -> latest('id')
+                        -> get();
+
+        $question = new Collection();
+        
+        foreach($cat as $det)
+        {
+            foreach($det->questions as $q)
+                $question->push($q);
+        }
 
         return view('question.index', compact('question', 'type'));
     }
@@ -55,7 +64,6 @@ class QuestionController extends Controller
         if(!$question->update([
             'q_type_id' => $request->q_type_id,
             'q_category_id' => $request->q_category_id,
-            'type' => $request->type,
             'sentence' => $request->sentence,
             'keyword' => $request->keyword
         ]))

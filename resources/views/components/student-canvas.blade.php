@@ -60,7 +60,7 @@
     
     @if(!auth()->user()->enrollment->isEmpty())
         @if(auth()->user()->enrollment[0]->where('period_id', Illuminate\Support\Facades\Session::get('period'))->first() !== null)
-            @if(auth()->user()->enrollment[0]->where('period_id', Illuminate\Support\Facades\Session::get('period'))->first() === 'Approved')
+            @if(auth()->user()->enrollment[0]->where('period_id', Illuminate\Support\Facades\Session::get('period'))->first()->status === 'Approved')
             <div class="row mx-3 py-3 d-flex justify-content-between">
                 <div class="col">
                     <strong> DEPARTMENT </strong> <br/>

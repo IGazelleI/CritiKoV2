@@ -16,10 +16,9 @@ return new class extends Migration
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('q_type_id')->constrained()->onDelete('cascade');
-            $table->foreignId('q_category_id')->constrained()->onDelete('cascade')->nullable();
+            $table->foreignId('q_category_id')->default(1)->constrained()->onDelete('cascade');
             $table->tinyText('sentence');
             $table->string('keyword')->nullable();
-            $table->integer('type');
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });

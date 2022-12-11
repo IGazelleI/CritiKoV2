@@ -161,7 +161,7 @@ class UserController extends Controller
 
     public function assignDean(Department $department)
     {
-        $faculty = Faculty::where('department_id', $department)
+        $faculty = Faculty::where('department_id', $department->id)
                         -> latest('id')
                         -> get();
 

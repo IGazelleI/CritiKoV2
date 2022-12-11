@@ -79,6 +79,24 @@
     </div>
 </div>
 <!-- Off Canvas -->
+<!-- Recommmendation Modal -->
+<div class="modal fade" id="recommendationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel"></h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- Recommendation Modal -->
 @php
     function periods()
     {
@@ -96,4 +114,24 @@
 <script>
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+    const recommendationModal = document.getElementById('recommendationModal');
+
+    recommendationModal.addEventListener('show.bs.modal', event => {
+    // Button that triggered the modal
+    const button = event.relatedTarget;
+    // Extract info from data-bs-* attributes
+    const recipient = button.getAttribute('data-bs-whatever');
+    const recommendations[] = button.getAttribute('data-bs-recommendation');
+    // If necessary, you could initiate an AJAX request here
+    // and then do the updating in a callback.
+    //
+    // Update the modal's content.
+    console.log(recommendations);
+    const modalTitle = recommendationModal.querySelector('.modal-title');
+    const modalBodyInput = recommendationModal.querySelector('.modal-body input');
+
+    modalTitle.textContent = `New message to ${recipient}`;
+    modalBodyInput.value = recipient;
+    })
 </script>
