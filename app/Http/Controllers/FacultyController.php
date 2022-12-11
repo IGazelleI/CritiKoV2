@@ -309,6 +309,7 @@ class FacultyController extends Controller
                     
                     if($prevDetails == null)
                     {
+                        $random = $this->randomAttributes(count($cat));
                         $studentChart[$det->id]->dataset($p->getDescription(), 'radar', $this->randomAttributes(count($cat)))->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
                         $prevAvgSt[$det->id] = $prevAvgSt[$det->id] == 0? collect($random)->avg() : ($prevAvgSt[$det->id] + collect($random)->avg()) / 2;
                     }
