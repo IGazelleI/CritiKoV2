@@ -55,13 +55,13 @@
                             <div class="col">
                                 <div class="mb-3">
                                     <label for="password" class="col-form-label ms-2">Password</label>
-                                    <input type="text" class="form-control rounded-pill password" name="password">
+                                    <input type="password" class="form-control rounded-pill password" name="password">
                                 </div>
                             </div>
                             <div class="col">
                                 <div class="mb-3">
                                     <label for="password_confirmation" class="col-form-label ms-2">Confirm Password</label>
-                                    <input type="text" class="form-control rounded-pill password_confirmation" name="password_confirmation">
+                                    <input type="password" class="form-control rounded-pill password_confirmation" name="password_confirmation">
                                 </div>
                             </div>
                         </div>
