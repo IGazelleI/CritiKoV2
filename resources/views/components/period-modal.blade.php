@@ -102,10 +102,10 @@
                         </div>
                         <div class="mb-3">
                             <label for="description" class="col-form-label ms-2">Begin</label>
-                            <input type="date" name="beginEval" id="beginEval" class="form-control"/>
+                            <input type="date" name="beginEval" id="beginEval" class="form-control rounded-pill"/>
 
                             <label for="description" class="col-form-label ms-2">End</label>
-                            <input type="date" name="endEval" id="endEval" class="form-control"/>
+                            <input type="date" name="endEval" id="endEval" class="form-control rounded-pill"/>
                         </div>
                 </div>
                 <div class="modal-footer">
@@ -144,10 +144,10 @@
                         </div>
                         <div class="mb-3">
                             <label for="description" class="col-form-label ms-2">Begin</label>
-                            <input type="date" name="beginEval" id="beginEval" class="form-control beginEval"/>
+                            <input type="date" name="beginEval" id="beginEval" class="form-control rounded-pill beginEval"/>
 
                             <label for="description" class="col-form-label ms-2">End</label>
-                            <input type="date" name="endEval" id="endEval" class="form-control endEval"/>
+                            <input type="date" name="endEval" id="endEval" class="form-control rounded-pill endEval"/>
                         </div>
                 </div>
                 <div class="modal-footer">

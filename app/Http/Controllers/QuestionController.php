@@ -15,13 +15,14 @@ class QuestionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($type = null)
+    public function index($type = 4)
     {
-        $cat = QCategory::where(function ($query) use ($type)
-                        {
-                            if($type != null)
-                                $query->where('type', $type);
-                        })
+        $cat = QCategory::with('questions')
+                        -> where(function ($query) use ($type)
+                            {
+                                if($type != null)
+                                    $query->where('type', $type);
+                            })
                         -> latest('id')
                         -> get();
 

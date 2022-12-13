@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -45,6 +46,8 @@ Route::middleware('auth')->group(function ()
 
     Route::middleware('user-access:admin')->group(function ()
     {
+        Route::get('/a/report', [AdminController::class, 'report'])->name('admin.report');
+        Route::post('/a/prevLimit', [AdminController::class, 'changePrevLimit'])->name('admin.changePrevLimit');
         Route::controller(App\Http\Controllers\UserController::class)->group(function ()
         {
             Route::get('/asd', 's')->name('s');
@@ -115,6 +118,12 @@ Route::middleware('auth')->group(function ()
             Route::post('/changePeriodsast', 'changePeriod')->name('sast.changePeriod');
             Route::put('/setEvaluationDate', 'setEvaluationDate')->name('sast.setEvaluationDate');
         });
+        Route::controller(App\Http\Controllers\QCategoryController::class)->group(function ()
+        {
+            Route::post('/qCategory', 'store')->name('qCat.store');
+            Route::put('/qCategory', 'update')->name('qCat.update');
+            Route::delete('/qCategory', 'destroy')->name('qCat.delete');
+        });
         Route::controller(App\Http\Controllers\QuestionController::class)->group(function ()
         {
             Route::get('/q/{type?}', 'index')->name('question.manage');
@@ -128,12 +137,12 @@ Route::middleware('auth')->group(function ()
     {
         Route::controller(App\Http\Controllers\FacultyController::class)->group(function ()
         {
-            
+            //dean routes
             Route::middleware('user-access:dean')->group(function ()
             {
                 Route::get('/enrollments', 'enrollment')->name('dean.enrollment');
                 Route::post('/enrollment/{enroll}', 'processEnrollment')->name('dean.processEnrollment');
-                Route::get('/report', 'report')->name('dean.report');
+                Route::get('/d/report', 'report')->name('dean.report');
             });
 
             Route::get('/mf/profile', 'show')->name('faculty.profile');
@@ -143,6 +152,7 @@ Route::middleware('auth')->group(function ()
             Route::post('/changeSelectedf', 'changeSelected')->name('faculty.changeSelected');
             Route::get('/evaluatef', 'evaluate')->name('faculty.evaluate');
             Route::post('evaluate/processf', 'evaluateProcess')->name('faculty.evaluateProcess');
+            Route::post('/f/prevLimit', 'changePrevLimit')->name('faculty.changePrevLimit');
         });
     });
 

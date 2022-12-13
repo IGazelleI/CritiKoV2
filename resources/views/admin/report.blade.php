@@ -11,6 +11,72 @@
                     </h2>
                 </div>
             </div>
+            <div class="row p-3">
+                <div class="col text-end">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle rounded-pill" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            @if (isset($deptSelected))
+                                {{$department->find($deptSelected)->name}}
+                            @else
+                                Department
+                            @endif
+                        </button>
+                      
+                        <ul class="dropdown-menu">
+                            @unless($department->isEmpty())
+                                <li>
+                                    <a  href="{{route('admin.report', ['period' => isset($perSelected)? encrypt($perSelected) : null])}}" class="dropdown-item">
+                                        All
+                                    </a>
+                                </li>
+                                @foreach($department as $dept)
+                                <li>
+                                    <a  href="{{route('admin.report', ['department' => encrypt($dept->id), 'period' => isset($perSelected)? encrypt($perSelected) : null])}}" class="dropdown-item">
+                                        {{$dept->name}}
+                                    </a>
+                                </li>
+                                @endforeach
+                            @else
+                            <li>
+                                <a class="dropdown-item disabled"> Department is empty </a>
+                            </li>
+                            @endunless
+                        </ul>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle rounded-pill" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            @if (isset($perSelected))
+                                {{$periodAll->find($perSelected)->getDescription()}} 
+                            @else
+                                Period
+                            @endif
+                        </button>
+                      
+                        <ul class="dropdown-menu">
+                            @unless($periodAll->isEmpty())
+                                <li>
+                                    <a  href="{{route('admin.report', ['department' => isset($deptSelected)? encrypt($deptSelected) : null])}}" class="dropdown-item">
+                                        Latest
+                                    </a>
+                                </li>
+                                @foreach($periodAll as $per)
+                                <li>
+                                    <a  href="{{route('admin.report', ['period' => encrypt($per->id), 'department' => isset($deptSelected)? encrypt($deptSelected) : null])}}" class="dropdown-item">
+                                        {{$per->getDescription()}}
+                                    </a>
+                                </li>
+                                @endforeach
+                            @else
+                            <li>
+                                <a class="dropdown-item disabled"> Department is empty </a>
+                            </li>
+                            @endunless
+                        </ul>
+                    </div>
+                </div>
+            </div>
             @unless($faculty->isEmpty())
                 @foreach($faculty as $det)
                 <div class="row p-3 border-bottom">
@@ -153,11 +219,15 @@
                 </div>
                 @endforeach
             @else
-            <h3 class="text-center m-4 bg-light p-4 rounded text-uppercase"> Faculty under your department is empty </h3>
+                @if(isset($deptSelected))
+                <h3 class="text-center m-4 bg-light p-4 rounded text-uppercase"> Faculty in {{$department->find($deptSelected)->description}} is empty </h3>
+                @else
+                <h3 class="text-center m-4 bg-light p-4 rounded text-uppercase"> Faculty is empty </h3>
+                @endif
             @endunless
         </div>
     </x-medium-card>
-    <x-faculty-canvas/>
+    <x-admin-canvas/>
 </x-layout>
 @php
     function getImprovement($current, $previous)

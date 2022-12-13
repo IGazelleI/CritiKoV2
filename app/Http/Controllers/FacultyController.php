@@ -172,8 +172,17 @@ class FacultyController extends Controller
         return redirect(route('faculty.evaluate'))->with('message', 'Selected changed.');
     }
 
+    public function changePrevLimit(Request $request)
+    {
+        $request->session()->put('prevLimit', (int) $request->prevLimit);
+
+        return back()->with('message', 'Limit in viewing previous semester changed.');
+    }
+
     public function report()
     {
+        //previous limit
+        $prevLimit = Session::get('prevLimit') == null? 1 : Session::get('prevLimit');
         //get current period
         $period = Session::get('period') == null? Period::latest('id')->get()->first() : Period::find(Session::get('period')); 
         //get faculties under department
@@ -192,19 +201,19 @@ class FacultyController extends Controller
                 'backgroundColor' => $this->colors(0)->bg, 
                 'pointBorderColor' => $this->colors(0)->pointer,
                 'scales' => [
-                    'min' => 0,
-                    'max' => 100,
-                    'ticks' => [
-                        'stepSize' => 20,
-                        'display' => false
+                    'r' => [
+                        'min' => 0,
+                        'max' => 100,
+                        'ticks' => [
+                            'stepSize' => 20,
+                            'display' => false
+                        ]
                 ]],
                 'responsive' => true
             ]);
             //get current attributes
             $details = $this->getDetails($period, 3, $det->user_id);
-
-            
-
+            //get the recommendations
             $recommendation[$det->id] = isset($details)? Question::select('keyword')
                                             -> where('q_category_id', $details->lowestAttribute)
                                             -> where('q_type_id', 1)
@@ -228,19 +237,25 @@ class FacultyController extends Controller
                 $i = 1;
                 foreach($periods as $p)
                 {
-                    $prevDetails = $this->getDetails($p, 3, $det->id);
-                    
-                    if($prevDetails == null)
+                    if($i <= $prevLimit)
                     {
-                        $random = $this->randomAttributes(count($cat));
-                        $facultyChart[$det->id]->dataset($p->getDescription(), 'radar', $random)->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
-                        $prevAvgFac[$det->id] = $prevAvgFac[$det->id] == 0? collect($random)->avg() : ($prevAvgFac[$det->id] + collect($random)->avg()) / 2;
+                        $prevDetails = $this->getDetails($p, 3, $det->user_id);
+                    
+                        if($prevDetails == null)
+                        {
+                            $random = $this->randomAttributes(count($cat));
+                            $facultyChart[$det->id]->dataset($p->getDescription(), 'radar', $random)->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
+                            $prevAvgFac[$det->id] = $prevAvgFac[$det->id] == 0? collect($random)->avg() : ($prevAvgFac[$det->id] + collect($random)->avg()) / 2;
+                        }
+                        else
+                        {
+                            $facultyChart[$det->id]->dataset($p->getDescription(), 'radar', $prevDetails->attributes)->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
+                            $prevAvgFac[$det->id] = $prevAvgFac[$det->id] == 0? collect($prevDetails->attributes)->avg() : ($prevAvgFac[$det->id] + collect($prevDetails->attributes)->avg()) / 2;
+                        }
                     }
                     else
-                    {
-                        $facultyChart[$det->id]->dataset($p->getDescription(), 'radar', $prevDetails->attributes)->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
-                        $prevAvgFac[$det->id] = $prevAvgFac[$det->id] == 0? collect($prevDetails->attributes)->avg() : ($prevAvgFac[$det->id] + collect($prevDetails->attributes)->avg()) / 2;
-                    }
+                        break;
+
                     $i += 1;
                 }
             }
@@ -258,11 +273,13 @@ class FacultyController extends Controller
                 'backgroundColor' => $this->colors(0)->bg, 
                 'pointBorderColor' => $this->colors(0)->pointer,
                 'scales' => [
-                    'min' => 0,
-                    'max' => 100,
-                    'ticks' => [
-                        'stepSize' => 20,
-                        'display' => false
+                    'r' => [
+                        'min' => 0,
+                        'max' => 100,
+                        'ticks' => [
+                            'stepSize' => 20,
+                            'display' => false
+                        ]
                 ]],
                 'responsive' => true
             ]);
@@ -276,6 +293,7 @@ class FacultyController extends Controller
                                     -> where('q_type_id', 1)
                                     -> latest('id')
                                     -> get() : null;
+                                    
                 if($additional != null)
                     $recommendation[$det->id] = $additional->concat($recommendation[$det->id]);
             }
@@ -305,19 +323,25 @@ class FacultyController extends Controller
                 $i = 1;
                 foreach($periods as $p)
                 {
-                    $prevDetails = $this->getDetails($p, 4, $det->id);
-                    
-                    if($prevDetails == null)
+                    if($i <= $prevLimit)
                     {
-                        $random = $this->randomAttributes(count($cat));
-                        $studentChart[$det->id]->dataset($p->getDescription(), 'radar', $this->randomAttributes(count($cat)))->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
-                        $prevAvgSt[$det->id] = $prevAvgSt[$det->id] == 0? collect($random)->avg() : ($prevAvgSt[$det->id] + collect($random)->avg()) / 2;
+                        $prevDetails = $this->getDetails($p, 4, $det->user_id);
+                    
+                        if($prevDetails == null)
+                        {
+                            $random = $this->randomAttributes(count($cat));
+                            $studentChart[$det->id]->dataset($p->getDescription(), 'radar', $this->randomAttributes(count($cat)))->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
+                            $prevAvgSt[$det->id] = $prevAvgSt[$det->id] == 0? collect($random)->avg() : ($prevAvgSt[$det->id] + collect($random)->avg()) / 2;
+                        }
+                        else
+                        {
+                            $studentChart[$det->id]->dataset($p->getDescription(), 'radar', $prevDetails->attributes)->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
+                            $prevAvgSt[$det->id] = $prevAvgSt[$det->id] == 0? collect($prevDetails->attributes)->avg() : ($prevAvgSt[$det->id] + collect($prevDetails->attributes)->avg()) / 2;
+                        }
                     }
                     else
-                    {
-                        $studentChart[$det->id]->dataset($p->getDescription(), 'radar', $prevDetails->attributes)->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
-                        $prevAvgSt[$det->id] = $prevAvgSt[$det->id] == 0? collect($prevDetails->attributes)->avg() : ($prevAvgSt[$det->id] + collect($prevDetails->attributes)->avg()) / 2;
-                    }
+                        break;
+
                     $i += 1;
                 }
             }
@@ -330,11 +354,11 @@ class FacultyController extends Controller
 
         return view('dean.facultyReport', compact('faculty', 'facultyChart', 'averageFac', 'prevAvgFac', 'studentChart', 'averageSt', 'prevAvgSt', 'recommendation'));
     }
-    
+    //local methods
     function colors($i)
     {
-        $bg = ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'Green', 'Yellow', 'Gray'];
-        $pointer = ['Red', 'Blue', 'Green', 'Yellow', 'Gray'];
+        $bg = ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 159, 64, 0.2)', 'rgba(255, 205, 86, 0.2)', 'rgba(153, 102, 255, 0.2)'];
+        $pointer = ['Red', 'Blue', 'Orange', 'Yellow', 'Violet'];
 
         $detail = new Collection();
 
@@ -361,7 +385,7 @@ class FacultyController extends Controller
         $attributes = [];
 
         for($i = 0; $i < $number; $i++)
-            $attributes = array_merge($attributes, [random_int(40, 60)]);
+            $attributes = array_merge($attributes, [random_int(20, 90)]);
 
         return $attributes;
     }
@@ -385,7 +409,8 @@ class FacultyController extends Controller
         //get evaluations of user
         if($type == 3)
         {
-            $evaluation = Evaluate::where('evaluatee', $faculty)
+            $evaluation = Evaluate::with('evalDetails')
+                            -> where('evaluatee', $faculty)
                             -> where('evaluator', auth()->user()->faculties[0]->department->faculties->where('isChairman', true)->first()->user_id)
                             -> whereDate('created_at', '>=', $period->beginEval)
                             -> whereDate('created_at', '<=', $period->endEval)

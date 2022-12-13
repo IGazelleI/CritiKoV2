@@ -9,10 +9,8 @@ use App\Models\Question;
 use App\Models\QCategory;
 use App\Models\Department;
 use App\Models\Enrollment;
-use Illuminate\Support\Arr;
 use App\Charts\FacultyChart;
 use Illuminate\Http\Request;
-use App\Models\EvaluateDetail;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -25,99 +23,93 @@ class HomeController extends Controller
         {
             case 1: //Admin Home
                 //get all period
-                $period = Period::latest('id')
+                $period = Period::orderBy('id')
                             -> get();
                 
                 //overall chart
                 $overAllChart = new FacultyChart();
-
-                $overAllChart-> labels(['One', 'Two', 'Three', 'Four']);
+                $periodArr = [];
+                //get categories
+                $cat = QCategory::latest('id')
+                            -> get();
                 //get improvement by period
-                /* foreach($period as $per)
+                if(!$period->isEmpty())
                 {
-                    $labels = [];
-                    $rawAttDept = [];
-                    $i = 0;
-                    //get departments
-                    $department = Department::latest('id')
-                                    -> get();
-                    //get overall from every department
-                    foreach($department as $dept)
+                    $department = Department::with('faculties')
+                                        -> latest('id')
+                                        -> get();
+                    //get average by department
+                    if(!$department->isEmpty())
                     {
-                        $rawAttFac = [];
-                        //get every faculty inside the department
-                        foreach($dept->faculties as $fac)
+                        //color variable
+                        $i = 0;
+
+                        foreach($department as $dept)
                         {
-                            //get all evaluations from the faculty on that period
-                            $evaluation = Evaluate::where('evaluatee', $fac->user_id)
-                                            -> whereDate('created_at', '>=', $per->beginEval)
-                                            -> whereDate('created_at', '<=', $per->endEval)
-                                            -> latest('id')
-                                            -> get();
-                            
-                            if($evaluation->isEmpty())
+                            $avgRaw = [];
+                            //get average of department by period
+                            foreach($period as $per)
                             {
-                                $attributes = [random_int(1, 100), random_int(1, 100), random_int(1, 100), random_int(1, 100), random_int(1, 100)];
-                                $prevAtt = [random_int(1, 100), random_int(1, 100), random_int(1, 100), random_int(1, 100), random_int(1, 100)];
-                            }
-                            else
-                            {  
-                                $catCount = 0;
-                                $catPts = 0;
-                                //get statistics based on evaluation
-                                foreach($evaluation as $eval)
+                                $avgPeriod[$per->id] = 0;
+                                //checks if currnet department's faculty is empty
+                                if(!$dept->faculties->isEmpty())
                                 {
-                                    $prevCat = 0;
-        
-                                    foreach($eval->evalDetails as $detail)
+                                    $facAvg = 0; 
+                                    $stAvg = 0;
+                                    ///loop through all faculties
+                                    foreach($dept->faculties as $fac)
                                     {
-                                        //only gets the quantitative question
-                                        if($detail->question->q_type_id == 1)
-                                        {        
-                                            if($prevCat != $detail->question->qcat->id && $prevCat != 0)
-                                            {
-                                                $final = ($catPts / ($catCount * 5)) * 100;
-                                                $before = $rawAttFac[$prevCat];
-        
-                                                $rawAttFac[$prevCat] = $rawAttFac[$prevCat] == 0? round($final, 0) : round(($rawAttFac[$prevCat] + $final) / 2, 0);
-                                            
-                                                $catCount = 0;
-                                                $catPts = 0;
-                                            }
-        
-                                            $prevCat = $detail->question->qcat->id;
-        
-                                            if($prevCat == $detail->question->qcat->id || $prevCat == 0)
-                                            {
-                                                $catPts += $detail->answer;
-                                                $catCount += 1;
-                                            }
-                                        }
+                                        //get details for current faculty
+                                        //faculty evaluations
+                                        $facEvalDetails = $this->getDetails($per, 3, $fac);
+                                        //get average of faculties evaluation
+                                        if($facEvalDetails !=  null)
+                                            $facAvg = $facAvg == 0? collect($facEvalDetails->attributes)->avg() : ($facAvg + collect($facEvalDetails->attributes)->avg()) / 2;
+                                        else
+                                            $facAvg = $facAvg == 0? collect($this->randomAttributes($cat->where('type', 3)->count()))->avg() : ($facAvg + collect($this->randomAttributes(3))->avg()) / 2;
+                                        //student evaluations
+                                        $stEvalDetails = $this->getDetails($per, 4, $fac);
+                                        //get average of students evaluation
+                                        if($stEvalDetails != null)
+                                            $stAvg = $stAvg == 0? collect($stEvalDetails->attributes)->avg() : ($stAvg + collect($stEvalDetails->attributes)->avg()) / 2;
+                                        else
+                                            $stAvg = $stAvg == 0? collect($this->randomAttributes($cat->where('type', 4)->count()))->avg() : ($stAvg + collect($this->randomAttributes(5))->avg()) / 2;
                                     }
-                                    if($catPts != 0)
-                                    {
-                                        $final = ($catPts / ($catCount * 5)) * 100;
-                                        $rawAttFac[$prevCat] = $rawAttFac[$prevCat] == 0? round($final, 0) : round(($rawAttFac[$prevCat] + $final) / 2, 0);
-        
-                                        $catCount = 0;
-                                        $catPts = 0;
-                                    }
-                                }                                                            
-                                $attributes = array();
-                                $attributes = array_merge($attributes, $rawAttFac);
+                                    //get the average of the two
+                                    $avgRaw[$per->id] = number_format(($facAvg + $stAvg) / 2, 0);
+                                }
+                                else //randomize if empty lang sa
+                                    $avgRaw[$per->id] = random_int(10, 99);
+                                //merge array so it will start to 1
+                                $average = array();
+                                $average = array_merge($average, $avgRaw); 
+                                //getting chart label purposes
+                                if($i == 0)
+                                    $periodArr = array_merge($periodArr, [$per->getDescription()]);
                             }
-                            $average[$dept->id] = collect($attributes)->avg();
-                            $prevAvg[$dept->id] = collect($prevAtt)->avg();
+                            //chart details
+                            $overAllChart->dataset($dept->name, 'line', $average)
+                                    -> options([
+                                        'backgroundColor' => $this->colors($i)->bg,
+                                        'pointBorderColor' => $this->colors($i)->pointer,
+                                        'borderColor' => $this->colors($i)->bg,
+                                        'scales' => [
+                                            'r' => [
+                                                'min' => 0,
+                                                'max' => 100
+                                            ]
+                                        ]
+                                    ]);
+
+                            $i += 1;
                         }
                     }
-                    //chart details
-                    $overAllChart-> dataset($per->getDescription(), 'radar', $attributes);
-                } */
-                $overAllChart-> dataset('Chart Name 1', 'line', [10, 40, 50]);
-                $overAllChart-> dataset('Chart Name 2', 'line', [20, 25, 80]);
+                    //initialize the chart labels
+                    $overAllChart-> labels($periodArr);
+                }
 
                 //evaluation progress chart only show latest period
-                $p = $period->first();
+                $p = $period->last();
                 //faculty
                 $evalProgress = new FacultyChart(); 
 
@@ -200,12 +192,9 @@ class HomeController extends Controller
                         -> options(['responsive' => true]); */
                 }
                 else
-                {
-                    $evalProgress = null;
-                }
+                    $evalProgress = null;                
                 
-                
-                return view('admin.index', compact('overAllChart', 'evalProgress'));
+                return view('admin.index', compact('overAllChart', 'evalProgress', 'p', 'department'));
                 break;
             case 2: //SAST Officer Home
                 //percentage done chartFaculty
@@ -228,7 +217,8 @@ class HomeController extends Controller
                     $finishedf = $evaluation->count();
                     //get expected evaluations
                     //get each department
-                    $dept = Department::latest('id')
+                    $dept = Department::with('faculties')
+                                    -> latest('id')
                                     -> get();
                     
                     $expectedf = 0;
@@ -254,7 +244,8 @@ class HomeController extends Controller
                     //percentage done chartStudent
                     $chartStudent = new FacultyChart();
                     //get enrollment query
-                    $enrollment = Enrollment::where('period_id', $period->id)
+                    $enrollment = Enrollment::with('user')
+                                        -> where('period_id', $period->id)
                                         -> latest('id')
                                         -> get();
                     //total enrollee
@@ -293,7 +284,9 @@ class HomeController extends Controller
 
                 return view('sast.index', compact('period', 'chartFaculty', 'finishedf', 'pendingf', 'expectedf', 'chartStudent', 'totalEnrollees', 'finisheds', 'pendings', 'expecteds'));
                 break;
-            case 3: 
+            case 3: //Faculty Home 
+                //previous limit
+                $prevLimit = Session::get('prevLimit') == null? 1 : Session::get('prevLimit');
                 //get current period
                 $period = Session::get('period') == null? Period::latest('id')->get()->first() : Period::find(Session::get('period'));                
                 //student attributes chart 
@@ -304,16 +297,18 @@ class HomeController extends Controller
                     'backgroundColor' => $this->colors(0)->bg, 
                     'pointBorderColor' => $this->colors(0)->pointer,
                     'scales' => [
-                        'min' => 0,
-                        'max' => 100,
-                        'ticks' => [
-                            'stepSize' => 20,
-                            'display' => false
+                        'r' => [
+                            'min' => 0,
+                            'max' => 100,
+                            'ticks' => [
+                                'stepSize' => 20,
+                                'display' => false
+                            ]
                     ]],
                     'responsive' => true
                 ]);
 
-                $details = $this->getDetails($period, 4);
+                $details = $this->getDetails($period, 4, null);
                 
                 $recommendation = isset($details)? Question::select('keyword')
                                         -> where('q_category_id', $details->lowestAttribute)
@@ -335,12 +330,17 @@ class HomeController extends Controller
                     $i = 1;
                     foreach($periods as $det)
                     {
-                        $prevDetails = $this->getDetails($det, 4);
+                        if($i <= $prevLimit)
+                        {
+                            $prevDetails = $this->getDetails($det, 4, null);
 
-                        if($prevDetails == null)
-                            $studentChart->dataset($det->getDescription(), 'radar', $this->randomAttributes(count($cat)))->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
+                            if($prevDetails == null)
+                                $studentChart->dataset($det->getDescription(), 'radar', $this->randomAttributes(count($cat)))->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
+                            else
+                                $studentChart->dataset($det->getDescription(), 'radar', $prevDetails->attributes)->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
+                        }
                         else
-                            $studentChart->dataset($det->getDescription(), 'radar', $prevDetails->attributes)->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
+                            break;
 
                         $i += 1;
                     }
@@ -355,16 +355,18 @@ class HomeController extends Controller
                     'backgroundColor' => $this->colors(0)->bg,
                     'pointBorderColor' => $this->colors(0)->pointer,
                     'scales' => [
-                        'min' => 0,
-                        'max' => 100,
-                        'ticks' => [
-                            'stepSize' => 20,
-                            'display' => false
+                        'r' => [
+                            'min' => 0,
+                            'max' => 100,
+                            'ticks' => [
+                                'stepSize' => 20,
+                                'display' => false
+                            ]
                     ]],
                     'responsive' => true
                 ]);
 
-                $details = $this->getDetails($period, 3);
+                $details = $this->getDetails($period, 3, null);
 
                 if(isset($recommendation))
                 {
@@ -373,8 +375,9 @@ class HomeController extends Controller
                                         -> where('q_type_id', 1)
                                         -> latest('id')
                                         -> get() : null;
-                    
-                    $recommendation = $additional->concat($recommendation);
+
+                    if($additional != null)
+                        $recommendation = $additional->concat($recommendation);
                 }
                 else
                 {
@@ -399,12 +402,17 @@ class HomeController extends Controller
                     $i = 1;
                     foreach($periods as $det)
                     {
-                        $prevDetails = $this->getDetails($det, 3);
+                        if($i <= $prevLimit)
+                        {
+                                $prevDetails = $this->getDetails($det, 3, null);
 
-                        if($prevDetails == null)
-                            $facultyChart->dataset($det->getDescription(), 'radar', $this->randomAttributes(count($cat)))->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
+                                if($prevDetails == null)
+                                    $facultyChart->dataset($det->getDescription(), 'radar', $this->randomAttributes(count($cat)))->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
+                                else
+                                    $facultyChart->dataset($det->getDescription(), 'radar', $prevDetails->attributes)->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
+                        }
                         else
-                            $facultyChart->dataset($det->getDescription(), 'radar', $prevDetails->attributes)->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
+                            continue;
 
                         $i += 1;
                     }
@@ -428,7 +436,8 @@ class HomeController extends Controller
                                     -> get()
                                     -> first();
                 
-                $cat = QCategory::where('type', 4)
+                $cat = QCategory::with('questions')
+                                -> where('type', 4)
                                 -> get();
 
                 $question = new Collection();
@@ -448,11 +457,11 @@ class HomeController extends Controller
                 $currentSelected = Session::get('selected');
         
                 $evaluation = $currentSelected != null? Evaluate::where('evaluator', auth()->user()->id)
-                                                                -> where('evaluatee', $currentSelected)
-                                                                -> where('period_id', Session::get('period'))
-                                                                -> latest('id')
-                                                                -> get()
-                                                                -> first() : null;
+                                                            -> where('evaluatee', $currentSelected)
+                                                            -> where('period_id', Session::get('period'))
+                                                            -> latest('id')
+                                                            -> get()
+                                                            -> first() : null;
 
                 return view('student.index', compact('instructor'));
                 break;
@@ -460,10 +469,12 @@ class HomeController extends Controller
     }
     function colors($i)
     {
-        $bg = ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'Green', 'Yellow', 'Gray'];
-        $pointer = ['Red', 'Blue', 'Green', 'Yellow', 'Gray'];
+        $bg = ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 159, 64, 0.2)', 'rgba(255, 205, 86, 0.2)', 'rgba(153, 102, 255, 0.2)'];
+        $pointer = ['Red', 'Blue', 'Orange', 'Yellow', 'Violet'];
 
         $detail = new Collection();
+        if($i >= count($bg))
+            $i = count($bg) % 5;
 
         $detail->bg = $bg[$i];
         $detail->pointer = $pointer[$i];
@@ -493,7 +504,7 @@ class HomeController extends Controller
         return $attributes;
     }
 
-    function getDetails($period, $type)
+    function getDetails($period, $type, $user)
     {
         if(!isset($period->beginEval))
             return null;
@@ -510,10 +521,14 @@ class HomeController extends Controller
 
         $evaluation = new Collection();
         //get evaluations of user
+        if(!isset($user))
+            $user = auth()->user()->faculties[0];
+        
         if($type == 3)
         {
-            $evaluation = Evaluate::where('evaluatee', auth()->user()->id)
-                            -> where('evaluator', auth()->user()->faculties[0]->department->faculties->where('isChairman', true)->first()->user_id)
+            $evaluation = Evaluate::with('evalDetails')
+                            -> where('evaluatee', $user->user_id)
+                            -> where('evaluator', $user->department->faculties->where('isChairman', true)->first()->user_id)
                             -> whereDate('created_at', '>=', $period->beginEval)
                             -> whereDate('created_at', '<=', $period->endEval)
                             -> latest('id')
@@ -536,7 +551,8 @@ class HomeController extends Controller
                     $students = array_merge($students, [$det->user_id]);
             }
 
-            $evaluation = Evaluate::where('evaluatee', auth()->user()->id)
+            $evaluation = Evaluate::with('evalDetails')
+                            -> where('evaluatee', $user->user_id)
                             -> whereIn('evaluator', $students)
                             -> whereDate('created_at', '>=', $period->beginEval)
                             -> whereDate('created_at', '<=', $period->endEval)
@@ -649,7 +665,8 @@ class HomeController extends Controller
                     $students = array_merge($students, [$det->user_id]);
             }
 
-            $evaluation = Evaluate::where('evaluatee', auth()->user()->id)
+            $evaluation = Evaluate::with('evalDetails')
+                            -> where('evaluatee', auth()->user()->id)
                             -> whereIn('evaluator', $students)
                             -> whereDate('created_at', '>=', $period->beginEval)
                             -> whereDate('created_at', '<=', $period->endEval)

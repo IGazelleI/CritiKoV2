@@ -189,8 +189,6 @@
             divSID.style.display = 'none';
         }
         else
-        {
             divA.style.display = 'none';
-        }
     }
 </script>

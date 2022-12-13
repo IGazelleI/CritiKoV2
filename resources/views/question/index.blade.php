@@ -94,7 +94,7 @@
                                 </div>
                                 <div class="col-1 border-bottom border-dark text-white rounded-bottom">
                                     <button type="button" 
-                                        class="btn btn-transparent btn-outline-primary shadow-none text-white btn-sm ms-4" data-bs-target="#addQModal" data-bs-toggle="modal"
+                                        class="btn btn-transparent btn-outline-primary shadow-none text-white btn-sm ms-4" data-bs-target="#add{{$type == 3? 'F' : 'S'}}QModal" data-bs-toggle="modal"
                                         data-bs-answer="{{$type}}"
                                         data-bs-type="{{$det->q_type_id}}"
                                         data-bs-category="{{$det->q_category_id}}"
@@ -108,9 +108,9 @@
                         <div class="row ms-1 d-flex align-items-center">
                             <div class="col border-end">
                                 <span data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{$det->keyword}}">
-                                    <b> {{++$count}}. </b> {{$det->sentence}}
+                                    <b> {{++$count}}. </b> {{ucfirst($det->sentence)}}
                                 </span>
-                                <button type="button" class="btn btn-sm shadow-none text-secondary" data-bs-target="#editQModal" data-bs-toggle="modal"
+                                <button type="button" class="btn btn-sm shadow-none text-secondary" data-bs-target="#edit{{$type == 3? 'F' : 'S'}}QModal" data-bs-toggle="modal"
                                     data-bs-id={{$det->id}}
                                     data-bs-answer="{{$type}}"
                                     data-bs-type="{{$det->q_type_id}}"
@@ -154,7 +154,7 @@
                         @endphp
                     @else
                         <div class="row">
-                            <div class="col d-flex align-items-center ms-5 mt-5 mb-2 disappear">
+                            <div class="col d-flex align-items-center text-capitalize ms-5 mt-5 mb-2">
                                 {{$det->sentence}}
                                 <button type="button" class="btn btn-sm shadow-none text-secondary disappear" data-bs-target="#editQModal" data-bs-toggle="modal"
                                     data-bs-id={{$det->id}}

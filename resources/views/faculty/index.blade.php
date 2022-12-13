@@ -145,7 +145,7 @@
                     <div class="card-body p-0 text-dark">
                         <div class="ps-3">
                             <h5 class="mt-4" style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif">
-                                Summary <span class="text-danger"> Ok rana ang faculty chart same lang ug gawas tungod sa date kanus gi evalue gisame rag date kada semester gud </span>
+                                Summary
                             </h5>
                             <p class="text-secondary" style="font-size: 12px">
                                 Evaluation summary for {{$period->getDescription()}}
@@ -277,8 +277,6 @@
                                                         </tr>
                                                     </tbody>
                                                 </table>
-                                                @else
-                                                <h3 class="text-center m-4 bg-light p-4 rounded text-uppercase"> Evaluation by students in selected semester is empty </h3>
                                                 @endif
                                             </div>
                                         </div>
@@ -296,7 +294,7 @@
                                       </div>
                                       <div class="row">
                                         <div class="col">
-                                          <p class="badge {{status(number_format($facSt->avg('mean'), 0))->background}} text-wrap">
+                                          <p class="badge {{status(number_format($facSt->avg('mean'), 0))->background}} fs-6 text-wrap">
                                             {{status(number_format($facSt->avg('mean'), 0))->message}}
                                           </p>
                                         </div>
@@ -376,8 +374,6 @@
                                                         </tr>
                                                     </tbody>
                                                 </table>
-                                                @else
-                                                <h3 class="text-center m-4 bg-light p-4 rounded text-uppercase"> Evaluation by chairman in selected semester is empty </h3>
                                                 @endif
                                             </div>
                                         </div>
@@ -417,24 +413,3 @@
     return $detail;
   }
 @endphp
-<script>
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-
-    /* var recEl = document.getElementById('rec');
-    var open = true;
-
-    setInterval(() => {
-      open = false;
-    }, 3000);
-    while(open)
-    {
-      setInterval(() => {
-          recEl.style.color = 'red';
-
-          setInterval(() => {
-            recEl.style.color = 'black';
-          }, 500);
-      }, 500);
-    } */
-</script> 
