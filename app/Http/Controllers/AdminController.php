@@ -118,7 +118,7 @@ class AdminController extends Controller
                 }
 
                 if($details == null)
-                    $averageFac[$det->id] = random_int(40, 80);
+                    $averageFac[$det->id] = random_int(0, 0);
                 else
                     $averageFac[$det->id] = collect($details->attributes)->avg();
                 
@@ -201,7 +201,7 @@ class AdminController extends Controller
                 }
 
                 if($details == null)
-                    $averageSt[$det->id] = 40;
+                    $averageSt[$det->id] = random_int(0, 0);
                 else
                     $averageSt[$det->id] = collect($details->attributes)->avg();
             }
@@ -251,7 +251,7 @@ class AdminController extends Controller
         $attributes = [];
 
         for($i = 0; $i < $number; $i++)
-            $attributes = array_merge($attributes, [random_int(20, 90)]);
+            $attributes = array_merge($attributes, [random_int(0, 0)]);
 
         return $attributes;
     }

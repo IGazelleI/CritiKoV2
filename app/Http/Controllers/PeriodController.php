@@ -36,6 +36,9 @@ class PeriodController extends Controller
      */
     public function store(PeriodStoreRequest $request)
     {
+        if((isset($request->beginEval) && !isset($request->endEval)) || (!isset($request->beginEval) && isset($request->endEval)))
+            return back()->with('message', 'It is recommended set both dates instead of just only one.');
+
         if(!Period::create([
             'semester' => $request->semester,
             'batch' => $request->batch,
@@ -57,8 +60,11 @@ class PeriodController extends Controller
      */
     public function update(PeriodStoreRequest $request)
     {
-        $period = Period::find($request->id);
+        if((isset($request->beginEval) && !isset($request->endEval)) || (!isset($request->beginEval) && isset($request->endEval)))
+            return back()->with('message', 'It is recommended set both dates instead of just only one.');
 
+        $period = Period::find($request->id);
+        
         if(!$period->update([
             'semester' => $request->semester,
             'batch' => $request->batch,

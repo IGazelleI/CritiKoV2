@@ -91,6 +91,7 @@ class StudentController extends Controller
             foreach($det->questions as $q)
                 $question->push($q);
         }
+        $question = $question->sortBy('q_type_id');
 
         $instructor = isset($enrollment)? Faculty::join('klases', 'faculties.user_id', 'klases.instructor')
                                             -> join('blocks', 'klases.block_id', 'blocks.id')

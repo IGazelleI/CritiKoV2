@@ -65,7 +65,7 @@
                                 @endif
                             </td>
                             <td class="d-flex justify-self-center align-self-center">
-                                @if($det->block->period->beginEval >= NOW()->format('Y-m-d'))
+                                @if(!isset($det->block->period->beginEval) || $det->block->period->beginEval > NOW()->format('Y-m-d'))
                                 <div class="dropdown">
                                     <button class="border border-0 bg-transparent" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 5%">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">

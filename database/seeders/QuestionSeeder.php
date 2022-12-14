@@ -325,6 +325,7 @@ class QuestionSeeder extends Seeder
             ],
             [
                 'q_type_id' => 2,
+                'q_category_id' => 8,
                 'sentence' => 'Any thoughts on instructor?'
             ]
         ];

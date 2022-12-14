@@ -33,6 +33,7 @@ class QuestionController extends Controller
             foreach($det->questions as $q)
                 $question->push($q);
         }
+        $question = $question->sortBy('q_type_id');
 
         return view('question.index', compact('question', 'type'));
     }

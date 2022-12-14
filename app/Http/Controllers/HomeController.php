@@ -75,11 +75,11 @@ class HomeController extends Controller
                                         else
                                             $stAvg = $stAvg == 0? collect($this->randomAttributes($cat->where('type', 4)->count()))->avg() : ($stAvg + collect($this->randomAttributes(5))->avg()) / 2;
                                     }
-                                    //get the average of the two
-                                    $avgRaw[$per->id] = number_format(($facAvg + $stAvg) / 2, 0);
+                                    //get the average of the two but only put one if there is no evaluations on other
+                                    $avgRaw[$per->id] = ($facAvg > 0 && $stAvg == 0 || $facAvg == 0 && $stAvg > 0)? ($facAvg == 0? number_format($stAvg, 0) : number_format($facAvg, 0))  : number_format(($facAvg + $stAvg) / 2, 0);
                                 }
                                 else //randomize if empty lang sa
-                                    $avgRaw[$per->id] = random_int(10, 99);
+                                    $avgRaw[$per->id] = random_int(0, 0);
                                 //merge array so it will start to 1
                                 $average = array();
                                 $average = array_merge($average, $avgRaw); 
@@ -123,35 +123,6 @@ class HomeController extends Controller
                                         -> whereDate('created_at', '>=', $p->beginEval)
                                         -> whereDate('created_at', '<=', $p->endEval)
                                         -> get();
-                    
-                    //get finished evaluations
-                    $finishedf = $evaluation->count();
-                    //get expected evaluations
-                    //get each department
-                    $dept = Department::latest('id')
-                                    -> get();
-
-                    $expectedf = 0;
-                    //count total number of expected evaluations by multiplying number of faculty to itself minus 1 excluding the evaluator
-                    foreach($dept as $det)
-                        $expectedf += $det->faculties->count() > 0? ($det->faculties->count()/*  * $det->faculties->count() - 1 */) : 0;
-
-                    $pendingf = $expectedf - $finishedf;
-                                        
-                    //chart details
-                    $evalProgress-> labels(['Pending', 'Finished'])
-                        -> dataset('Chart Name', 'doughnut', [30, 70])
-                        -> backgroundColor(['Yellow', 'Green'])/* 
-                        -> options([
-                            'maintainAspectRatio' => true,
-                            'responsive' => true,
-                            'tooltips' => [ 
-                                'callbacks' => [
-                                    'label' => ['10%', '50%']
-                                ]
-                            ]
-                        ]) */;
-
                     //student
                     //get enrollment query
                     $enrollment = Enrollment::where('period_id', $p->id)
@@ -174,8 +145,8 @@ class HomeController extends Controller
                     $pendings = $expecteds - $finisheds;
                     
                     //chart details
-                    $evalProgress-> dataset('Chart Name', 'doughnut', [20, 30])
-                        -> backgroundColor(['Red', 'Blue'])/* 
+                    $evalProgress-> dataset('Chart Name', 'doughnut', [$pendings, $finisheds])
+                        -> backgroundColor(['rgba(255, 205, 86, 0.2)', 'rgba(75, 192, 192, 0.2)'])/* 
                         -> options([
                             'maintainAspectRatio' => true,
                             'responsive' => true,
@@ -185,11 +156,33 @@ class HomeController extends Controller
                                 ]
                             ]
                         ]) */;
+                    //get finished evaluations on faculty
+                    $finishedf = $evaluation->count();
+                    //get expected evaluations
+                    //get each department
+                    $dept = Department::latest('id')
+                                    -> get();
 
-                    /* $evalProgress-> labels(['Pending', 'Finished'])
-                        -> dataset('Progess', 'doughnut', [75, 25])
-                        -> backgroundColor(['Yellow', 'Green'])
-                        -> options(['responsive' => true]); */
+                    $expectedf = 0;
+                    //count total number of expected evaluations by multiplying number of faculty to itself minus 1 excluding the evaluator
+                    foreach($dept as $det)
+                        $expectedf += $det->faculties->count() > 0? ($det->faculties->count()/*  * $det->faculties->count() - 1 */) : 0;
+
+                    $pendingf = $expectedf - $finishedf;
+                                        
+                    //chart details
+                    $evalProgress-> labels(['Pending', 'Finished'])
+                        -> dataset('Chart Name', 'doughnut', [$pendingf, $finishedf])
+                        -> backgroundColor(['Yellow', 'Green'])/* 
+                        -> options([
+                            'maintainAspectRatio' => true,
+                            'responsive' => true,
+                            'tooltips' => [ 
+                                'callbacks' => [
+                                    'label' => ['10%', '50%']
+                                ]
+                            ]
+                        ]) */;
                 }
                 else
                     $evalProgress = null;                
@@ -209,9 +202,9 @@ class HomeController extends Controller
                                             -> from('faculties')
                                             -> whereColumn('faculties.user_id', 'evaluates.evaluator');
                                     })
-                                    -> where('period_id', $period->id)
+                                    -> where('period_id', $period->id)/* 
                                     -> whereDate('created_at', '>=', $period->beginEval)
-                                    -> whereDate('created_at', '<=', $period->endEval)
+                                    -> whereDate('created_at', '<=', $period->endEval) */
                                     -> get();
                     //get finished evaluations
                     $finishedf = $evaluation->count();
@@ -423,9 +416,9 @@ class HomeController extends Controller
                             -> latest('id')
                             -> get();
 
-                $facSt = $this->getSummary($period, 3);           
+                $sumFac = $this->getSummary($period, 3);           
                 
-                return view('faculty.index', compact('period', 'faculty', 'studentChart', 'facultyChart', 'recommendation', 'facSt', 'sumSt'));
+                return view('faculty.index', compact('period', 'faculty', 'studentChart', 'facultyChart', 'recommendation', 'sumFac', 'sumSt'));
                 break;
             case 4:
                 $period = Session::get('period') == null? Period::latest('id')->get()->first() : Period::find(Session::get('period'));
@@ -499,7 +492,7 @@ class HomeController extends Controller
         $attributes = [];
 
         for($i = 0; $i < $number; $i++)
-            $attributes = array_merge($attributes, [random_int(20, 90)]);
+            $attributes = array_merge($attributes, [random_int(0, 0)]);
 
         return $attributes;
     }

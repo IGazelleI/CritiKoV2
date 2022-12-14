@@ -9,16 +9,6 @@ use Illuminate\Support\Facades\Session;
 
 class SASTController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        return view('sast.index');
-    }
-
     public function show()
     {
         $det = Sast::with('user')->where('user_id', '=', auth()->user()->id)->first();
@@ -50,6 +40,9 @@ class SASTController extends Controller
 
     public function setEvaluationDate(Request $request)
     {
+        if((isset($request->beginEval) && !isset($request->endEval)) || (!isset($request->beginEval) && isset($request->endEval)))
+            return back()->with('message', 'It is recommended set both dates instead of just only one.');
+        
         $period = Session::get('period') == null? Period::latest('id')->get()->first() : Period::find(Session::get('period'));
 
         if(!$period->update([

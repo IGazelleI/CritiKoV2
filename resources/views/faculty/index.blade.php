@@ -153,7 +153,7 @@
                             <hr/>
                         </div>
                         <div class="ps-2 pb-2">
-                            @if($period->endEval <= NOW()->format('Y-m-d'))
+                            @if(isset($period->beginEval) && $period->endEval <= NOW()->format('Y-m-d'))
                              <!-- Pills navs -->
                             <ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
                               <li class="nav-item" role="presentation">
@@ -285,17 +285,17 @@
                               </div>
                               <div class="tab-pane fade show" id="pills-faculty" role="tabpanel" aria-labelledby="tab-faculty">
                                 <div class="row d-flex justify-content-between p-2 px-4">
-                                  @if(isset($facSt))
+                                  @if(isset($sumFac))
                                   <div class="col">
                                       <div class="row">
                                         <div class="col">
-                                          <strong> Grand Mean: </strong> {{number_format($facSt->avg('mean'), 0)}}
+                                          <strong> Grand Mean: </strong> {{number_format($sumFac->avg('mean'), 0)}}
                                         </div>
                                       </div>
                                       <div class="row">
                                         <div class="col">
-                                          <p class="badge {{status(number_format($facSt->avg('mean'), 0))->background}} fs-6 text-wrap">
-                                            {{status(number_format($facSt->avg('mean'), 0))->message}}
+                                          <p class="badge {{status(number_format($sumFac->avg('mean'), 0))->background}} fs-6 text-wrap">
+                                            {{status(number_format($sumFac->avg('mean'), 0))->message}}
                                           </p>
                                         </div>
                                       </div>
@@ -315,7 +315,7 @@
                                     <div class="col">
                                         <div class="collapse" id="collapseFacDetails">
                                             <div class="card card-body">
-                                                @if(isset($facSt))
+                                                @if(isset($sumFac))
                                                 <table class="table table-hover text-start">
                                                     <thead>
                                                         <th> <strong> Question </strong> </th>
@@ -329,7 +329,7 @@
                                                           $catCount = 0;
                                                           $totalPts = 0;
                                                         @endphp
-                                                        @foreach($facSt as $det)
+                                                        @foreach($sumFac as $det)
                                                           @if($prevCat != $det->q_category_id && $prevCat != 0)
                                                             <tr>
                                                                 <td class="text-end"> <strong> Mean  </strong> </td>
@@ -347,7 +347,7 @@
                                                               <td> <strong> {{$count}}. </strong> {{$det->sentence}} </td>
                                                               <td class="text-center"> {{$det->mean}}</td>
                                                           </tr>
-                                                          @if($count == $facSt->count())
+                                                          @if($count == $sumFac->count())
                                                             @php
                                                               $catCount += 1;
                                                             @endphp

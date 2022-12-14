@@ -136,7 +136,8 @@ class FacultyController extends Controller
             foreach($det->questions as $q)
                 $question->push($q);
         }
-
+        $question = $question->sortBy('q_type_id');
+        
         $faculty = Faculty::where('department_id', auth()->user()->faculties[0]->department_id)
                         -> where('user_id', '!=', auth()->user()->id)
                         -> latest('id')
@@ -261,7 +262,7 @@ class FacultyController extends Controller
             }
 
             if($details == null)
-                $averageFac[$det->id] = random_int(40, 80);
+                $averageFac[$det->id] = random_int(0, 0);
             else
                 $averageFac[$det->id] = collect($details->attributes)->avg();
             
@@ -347,7 +348,7 @@ class FacultyController extends Controller
             }
 
             if($details == null)
-                $averageSt[$det->id] = 40;
+                $averageSt[$det->id] = random_int(0, 0);
             else
                 $averageSt[$det->id] = collect($details->attributes)->avg();
         }
@@ -385,7 +386,7 @@ class FacultyController extends Controller
         $attributes = [];
 
         for($i = 0; $i < $number; $i++)
-            $attributes = array_merge($attributes, [random_int(20, 90)]);
+            $attributes = array_merge($attributes, [random_int(0, 0)]);
 
         return $attributes;
     }
