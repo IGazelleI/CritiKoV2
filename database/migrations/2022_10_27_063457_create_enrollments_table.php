@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('enrollments', function (Blueprint $table) {
             $table->id();
+            $table->integer('type');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('user_id')->on('students');
             $table->foreignId('period_id')->constrained()->onDelete('cascade');

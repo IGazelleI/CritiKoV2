@@ -167,6 +167,9 @@ Route::middleware('auth')->group(function ()
             Route::post('/changePics/{student}', 'changeProfilePicture')->name('student.changePic');
             Route::post('/changePeriods', 'changePeriod')->name('student.changePeriod');
             Route::post('/changeSelecteds', 'changeSelected')->name('student.changeSelected');
+            Route::post('/changeEnrollType', 'changeEnrollType')->name('student.changeEnrollmentType');
+            Route::post('/changeCourse', 'changeCourse')->name('student.changeCourse');
+            Route::post('/changeYear', 'changeYear')->name('student.changeYear');
             Route::get('/enrollment', 'enrollment')->name('student.enrollment');
             Route::post('/enroll', 'enroll')->name('student.submitEnroll');
         });

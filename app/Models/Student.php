@@ -63,7 +63,7 @@ class Student extends Model
         $eval = Evaluate::create([
             'period_id' => Session::get('period'),
             'evaluator' => auth()->user()->id,
-            'evaluatee' => Session::get('selected')
+            'evaluatee' => KlaseStudent::with('klase')->find(Session::get('selected'))->klase->instructor
         ]);
 
         if(!$eval)

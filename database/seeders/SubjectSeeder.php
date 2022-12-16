@@ -407,6 +407,13 @@ class SubjectSeeder extends Seeder
                 'descriptive_title' => 'Capstone Project and Research 2 (Technopreneurship 2)',
                 'year_level' => 4,
                 'semester' => 1
+            ],
+            [
+                'course_id' => 1,
+                'code' => 'AP 5',
+                'descriptive_title' => 'Cross-Platform Script Development Technology',
+                'year_level' => 4,
+                'semester' => 1
             ]
         ];
 

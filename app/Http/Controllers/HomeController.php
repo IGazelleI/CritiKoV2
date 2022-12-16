@@ -10,6 +10,7 @@ use App\Models\QCategory;
 use App\Models\Department;
 use App\Models\Enrollment;
 use App\Charts\FacultyChart;
+use App\Models\KlaseStudent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -420,43 +421,31 @@ class HomeController extends Controller
                 
                 return view('faculty.index', compact('period', 'faculty', 'studentChart', 'facultyChart', 'recommendation', 'sumFac', 'sumSt'));
                 break;
-            case 4:
+            case 4: //Student Home
+                //get period selected
                 $period = Session::get('period') == null? Period::latest('id')->get()->first() : Period::find(Session::get('period'));
-
+                //get enrollment status
                 $enrollment = Enrollment::where('user_id', auth()->user()->id)
                                     -> where('period_id', $period->id)
                                     -> latest('id')
                                     -> get()
                                     -> first();
-                
-                $cat = QCategory::with('questions')
-                                -> where('type', 4)
-                                -> get();
-
-                $question = new Collection();
-
-                foreach($cat as $det)
-                {
-                    foreach($det->questions as $q)
-                        $question->push($q);
-                }
-        
-                $instructor = isset($enrollment)? Faculty::join('klases', 'faculties.user_id', 'klases.instructor')
-                                                    -> join('blocks', 'klases.block_id', 'blocks.id')
-                                                    -> where('faculties.department_id', auth()->user()->students[0]->enrollments[0]->course->department_id)
-                                                    -> latest('faculties.user_id')
+                //get the subjects taken
+                $subjects =  isset($enrollment)? KlaseStudent::with('klase')
+                                                    -> where('user_id', auth()->user()->id)       
+                                                    -> latest('id')
                                                     -> get() : null;
         
                 $currentSelected = Session::get('selected');
         
                 $evaluation = $currentSelected != null? Evaluate::where('evaluator', auth()->user()->id)
-                                                            -> where('evaluatee', $currentSelected)
+                                                            -> where('evaluatee', $subjects->find($currentSelected)->klase->instructor)
                                                             -> where('period_id', Session::get('period'))
                                                             -> latest('id')
                                                             -> get()
                                                             -> first() : null;
 
-                return view('student.index', compact('instructor'));
+                return view('student.index', compact('subjects', 'enrollment'));
                 break;
         }
     }

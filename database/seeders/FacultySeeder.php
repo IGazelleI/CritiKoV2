@@ -89,6 +89,10 @@ class FacultySeeder extends Seeder
             [
                 'fname' => 'Joey',
                 'lname' => 'Sayson'
+            ],
+            [
+                'fname' => 'Cherry',
+                'lname' => 'Minguito'
             ]
         ];
 

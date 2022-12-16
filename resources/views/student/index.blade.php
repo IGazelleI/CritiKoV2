@@ -2,12 +2,12 @@
     <x-general-card>
         <div class="card mask-custom">
             <div class="card-body p-4 text-dark">
-              @unless(!isset($instructor))
+              @unless(!isset($subjects) || $enrollment->status == 'Denied')
               <div class="text-center pt-3 pb-2">
                 <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-todo-list/check1.webp"
                   alt="Check" width="60">
                 <h2 class="my-4" style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif">
-                  Evaluation Status {{-- <br/><span class="text-danger"> NABUANG ANG ID SA EVALUATE IG ILIS UG INSTRUCTOR NGA DUHA SUBJECT KAY KATO RA USA PIRMI MAPILIAN</span> --}}
+                  Evaluation Status
                 </h2>
               </div>
               <table class="table mb-0">
@@ -19,32 +19,23 @@
                   </tr>
                 </thead>
                 <tbody>
-                    @php
-                      $current = 0;
-                    @endphp
-                    @foreach($instructor as $det)
+                    @foreach($subjects as $det)
                     <tr class="fw-normal">
                         <th>
                             <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
                               alt="avatar 1" style="width: 45px; height: auto"/>
 
-                            <span class="ms-2"> {{$det->fullName(1)}} </span>
+                            <span class="ms-2"> {{$det->klase->faculties->first()->fullName(1)}} </span>
                         </th>
                         <td class="align-middle">
-                            @php
-                              if($det->klases->count() > 1 && $current < $det->klases->count() - 1)
-                                $current++;
-                              else
-                                $current = 0;
-                            @endphp
-                            <span> {{$det->klases[$current]->subject->descriptive_title}} </span>
+                            <span> {{$det->klase->subject->descriptive_title}} </span>
                         </td>
                         <td class="align-middle">
                             <h6 class="mb-0">
-                                @if($instructor->where('user_id', $det->user_id)->first() != null)
-                                  @if($instructor->where('user_id', $det->user_id)->first()->evaluated->where('evaluator', auth()->user()->id)->isEmpty())
-                                    <a href="{{route('student.evaluate', ['instructor' => encrypt($det->user_id)])}}" class="btn btn-transparent shadow-none px-0"
-                                      data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Click To Evaluate {{$det->klases[$current]->subject->code}} Instructor"  
+                                @if($det->klase->faculties->first() != null)
+                                  @if($det->klase->faculties->first()->evaluated->where('evaluator', auth()->user()->id)->isEmpty())
+                                    <a href="{{route('student.evaluate', ['subject' => encrypt($det->id)])}}" class="btn btn-transparent shadow-none px-0"
+                                      data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Click To Evaluate {{$det->klase->subject->code}} Instructor"
                                     >
                                       <span class="badge bg-warning rounded-circle px-2 py-2">
                                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
@@ -54,8 +45,8 @@
                                       </span>  
                                     </a>
                                   @else
-                                    <a href="{{route('student.evaluate', ['instructor' => encrypt($det->user_id)])}}" class="btn btn-transparent shadow-none px-0"
-                                      data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Click To View Summary"  
+                                    <a href="{{route('student.evaluate', ['subject' => encrypt($det->id)])}}" class="btn btn-transparent shadow-none px-0"
+                                      data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Click To View Summary"
                                     >
                                       <span class="badge bg-success rounded-circle px-2 py-2">
                                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2" viewBox="0 0 16 16">

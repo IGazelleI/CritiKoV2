@@ -12,6 +12,7 @@
                 <thead class="bg-light">
                   <tr>
                     <th scope="col">ID Number</th>
+                    <th scope="col"> Type</th>
                     <th scope="col">Period</th>
                     <th scope="col">Name</th>
                     <th scope="col">Course</th>
@@ -24,6 +25,9 @@
                     <tr class="fw-normal">
                         <td class="align-middle">
                             <span>{{$det->user->students[0]->id_number}}</span>
+                        </td>
+                        <td class="align-middle">
+                            <span>{{$det->type == 0? 'Regular' : 'Irregular'}}</span>
                         </td>
                         <td class="align-middle">
                             <span>{{$det->period->getDescription()}}</span>

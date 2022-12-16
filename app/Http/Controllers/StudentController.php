@@ -6,6 +6,7 @@ use App\Models\Course;
 use App\Models\Period;
 use App\Models\Faculty;
 use App\Models\Student;
+use App\Models\Subject;
 use App\Models\Evaluate;
 use App\Models\Question;
 use App\Models\QCategory;
@@ -17,6 +18,9 @@ use App\Http\Requests\ChangePicRequest;
 use Illuminate\Support\Facades\Session;
 use App\Http\Requests\StudentStoreRequest;
 use App\Http\Requests\EnrollmentSubmitRequest;
+use App\Models\EnrollmentDetail;
+use App\Models\EnrollmentSubject;
+use App\Models\KlaseStudent;
 
 class StudentController extends Controller
 {
@@ -91,27 +95,27 @@ class StudentController extends Controller
             foreach($det->questions as $q)
                 $question->push($q);
         }
+        //sort the questions by type
         $question = $question->sortBy('q_type_id');
 
-        $instructor = isset($enrollment)? Faculty::join('klases', 'faculties.user_id', 'klases.instructor')
-                                            -> join('blocks', 'klases.block_id', 'blocks.id')
-                                            -> where('faculties.department_id', auth()->user()->students[0]->enrollments[0]->course->department_id)
-                                            -> latest('faculties.user_id')
-                                            -> get() : null;
+        $subjects =  isset($enrollment)? KlaseStudent::with('klase')
+                                                    -> where('user_id', auth()->user()->id)       
+                                                    -> latest('id')
+                                                    -> get() : null;
 
-        if(isset($request->instructor))
-            $request->session()->put('selected', (int) decrypt($request->instructor));
+        if(isset($request->subject))
+            $request->session()->put('selected', (int) decrypt($request->subject));
         
         $currentSelected = Session::get('selected');
-
+        //get the evaluations from the selected 
         $evaluation = $currentSelected != null? Evaluate::where('evaluator', auth()->user()->id)
-                                                        -> where('evaluatee', $currentSelected)
+                                                        -> where('evaluatee', $subjects->find($currentSelected)->klase->instructor)
                                                         -> where('period_id', Session::get('period'))
                                                         -> latest('id')
                                                         -> get()
                                                         -> first() : null;
 
-        return view('student.evaluate', compact('enrollment', 'period', 'instructor', 'question', 'evaluation'));
+        return view('student.evaluate', compact('enrollment', 'period', 'subjects', 'question', 'evaluation'));
     }
 
     public function evaluateProcess(Request $request)
@@ -131,50 +135,126 @@ class StudentController extends Controller
 
     public function changeSelected(Request $request)
     {
-        $request->session()->put('selected', (int) $request->user_id);
+        $request->session()->put('selected', (int) $request->subject);
 
         return redirect(route('student.evaluate'))->with('message', 'Selected changed.');
     }
 
     public function enrollment(Request $request)
     {
+        //get period selected
+        $period = Period::find(Session::get('period'));
+        //get enrollment type
+        $enrollType = Session::get('enrollType');
+        //get course
+        $courseSelected = Session::get('course');
+        //get year
+        $yearSelected = Session::get('year');
+
         $enrollment = Enrollment::where('user_id', auth()->user()->id)
                             -> where('period_id', Session::get('period'))
                             -> get()
                             -> first();
         
+        if(isset($enrollment))
+        {
+            $enrollType = $enrollment->type;
+            $courseSelected = $enrollment->course_id;
+            $yearSelected = $enrollment->year_level;
+        }
+        
         $det = Student::where('user_id', auth()->user()->students[0]->user_id)
                     -> get()
                     -> first();
-
+        //get all available courses
         $course = Course::orderBy('name')->get();
 
-        return view('student.enrollment', compact('det', 'course', 'enrollment'));
+        $variables = ['det', 'course', 'enrollment', 'enrollType', 'courseSelected', 'yearSelected'];
+        //get subjects from selection when irregular
+        if($enrollType == 1)
+        {
+            $subjects = Subject::where('semester', $period->semester)
+                            -> where('course_id', isset($enrollment)? $enrollment->course_id : $courseSelected)
+                            -> where('year_level', isset($enrollment)? $enrollment->year_level : $yearSelected)
+                            -> latest('id')
+                            -> get();
+
+            $variables = array_merge($variables, ['subjects']);
+
+            if(isset($enrollment))
+            {
+                $subjectsTaken = EnrollmentDetail::with('enrollSubjects')
+                                            -> where('id', $enrollment->id)
+                                            -> latest('id')
+                                            -> get()
+                                            -> first()
+                                            -> enrollSubjects;
+
+                $variables = array_merge($variables, ['subjectsTaken']);
+            }
+        }
+
+        return view('student.enrollment', compact($variables));
     }
 
-    public function enroll(EnrollmentSubmitRequest $request)
+    public function changeEnrollType(Request $request)
     {
-        if(!Enrollment::create([
+        $request->session()->put('enrollType', (int) $request->type);
+
+        return back()->with('message', 'Enrollment type changed.');
+    }
+
+    public function changeCourse(Request $request)
+    {
+        $request->session()->put('course', (int) $request->course_id);
+
+        return back()->with('message', 'Course changed.');
+    }
+
+    public function changeYear(Request $request)
+    {
+        $request->session()->put('year', (int) $request->year_level);
+
+        return back()->with('message', 'Year level changed.');
+    }
+
+    public function enroll(Request $request)
+    {
+        $enrollType = Session::get('enrollType');
+
+        $enrollment = Enrollment::create([
+            'type' => $enrollType,
             'user_id' => auth()->user()->id,
             'period_id' => Session::get('period'),
-            'course_id' => $request->course_id,
-            'year_level' => $request->year_level,
+            'course_id' => Session::get('course'),
+            'year_level' => Session::get('year'),
             'status' => 'Pending'
-        ]))
+        ]);
+
+        if(!$enrollment)
             return back()->with('message', 'Error in submitting enrollment. Please try again.');
+
+        //irregular details
+        if($enrollType == 1)
+        {
+            $enrollDetail = EnrollmentDetail::create(['enrollment_id' => $enrollment->id]);
+
+            if(!$enrollDetail)
+                return back()->with('message', 'Error in submitting enrollment detail. Please try again.');
+            //subjects taken
+            for($i = 0; $i < $request->subCount; $i++)
+            {
+                if(isset($request['subject_' . $i]))
+                {
+                    if(!EnrollmentSubject::create([
+                        'enrollment_detail_id' => $enrollDetail->id,
+                        'subject_id' => $request['subject_' . $i]
+                    ]))
+                        return back()->with('message', 'Error in creating enrollment subject. Please try again.');
+                }
+            }
+        }
 
         return back()->with('message', 'Enrollment submitted. Stay tuned for the process.');
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
-
 }
