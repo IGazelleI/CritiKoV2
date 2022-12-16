@@ -292,7 +292,7 @@ class SubjectSeeder extends Seeder
             [
                 'course_id' => 1,
                 'code' => 'PC 316',
-                'descriptive_title' => 'Systems Integration and Arcitecture 1',
+                'descriptive_title' => 'Systems Integration and Architecture 1',
                 'year_level' => 3,
                 'semester' => 1
             ],

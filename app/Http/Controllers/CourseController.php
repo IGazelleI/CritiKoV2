@@ -15,21 +15,19 @@ class CourseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($department = null, Request $request)
+    public function index($department = null)
     {
         $course = Course::where(function ($query) use ($department)
                         {
                             if($department != null)
                                 $query->where('department_id', $department);
                         })
-                        ->latest('id')
-                        ->get();
+                        -> latest('id')
+                        -> get();
 
         $department = ($department != 0)? Department::find($department) : null;
-
-        $open = $request->open;
                     
-        return view('course.index', compact('course', 'department', 'open'));
+        return view('course.index', compact('course', 'department'));
     }
 
     /**

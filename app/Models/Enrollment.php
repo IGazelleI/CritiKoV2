@@ -225,32 +225,32 @@ class Enrollment extends Model
                         $bArray = array_merge($bArray, [$det->id]);
                     
                     //get the subjects from a random block available
-                    $klases = Klase::where('block_id', random_int(0, count($bArray) - 1))
+                    $klases = Klase::where('block_id', $bArray[random_int(0, count($bArray) - 1)])
                                 -> latest('id')
                                 -> get();
                     //get the student's subjects taken
                     $subjectsTaken = EnrollmentDetail::with('enrollSubjects')
-                                -> where('id', $enroll->id)
+                                -> where('enrollment_id', $enroll->id)
                                 -> latest('id')
                                 -> get()
                                 -> first()
                                 -> enrollSubjects;
-
+                    //add the student from the classes in that block of the subjects taken
                     foreach($klases as $det)
                     {
                         //add the student to the classes with the subjects taken from that block
                         if($subjectsTaken->where('subject_id', $det->subject_id)->first() != null)
                         {
-                            $klaseStud = KlaseStudent::create([
+                            if(!KlaseStudent::create([
                                 'klase_id' => $det->id,
                                 'user_id' => $enroll->user_id
-                            ]);
-
-                            if(!$klaseStud)
+                            ]))
                                 return false;
                         }
                     }
                 }
+                else
+                    return false;
             }
         }
 

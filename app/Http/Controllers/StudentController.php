@@ -154,7 +154,7 @@ class StudentController extends Controller
         $enrollment = Enrollment::where('user_id', auth()->user()->id)
                             -> where('period_id', Session::get('period'))
                             -> get()
-                            -> first();
+                            -> first(); 
         
         if(isset($enrollment))
         {
@@ -184,7 +184,7 @@ class StudentController extends Controller
             if(isset($enrollment))
             {
                 $subjectsTaken = EnrollmentDetail::with('enrollSubjects')
-                                            -> where('id', $enrollment->id)
+                                            -> where('enrollment_id', $enrollment->id)
                                             -> latest('id')
                                             -> get()
                                             -> first()

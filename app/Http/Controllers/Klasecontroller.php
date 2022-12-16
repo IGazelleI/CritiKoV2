@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Block;
+use App\Models\BlockStudent;
 use App\Models\Klase;
 use App\Models\Period;
 use App\Models\Faculty;
+use App\Models\KlaseStudent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
@@ -19,11 +21,17 @@ class Klasecontroller extends Controller
     public function index(Block $block)
     {
         $klase = Klase::with('faculties')
+                    -> with('klaseStudents')
                     -> where('block_id', $block->id)
                     -> latest('id')
                     -> get();
 
-        return view('klase.index', compact('block', 'klase'));
+        $students = BlockStudent::with('user')
+                            -> where('block_id', $block->id)
+                            -> latest('id')
+                            -> get();
+
+        return view('klase.index', compact('block', 'klase', 'students'));
     }
 
     public function assignInstructor(Request $request)
@@ -46,6 +54,12 @@ class Klasecontroller extends Controller
         return redirect(route('klase.manage', $klase->block_id))->with('message', 'Instructor assigned.');
     }
 
+    public function classStudent(Klase $klase)
+    {
+        $students = $klase->klaseStudents;
+        
+        return view('klase.students', compact('klase', 'students'));
+    }
     /**
      * Show the form for creating a new resource.
      *

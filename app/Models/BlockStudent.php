@@ -19,9 +19,9 @@ class BlockStudent extends Model
     {
         return $this->belongsTo(Block::class, 'block_id');
     }
-    //student relationship
-    public function student()
+    //user relationship
+    public function user()
     {
-        return $this->belongsTo(Student::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

@@ -16,7 +16,10 @@ return new class extends Migration
         Schema::create('periods', function (Blueprint $table) {
             $table->id();
             $table->integer('semester');
-            $table->string('batch');
+            $table->year('begin');
+            $table->year('end');
+            $table->date('beginEnroll')->nullable();
+            $table->date('endEnroll')->nullable();
             $table->date('beginEval')->nullable();
             $table->date('endEval')->nullable();
             $table->timestamp('deleted_at')->nullable();

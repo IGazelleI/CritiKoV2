@@ -115,6 +115,8 @@ class FacultyController extends Controller
                 -> update(['status' => 'Pending'])
             )
                 return back()->with('message', 'Error in updating enrollment.');
+
+            return back()->with('message', 'There is a problem approving the enrollment. May be due to the lack of blocks currently have and an ireggular student cannot to the classes of a block.');
         }
 
         return back()->with('message', 'Enrollment ' . $status . '.');

@@ -20,9 +20,9 @@ class KlaseStudent extends Model
     {
         return $this->belongsTo(Klase::class, 'klase_id');
     }
-    //student relationship
-    public function student()
+    //user relationship
+    public function user()
     {
-        return $this->belongsTo(Student::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

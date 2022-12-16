@@ -105,6 +105,7 @@ Route::middleware('auth')->group(function ()
             Route::get('/k/{block}', 'index')->name('klase.manage');
             Route::get('/k', 'assignInstructor')->name('klase.assignInstructor');
             Route::post('/k/{klase}', 'assignInstructorProcess')->name('klase.assignInstructorProcess');
+            Route::get('k/s/{klase}', 'classStudent')->name('klase.students');
         });
     });
 
