@@ -225,7 +225,7 @@ class Enrollment extends Model
                         $bArray = array_merge($bArray, [$det->id]);
                     
                     //get the subjects from a random block available
-                    $klases = Klase::whereIn('block_id', $bArray)
+                    $klases = Klase::where('block_id', random_int(0, count($bArray) - 1))
                                 -> latest('id')
                                 -> get();
                     //get the student's subjects taken
