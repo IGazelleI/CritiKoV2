@@ -70,7 +70,7 @@
 </div>
 <!-- Add Period -->
 <div class="modal fade" id="addPerModal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">New Period</h1>
@@ -79,34 +79,72 @@
             <form action="{{route('period.store')}}" method="POST">
                 @csrf
                 <div class="modal-body">
-                        @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
+                    @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <select class="select form-select rounded-pill" name="semester">
+                                    <option selected disabled>Semester</option>
+                                    @for($i = 1; $i <= 3; $i++)
+                                        <option value="{{$i}}" >{{$i}}</option>
+                                    @endfor
+                                </select>
+                            </div>
                         </div>
-                        @endif
-                        <div class="mb-3">
-                            <select class="select form-select rounded-pill" name="semester">
-                                <option selected disabled>Semester</option>
-                                @for($i = 1; $i <= 3; $i++)
-                                    <option value="{{$i}}" >{{$i}}</option>
-                                @endfor
-                            </select>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col">
+                            <h5> Batch </h5>
                         </div>
-                        <div class="mb-3">
-                            <label for="name" class="col-form-label ms-2">Batch</label>
-                            <input type="text" class="form-control rounded-pill" name="batch">
-                        </div>
-                        <div class="mb-3">
+                    </div>
+                    <div class="row">
+                        <div class="col">
                             <label for="description" class="col-form-label ms-2">Begin</label>
-                            <input type="date" name="beginEval" id="beginEval" class="form-control rounded-pill"/>
-
-                            <label for="description" class="col-form-label ms-2">End</label>
-                            <input type="date" name="endEval" id="endEval" class="form-control rounded-pill"/>
+                            <input type="date" name="begin" id="begin" class="form-control rounded-pill begin"/>
                         </div>
+                        <div class="col">
+                            <label for="description" class="col-form-label ms-2">End</label>
+                            <input type="date" name="end" id="end" class="form-control rounded-pill end"/>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col">
+                            <h5> Enrollment </h5>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="description" class="col-form-label ms-2">Begin</label>
+                            <input type="date" name="beginEnroll" id="beginEnroll" class="form-control rounded-pill beginEnroll"/>
+                        </div>
+                        <div class="col">
+                            <label for="description" class="col-form-label ms-2">End</label>
+                            <input type="date" name="endEnroll" id="endEnroll" class="form-control rounded-pill endEnroll"/>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col">
+                            <h5> Evaluation </h5>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="description" class="col-form-label ms-2">Begin</label>
+                            <input type="date" name="beginEval" id="beginEval" class="form-control rounded-pill beginEval"/>
+                        </div>
+                        <div class="col">
+                            <label for="description" class="col-form-label ms-2">End</label>
+                            <input type="date" name="endEval" id="endEval" class="form-control rounded-pill endEval"/>
+                        </div>
+                    </div>  
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary rounded-pill" data-bs-target="#periodModal" data-bs-toggle="modal">Cancel</button>
@@ -119,7 +157,7 @@
 <!-- Add Period -->
 <!-- Edit Period -->
 <div class="modal fade" id="editPerModal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Update Period</h1>
@@ -129,26 +167,64 @@
                 @csrf
                 @method('PUT')
                 <div class="modal-body">
-                        <input type="hidden" class="id" name="id"/>
-                        <div class="mb-3">
-                            <select class="select form-select rounded-pill semester" name="semester">
-                                <option selected disabled>Semester</option>
-                                @for($i = 1; $i <= 3; $i++)
-                                    <option value="{{$i}}" >{{$i}}</option>
-                                @endfor
-                            </select>
+                    <input type="hidden" class="id" name="id"/>
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <select class="select form-select rounded-pill" name="semester">
+                                    <option selected disabled>Semester</option>
+                                    @for($i = 1; $i <= 3; $i++)
+                                        <option value="{{$i}}" >{{$i}}</option>
+                                    @endfor
+                                </select>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="name" class="col-form-label ms-2">Batch</label>
-                            <input type="text" class="form-control rounded-pill batch" name="batch">
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col">
+                            <h5> Batch </h5>
                         </div>
-                        <div class="mb-3">
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="description" class="col-form-label ms-2">Begin</label>
+                            <input type="date" name="begin" id="begin" class="form-control rounded-pill begin"/>
+                        </div>
+                        <div class="col">
+                            <label for="description" class="col-form-label ms-2">End</label>
+                            <input type="date" name="end" id="end" class="form-control rounded-pill end"/>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col">
+                            <h5> Enrollment </h5>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="description" class="col-form-label ms-2">Begin</label>
+                            <input type="date" name="beginEnroll" id="beginEnroll" class="form-control rounded-pill beginEnroll"/>
+                        </div>
+                        <div class="col">
+                            <label for="description" class="col-form-label ms-2">End</label>
+                            <input type="date" name="endEnroll" id="endEnroll" class="form-control rounded-pill endEnroll"/>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col">
+                            <h5> Evaluation </h5>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
                             <label for="description" class="col-form-label ms-2">Begin</label>
                             <input type="date" name="beginEval" id="beginEval" class="form-control rounded-pill beginEval"/>
-
+                        </div>
+                        <div class="col">
                             <label for="description" class="col-form-label ms-2">End</label>
                             <input type="date" name="endEval" id="endEval" class="form-control rounded-pill endEval"/>
                         </div>
+                    </div>  
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary rounded-pill" data-bs-target="#periodModal" data-bs-toggle="modal">Cancel</button>

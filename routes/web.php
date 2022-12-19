@@ -46,11 +46,16 @@ Route::middleware('auth')->group(function ()
 
     Route::middleware('user-access:admin')->group(function ()
     {
-        Route::get('/a/report', [AdminController::class, 'report'])->name('admin.report');
-        Route::post('/a/prevLimit', [AdminController::class, 'changePrevLimit'])->name('admin.changePrevLimit');
+        Route::controller(App\Http\Controllers\AdminController::class)->group(function ()
+        {
+            Route::get('/a/report', 'report')->name('admin.report');
+            Route::post('/a/prevLimit', 'changePrevLimit')->name('admin.changePrevLimit');
+            Route::get('/summary', 'summary')->name('admin.summary');
+            Route::post('/s/search', 'summarySearch')->name('admin.summarySearch');
+            Route::get('/summary/{faculty}', 'summaryReport')->name('admin.summaryReport');
+        });
         Route::controller(App\Http\Controllers\UserController::class)->group(function ()
         {
-            Route::get('/asd', 's')->name('s');
             Route::get('/u/m/{type?}', 'manage')->name('user.manage');
             Route::post('/u/create', 'create')->name('user.add');
             Route::get('/assign/{department}', 'assignDean')->name('user.assignDean');

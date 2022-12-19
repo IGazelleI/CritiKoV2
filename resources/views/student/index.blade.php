@@ -24,15 +24,15 @@
                         <th>
                             <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
                               alt="avatar 1" style="width: 45px; height: auto"/>
-
-                            <span class="ms-2"> {{$det->klase->faculties->first()->fullName(1)}} </span>
+                            
+                            <span class="fw-bold ms-2"> {{isset($det->klase->instructor)? $det->klase->faculties->first()->fullName(1) : 'TBA'}} </span>
                         </th>
                         <td class="align-middle">
                             <span> {{$det->klase->subject->descriptive_title}} </span>
                         </td>
                         <td class="align-middle">
                             <h6 class="mb-0">
-                                @if($det->klase->faculties->first() != null)
+                                @if($det->klase->instructor != null)
                                   @if($det->klase->faculties->first()->evaluated->where('evaluator', auth()->user()->id)->isEmpty())
                                     <a href="{{route('student.evaluate', ['subject' => encrypt($det->id)])}}" class="btn btn-transparent shadow-none px-0"
                                       data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Click To Evaluate {{$det->klase->subject->code}} Instructor"
@@ -55,6 +55,12 @@
                                       </span>
                                     </a>
                                   @endif
+                                @else
+                                  <span class="badge bg-danger rounded-circle px-2 py-2" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="No Instructor Assigned">
+                                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation" viewBox="0 0 16 16">
+                                        <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.553.553 0 0 1-1.1 0L7.1 4.995z"/>
+                                      </svg>
+                                  </span>
                                 @endif
                           </h6>
                         </td>

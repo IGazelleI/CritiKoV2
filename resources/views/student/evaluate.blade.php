@@ -21,9 +21,9 @@
                                     <option selected disabled> -Select Instructor- </option>
                                     @unless ($subjects->isEmpty())
                                         @foreach ($subjects as $det)
-                                                <option value="{{$det->id}}" {{selected() == $det->id? 'selected' : ''}}>
-                                                    ({{$det->klase->subject->descriptive_title}}) - {{isset($det->klase->instructor)? $det->klase->faculties->first()->fullName(1) : 'TBA'}}
-                                                </option>
+                                            <option value="{{$det->id}}" {{selected() == $det->id? 'selected' : ''}}>
+                                                ({{$det->klase->subject->descriptive_title}}) - {{isset($det->klase->instructor)? $det->klase->faculties->first()->fullName(1) : 'TBA'}}
+                                            </option>
                                         @endforeach
                                     @else
                                         <option selected disabled> Current not enrolled in any subjects. </option>

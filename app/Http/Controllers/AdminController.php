@@ -220,6 +220,43 @@ class AdminController extends Controller
 
         return back()->with('message', 'Limit in viewing previous semester changed.');
     }
+    public function summary(Request $request)
+    {
+        $search = $request->search;
+        $variables = ['search'];
+
+        if(isset($search))
+        {
+            $faculty = Faculty::with('department')
+                        -> where('fname', 'like', '%' . $search . '%')
+                        -> orwhere('mname', 'like', '%' . $search . '%')
+                        -> orwhere('lname', 'like', '%' . $search . '%')
+                        -> latest('id')
+                        -> get();
+
+            $variables = array_merge($variables, ['faculty']);
+        }
+
+        return view('admin.summary', compact($variables));
+    }
+    public function summarySearch(Request $request)
+    {
+        $search = $request->search;
+
+        return redirect(route('admin.summary', ['search' => $search]));
+    }
+    public function summaryReport(Request $request)
+    {
+        $faculty = Faculty::find($request->faculty);
+
+        $periods = Period::latest('id')->get();
+        $perSelected = $request->period;
+
+        $summaryS = $this->getSummary(isset($request->period)? $periods->find($perSelected) : $periods->first(), 4, $faculty);
+        $summaryF = $this->getSummary(isset($request->period)? $periods->find($perSelected) : $periods->first(), 3, $faculty);
+
+        return view('admin.summaryReport', compact('faculty', 'periods', 'perSelected', 'summaryS', 'summaryF'));
+    }
     //local methods
     function colors($i)
     {
@@ -255,7 +292,6 @@ class AdminController extends Controller
 
         return $attributes;
     }
-    
     function getDetails($period, $type, $faculty)
     {
         if(!isset($period->beginEval))
@@ -375,5 +411,78 @@ class AdminController extends Controller
         $details->lowestAttribute = $lowestAttribute;
         
         return $details;
+    }
+    function getSummary($period, $type, $faculty)
+    {
+        if(!isset($period->beginEval))
+            return null;
+        //get all categories
+        $category = QCategory::where('type', $type)
+                            -> latest('id')
+                            -> get();
+
+        $evaluation = new Collection();
+        //get evaluations of user
+        if($type == 3)
+        {
+            $evaluation = Evaluate::where('evaluatee', $faculty->user_id)
+                            -> where('evaluator', $faculty->department->faculties->where('isChairman', true)->first()->user_id)
+                            -> whereDate('created_at', '>=', $period->beginEval)
+                            -> whereDate('created_at', '<=', $period->endEval)
+                            -> latest('id')
+                            -> get();
+        }
+        else
+        {
+            //get students enrolled in selected semester
+            $enrolled = Enrollment::where('period_id', $period->id)
+                                -> where('status', 'Approved')
+                                -> latest('id')
+                                -> get();
+            
+            $students = [];
+
+            if($enrolled->isEmpty())
+                return null;
+            else
+            {
+                foreach($enrolled as $det)
+                    $students = array_merge($students, [$det->user_id]);
+            }
+            
+            $evaluation = Evaluate::with('evalDetails')
+                            -> where('evaluatee', $faculty->user_id)
+                            -> whereIn('evaluator', $students)
+                            -> whereDate('created_at', '>=', $period->beginEval)
+                            -> whereDate('created_at', '<=', $period->endEval)
+                            -> latest('id')
+                            -> get();
+        }
+        
+        $summary = new Collection();
+        //get the questions
+        if($evaluation->isEmpty())
+            return null;
+        else
+        {
+            foreach($category as $det)
+            {
+                foreach($det->questions as $q)
+                    $summary->push($q);
+            } 
+
+            foreach($evaluation as $det)
+            {
+                foreach($det->evalDetails as $detail)
+                {
+                    if($detail->question->q_type_id == 1)
+                        $summary->where('id', $detail->question_id)->first()->mean = isset($summary->where('id', $detail->question_id)->first()->mean)? ($summary->where('id', $detail->question_id)->first()->mean + $detail->answer) / 2 : $detail->answer;
+                    else
+                        $summary->where('id', $detail->question_id)->first()->message = isset($summary->where('id', $detail->question_id)->first()->message)?  $summary->where('id', $detail->question_id)->first()->message = array_merge( $summary->where('id', $detail->question_id)->first()->message, [$detail->answer]) : [$detail->answer];
+                }
+            }
+        }
+
+        return $summary;
     }
 }

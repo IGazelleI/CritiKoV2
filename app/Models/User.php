@@ -134,8 +134,8 @@ class User extends Authenticatable
         return $this->hasMany(BlockStudent::class, 'user_id');
     }
     //klase student relationship
-    public function klaseStudent()
+    public function klaseStudents()
     {
-        return $this->belongsTo(KlaseStudent::class, 'id');
+        return $this->hasMany(KlaseStudent::class, 'user_id');
     }
 }

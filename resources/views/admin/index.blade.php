@@ -2,10 +2,10 @@
     <x-medium-card>
         <div class="container">
             <div class="row">
-                <div class="col">
+                <div class="col shadow-sm">
                     <div class="row">
-                        <div class="col text-center">
-                            {{-- <h4> Improvement Rate </h4> --}}
+                        <div class="col mt-2 text-secondary ms-5">
+                            <strong> Faculty Performance </strong>
                         </div>
                     </div>
                     <div class="row">
@@ -15,16 +15,18 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-4 pt-5">
-                    @if(isset($evalProgress))
+                <div class="col-4 shadow-sm">
+                    <div class="row mt-2 text-secondary">
+                        <strong> Evaluation Progress </strong>
+                        <span style="font-size: 10px"> {{$p->getDescription()}} </span>
+                    </div>
                     <div class="row">
+                        @if(isset($evalProgress))
                         <div class="col">
                             {!! $evalProgress->container() !!}
                             {!! $evalProgress->script() !!}
                         </div>
-                    </div>
-                    @else
-                    <div class="row">
+                        @else
                         <div class="col bg-light text-center p-3 rounded">
                             <h3 class="text-uppercase"> Evaluation date not set </h3>
                             <p class="text-secondary" style="font-size: 16px"> {{$p->getDescription()}} </p>
@@ -38,8 +40,8 @@
                                 Set
                             </button>
                         </div>
+                        @endif
                     </div>
-                    @endif
                 </div>
             </div>
             <div class="row fw-bold p-3 mt-2 rounded">

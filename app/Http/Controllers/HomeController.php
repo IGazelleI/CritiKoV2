@@ -127,26 +127,31 @@ class HomeController extends Controller
                     //student
                     //get enrollment query
                     $enrollment = Enrollment::where('period_id', $p->id)
+                                        -> where('status', 'Approved')
                                         -> latest('id')
                                         -> get();
-
+                    $totalEnrollees = $enrollment->count();
                     //number of finished evaluations
                     $finisheds = 0;
                     
                     foreach($enrollment as $det)
-                        $finisheds += $det->user->evaluates->count();
-
-                    //number of evaluations when completed
-                    $expecteds = 0;
-
-                    foreach($enrollment as $det)
-                        $expecteds += $det->user->klaseStudent->klase->block->klases->count();
+                    {
+                        $finisheds += 1;
+                        foreach($det->user->klaseStudents as $detail)
+                        {
+                            if($det->user->evaluates->where('evaluatee', $detail->klase->instructor)->first() == null)
+                            {
+                                $finisheds -= 1;
+                                break;
+                            }
+                        }
+                    }
                     
                     //pending
-                    $pendings = $expecteds - $finisheds;
+                    $pendings = $totalEnrollees - $finisheds;
                     
                     //chart details
-                    $evalProgress-> dataset('Chart Name', 'doughnut', [$pendings, $finisheds])
+                    $evalProgress-> dataset('Student', 'bar', [$pendings, $finisheds])
                         -> backgroundColor(['rgba(255, 205, 86, 0.2)', 'rgba(75, 192, 192, 0.2)'])/* 
                         -> options([
                             'maintainAspectRatio' => true,
@@ -173,7 +178,7 @@ class HomeController extends Controller
                                         
                     //chart details
                     $evalProgress-> labels(['Pending', 'Finished'])
-                        -> dataset('Chart Name', 'doughnut', [$pendingf, $finishedf])
+                        -> dataset('Faculty', 'bar', [$pendingf, $finishedf])
                         -> backgroundColor(['Yellow', 'Green'])/* 
                         -> options([
                             'maintainAspectRatio' => true,
@@ -240,6 +245,7 @@ class HomeController extends Controller
                     //get enrollment query
                     $enrollment = Enrollment::with('user')
                                         -> where('period_id', $period->id)
+                                        -> where('status', 'Approved')
                                         -> latest('id')
                                         -> get();
                     //total enrollee
@@ -248,16 +254,20 @@ class HomeController extends Controller
                     $finisheds = 0;
                     
                     foreach($enrollment as $det)
-                        $finisheds += $det->user->evaluates->count();
-
-                    //number of evaluations when completed
-                    $expecteds = 0;
-
-                    foreach($enrollment as $det)
-                        $expecteds += $det->user->klaseStudent->klase->block->klases->count();
+                    {
+                        $finisheds += 1;
+                        foreach($det->user->klaseStudents as $detail)
+                        {
+                            if($det->user->evaluates->where('evaluatee', $detail->klase->instructor)->first() == null)
+                            {
+                                $finisheds -= 1;
+                                break;
+                            }
+                        }
+                    }
                     
                     //pending
-                    $pendings = $expecteds - $finisheds;
+                    $pendings = $totalEnrollees - $finisheds;
                     
                     //chart details
                     $chartStudent-> labels(['Pending', 'Finished'])
@@ -272,11 +282,13 @@ class HomeController extends Controller
                                 ]
                             ]
                         ]) */;
+                    
+                    $variables = ['period', 'chartFaculty', 'finishedf', 'pendingf', 'expectedf', 'chartStudent', 'totalEnrollees', 'finisheds', 'pendings'];
                 }
                 else
                     return view('sast.index', compact('period'));
 
-                return view('sast.index', compact('period', 'chartFaculty', 'finishedf', 'pendingf', 'expectedf', 'chartStudent', 'totalEnrollees', 'finisheds', 'pendings', 'expecteds'));
+                return view('sast.index', compact($variables));
                 break;
             case 3: //Faculty Home 
                 //previous limit
@@ -634,6 +646,7 @@ class HomeController extends Controller
         {
             //get students enrolled in selected semester
             $enrolled = Enrollment::where('period_id', $period->id)
+                                -> where('status', 'Approved')
                                 -> latest('id')
                                 -> get();
             
@@ -664,7 +677,7 @@ class HomeController extends Controller
         {
             foreach($category as $det)
             {
-                foreach($det->questions->where('q_type_id', 1) as $q)
+                foreach($det->questions as $q)
                     $summary->push($q);
             } 
 
@@ -673,7 +686,9 @@ class HomeController extends Controller
                 foreach($det->evalDetails as $detail)
                 {
                     if($detail->question->q_type_id == 1)
-                        $summary->where('id', $detail->question_id)->first()->mean = isset($summary->where('id', $detail->question_id)->first()->mean)? ($summary->where('id', $detail->question_id)->first()->mean + $detail->answer) / 2 : $detail->answer;
+                        $summary->where('id', $detail->question_id) ->first()->mean = isset($summary->where('id', $detail->question_id)->first()->mean)? ($summary->where('id', $detail->question_id)->first()->mean + $detail->answer) / 2 : $detail->answer;
+                    else
+                        $summary->where('id', $detail->question_id)->first()->message = isset($summary->where('id', $detail->question_id)->first()->message)?  $summary->where('id', $detail->question_id)->first()->message = array_merge( $summary->where('id', $detail->question_id)->first()->message, [$detail->answer]) : [$detail->answer];
                 }
             }
         }

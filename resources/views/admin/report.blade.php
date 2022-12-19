@@ -88,7 +88,7 @@
                     <div class="col">
                         <div class="row mt-3 mb-2">
                             <div class="col">
-                                {{$det->fullName(true)}} &nbsp;
+                                {{$det->fullName(true)}}
                                 @if($prevAvgFac[$det->id] > 0 && $prevAvgSt[$det->id] > 0)
                                     @if(getImprovement(($averageFac[$det->id] + $averageSt[$det->id]) / 2, ($prevAvgFac[$det->id] + $prevAvgSt[$det->id]) / 2) > 0)
                                     <span class="badge bg-success text-wrap rounded-pill">
@@ -111,7 +111,10 @@
                         <div class="row">
                             <div class="col">
                                 <a href="#collapse{{$det->id}}" class="text-decoration-underline" data-bs-toggle="collapse" aria-expanded="true" aria-controls="collapseOne">
-                                    Show Details
+                                    Show Attributes
+                                </a> &nbsp;
+                                <a href="#collapse{{$det->id}}" class="text-decoration-underline" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Click To Show Detailed Report on {{$det->fullName(true)}}">
+                                    Summary
                                 </a>
                             </div>
                         </div>

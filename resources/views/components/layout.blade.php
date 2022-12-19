@@ -10,9 +10,20 @@
         <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/5.0.0/mdb.min.css" rel="stylesheet"/>
         <link href="{{asset('assets/css/main.css')}}" rel="stylesheet"/>
         <style>
-            .dispppear button:hover
-            {
-                display:none;
+            @media print{
+                body * {
+                    visibility: hidden;
+                }
+
+                .print-container, .print-container *{
+                    visibility: visible;
+                }
+
+                .print-container{
+                    position: absolute;
+                    left: 0px;
+                    top: 0px;
+                }
             }
         </style>
     </head>

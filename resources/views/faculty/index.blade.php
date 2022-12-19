@@ -56,7 +56,7 @@
                     </div>
                 </div>
             </div>
-            @if(auth()->user()->faculties[0]->isChairman)
+            @if(auth()->user()->faculties->first()->isChairman)
             <div class="col-6">
                 <div class="card mask-custom">
                     <div class="card-body p-4 text-dark">
@@ -197,7 +197,7 @@
                                       </div>
                                       <div class="row">
                                         <div class="col">
-                                          <p class="badge {{status(number_format($sumSt->avg('mean'), 0))->background}} text-wrap">
+                                          <p class="badge {{status(number_format($sumSt->avg('mean'), 0))->background}} fs-6 text-wrap">
                                             {{status(number_format($sumSt->avg('mean'), 0))->message}}
                                           </p>
                                         </div>
@@ -232,7 +232,7 @@
                                                           $catCount = 0;
                                                           $totalPts = 0;
                                                         @endphp
-                                                        @foreach($sumSt as $det)
+                                                        @foreach($sumSt->where('q_type_id', 1) as $det)
                                                           @if($prevCat != $det->q_category_id && $prevCat != 0)
                                                             <tr>
                                                                 <td class="text-end"> <strong> Mean  </strong> </td>
@@ -247,16 +247,16 @@
                                                             $catPts += $det->mean;
                                                           @endphp
                                                           <tr>
-                                                              <td> <strong> {{$count}}. </strong> {{$det->sentence}} </td>
-                                                              <td class="text-center"> {{$det->mean}}</td>
+                                                              <td> <strong> {{$count}}. </strong> {{ucfirst($det->sentence)}} </td>
+                                                              <td class="text-center"> {{number_format($det->mean, 1)}}</td>
                                                           </tr>
-                                                          @if($count == $sumSt->count())
+                                                          @if($count == $sumSt->where('q_type_id', 1)->count())
                                                             @php
                                                               $catCount += 1;
                                                             @endphp
                                                             {{-- Last Row Will be shown as it is not counted in loop --}}
                                                             <tr>
-                                                              <td class="text-end"> <strong> Mean  </strong> </td>
+                                                              <td class="text-end"> <strong>  Mean  </strong> </td>
                                                               <td> <strong> {{number_format($catPts / $catCount, 1)}} </strong> </td>
                                                             </tr>
                                                             @php
@@ -277,6 +277,43 @@
                                                         </tr>
                                                     </tbody>
                                                 </table>
+                                                <div class="row">
+                                                  <div class="col">
+                                                      <table class="table table-hover text-start">
+                                                          <thead>
+                                                              <th colspan="2"> <strong> Qualititative </strong> </th>
+                                                          </thead>
+                                                          <tbody>
+                                                              @php
+                                                                  $count = 1;
+                                                              @endphp
+                                                              @foreach($sumSt->where('q_type_id', 2) as $det)
+                                                                  <tr>
+                                                                      <td class="col-3"> <strong> {{$count}}. </strong> {{ucfirst($det->sentence)}} </td>
+                                                                      <td>
+                                                                          @php
+                                                                              $mesCount = 1;
+                                                                          @endphp
+                                                                          @foreach($det->message as $message)
+                                                                              @if($mesCount < count($det->message))
+                                                                                  {{ucfirst($message)}}, 
+                                                                              @else
+                                                                                  {{ucfirst($message)}}
+                                                                              @endif
+                                                                              @php
+                                                                                  $mesCount += 1;
+                                                                              @endphp
+                                                                          @endforeach
+                                                                      </td>
+                                                                  </tr>
+                                                                  @php
+                                                                      $count += 1;
+                                                                  @endphp
+                                                              @endforeach
+                                                          </tbody>
+                                                      </table>
+                                                  </div>
+                                              </div>
                                                 @endif
                                             </div>
                                         </div>
@@ -318,7 +355,7 @@
                                                 @if(isset($sumFac))
                                                 <table class="table table-hover text-start">
                                                     <thead>
-                                                        <th> <strong> Question </strong> </th>
+                                                        <th> <strong> Quantitative </strong> </th>
                                                         <th> <strong> Mean </strong> </th>
                                                     </thead>
                                                     <tbody>
@@ -329,7 +366,7 @@
                                                           $catCount = 0;
                                                           $totalPts = 0;
                                                         @endphp
-                                                        @foreach($sumFac as $det)
+                                                        @foreach($sumFac->where('q_type_id', 1) as $det)
                                                           @if($prevCat != $det->q_category_id && $prevCat != 0)
                                                             <tr>
                                                                 <td class="text-end"> <strong> Mean  </strong> </td>
@@ -344,16 +381,16 @@
                                                             $catPts += $det->mean;
                                                           @endphp
                                                           <tr>
-                                                              <td> <strong> {{$count}}. </strong> {{$det->sentence}} </td>
-                                                              <td class="text-center"> {{$det->mean}}</td>
+                                                              <td> <strong> {{$count}}. </strong> {{ucfirst($det->sentence)}} </td>
+                                                              <td class="text-center"> {{number_format($det->mean, 1)}}</td>
                                                           </tr>
-                                                          @if($count == $sumFac->count())
+                                                          @if($count == $sumFac->where('q_type_id', 1)->count())
                                                             @php
                                                               $catCount += 1;
                                                             @endphp
                                                             {{-- Last Row Will be shown as it is not counted in loop --}}
                                                             <tr>
-                                                              <td class="text-end"> <strong> Mean  </strong> </td>
+                                                              <td class="text-end"> <strong>  Mean  </strong> </td>
                                                               <td> <strong> {{number_format($catPts / $catCount, 1)}} </strong> </td>
                                                             </tr>
                                                             @php
@@ -374,6 +411,43 @@
                                                         </tr>
                                                     </tbody>
                                                 </table>
+                                                <div class="row">
+                                                  <div class="col">
+                                                      <table class="table table-hover text-start">
+                                                          <thead>
+                                                              <th colspan="2"> <strong> Qualititative </strong> </th>
+                                                          </thead>
+                                                          <tbody>
+                                                              @php
+                                                                  $count = 1;
+                                                              @endphp
+                                                              @foreach($sumFac->where('q_type_id', 2) as $det)
+                                                                  <tr>
+                                                                      <td class="col-3"> <strong> {{$count}}. </strong> {{ucfirst($det->sentence)}} </td>
+                                                                      <td>
+                                                                          @php
+                                                                              $mesCount = 1;
+                                                                          @endphp
+                                                                          @foreach($det->message as $message)
+                                                                              @if($mesCount < count($det->message))
+                                                                                  {{ucfirst($message)}}, 
+                                                                              @else
+                                                                                  {{ucfirst($message)}}
+                                                                              @endif
+                                                                              @php
+                                                                                  $mesCount += 1;
+                                                                              @endphp
+                                                                          @endforeach
+                                                                      </td>
+                                                                  </tr>
+                                                                  @php
+                                                                      $count += 1;
+                                                                  @endphp
+                                                              @endforeach
+                                                          </tbody>
+                                                      </table>
+                                                  </div>
+                                              </div>
                                                 @endif
                                             </div>
                                         </div>

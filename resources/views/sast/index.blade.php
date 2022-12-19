@@ -85,10 +85,10 @@
                                     </div>
                                 </div>
                                 <div class="tab-pane fade" id="pills-student" role="tabpanel" aria-labelledby="tab-student">
-                                    @if($expecteds == 0)
+                                    @if($totalEnrollees == 0)
                                     <div class="row">
                                         <div class="col">
-                                            <h3 class="text-center m-4 bg-light p-4 rounded text-uppercase"> Current semmester has no enrollees. </h3>
+                                            <h3 class="text-center m-4 bg-light p-4 rounded text-uppercase"> Current semester has no enrollees. </h3>
                                         </div>
                                     </div>
                                     @else
@@ -98,12 +98,12 @@
                                         </div>
                                         <div class="col {{-- d-flex align-items-center --}}align-self-center p-3">
                                             <div class="mb-2 text-center" style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif">
-                                                <h4> Progress {{$expecteds == 0? 0 : number_format(($finisheds / $expecteds) * 100, 0)}}% </h4>
+                                                <h4> Progress {{$totalEnrollees == 0? 0 : number_format(($finisheds / $totalEnrollees) * 100, 0)}}% </h4>
                                                 <div class="progress h-100 rounded-pill">
                                                     <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" 
-                                                        aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width: {{$expecteds == 0? 0 : number_format(($finisheds / $expecteds) * 100, 0)}}%"
+                                                        aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width: {{$totalEnrollees == 0? 0 : number_format(($finisheds / $totalEnrollees) * 100, 0)}}%"
                                                     >
-                                                        {{$expecteds == 0? 0 : number_format(($finisheds / $expecteds) * 100, 0)}}%
+                                                        {{$totalEnrollees == 0? 0 : number_format(($finisheds / $totalEnrollees) * 100, 0)}}%
                                                     </div>
                                                 </div>
                                             </div>
@@ -119,10 +119,6 @@
                                                 <li class="list-group-item d-flex justify-content-between align-items-center p-3 border-0">
                                                     Pending
                                                     <span class="badge bg-warning rounded-pill">{{number_format($pendings)}}</span>
-                                                </li>
-                                                <li class="list-group-item d-flex justify-content-between align-items-center p-3 border-0">
-                                                    Expected Total Evaluation
-                                                    <span class="badge bg-primary rounded-pill">{{number_format($expecteds)}}</span>
                                                 </li>
                                             </ul>
                                         </div>
