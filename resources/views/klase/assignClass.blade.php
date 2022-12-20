@@ -36,6 +36,30 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row d-flex justify-content-center mx-4 my-2">
+                        <div class="col-8">
+                            <label class="ms-2" for="day"> Day </label>
+                            <select class="form-select rounded-pill" name="day">
+                                <option disabled selected> -Select- </option>
+                                <option value="Monday"> Monday </option>
+                                <option value="Tuesday"> Tuesday </option>
+                                <option value="Wednesday"> Wednesday </option>
+                                <option value="Thursday"> Thursday </option>
+                                <option value="Friday"> Friday </option>
+                                <option value="Saturday"> Saturday </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row d-flex justify-content-center mx-4 my-2">
+                        <div class="col-4">
+                            <label class="ms-2" for="begin"> Begin </label>
+                            <input type="time" class="form-control rounded-pill" name="begin"/>
+                        </div>
+                        <div class="col-4">
+                            <label class="ms-2" for="end"> End </label>
+                            <input type="time" class="form-control rounded-pill" name="end"/>
+                        </div>
+                    </div>
                     <div class="row d-flex justify-content-end m-4">
                         <div class="col-2 mx-4 me-5">
                             <!-- Button trigger modal -->

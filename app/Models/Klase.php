@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Klase extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'day',
@@ -18,6 +19,11 @@ class Klase extends Model
         'instructor',
         'status'
     ];
+    
+    public function schedule()
+    {
+        return substr($this->day, 0, 3) . ' @ ' . date('g:i A', strtotime($this->begin)) . '-' . date('g:i A', strtotime($this->end));
+    }
     //subject relationshio
     public function subject()
     {

@@ -33,7 +33,10 @@
                             <button class="btn btn-primary rounded-pill" data-bs-target="#editPerModal" data-bs-toggle="modal"
                                 data-bs-id="{{$p->id}}"
                                 data-bs-semester="{{$p->semester}}"
-                                data-bs-batch="{{$p->batch}}"
+                                data-bs-begin="{{$p->begin}}"
+                                data-bs-end="{{$p->end}}"
+                                data-bs-beginEnroll="{{$p->beginEnroll}}"
+                                data-bs-endEnroll="{{$p->endEnroll}}"
                                 data-bs-beginEval="{{$p->beginEval}}"
                                 data-bs-endEval="{{$p->endEval}}"
                             >

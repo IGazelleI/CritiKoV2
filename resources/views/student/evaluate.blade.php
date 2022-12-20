@@ -22,7 +22,7 @@
                                     @unless ($subjects->isEmpty())
                                         @foreach ($subjects as $det)
                                             <option value="{{$det->id}}" {{selected() == $det->id? 'selected' : ''}}>
-                                                ({{$det->klase->subject->descriptive_title}}) - {{isset($det->klase->instructor)? $det->klase->faculties->first()->fullName(1) : 'TBA'}}
+                                                ({{$det->klase->subject->descriptive_title}}) - {{isset($det->klase->instructor)? $det->klase->faculties->first()->fullName(true) : 'TBA'}}
                                             </option>
                                         @endforeach
                                     @else
@@ -35,6 +35,7 @@
                 </header>
                 <form action="{{route('student.evaluateProcess')}}" method="POST">
                     @csrf
+                    <input type="hidden" name="subject_id" value="{{$subject_id}}"/>
                     <input type="hidden" name="totalQuestion" id="totalQuestion" value="{{$question->count()}}"/>
                     <div class="row rounded border border-dark bg-info d-flex justify-content-center align-items-center my-3">
                         <div class="col-3 text-center p-2">
@@ -53,7 +54,7 @@
                             <div class="row px-5 py-2">
                                 <div class="col">
                                     @if($subjects->where('id', selected())->first() != null && isset($subjects->where('id', selected())->first()->klase->instructor))
-                                    <img src="{{$subjects->where('id', selected())->first()->klase->faculties->first()->evaluated->where('evaluator', auth()->user()->id)->isEmpty()? asset('images/pending.png') : asset('images/finished.png')}}" 
+                                    <img src="{{$subjects->where('id', selected())->first()->klase->faculties->first()->evaluated->where('evaluator', auth()->user()->id)->where('subject_id', $subject_id)->isEmpty()? asset('images/pending.png') : asset('images/finished.png')}}" 
                                         class="img-fluid" alt="Status"
                                     />
                                     @else
@@ -65,7 +66,7 @@
                                 <div class="col text-center">
                                     <h4 class="fw-bold"> 
                                         @if($subjects->where('id', selected())->first() != null && isset($subjects->where('id', selected())->first()->klase->instructor))
-                                        {{($subjects->where('id', selected())->first()->klase->faculties->first()->evaluated->where('evaluator', auth()->user()->id)->isEmpty()? 'Pending' : 'Finished')}} 
+                                        {{($subjects->where('id', selected())->first()->klase->faculties->first()->evaluated->where('evaluator', auth()->user()->id)->where('subject_id', $subject_id)->isEmpty()? 'Pending' : 'Finished')}} 
                                         @else
                                         Status
                                         @endif

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('enrollment_detail_id')->constrained()->onDelete('cascade');
             $table->foreignId('subject_id')->constrained()->onDelete('cascade');
+            $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });
     }

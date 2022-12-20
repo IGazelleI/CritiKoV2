@@ -22,8 +22,8 @@ class SubjectController extends Controller
                         if($course != null)
                             $query->where('course_id', $course->id);
                     })
-                    ->latest('id')
-                    ->get();
+                    -> orderBy('year_level')
+                    -> get();
 
         return view('subject.index', compact('subject', 'course'));
     }

@@ -29,7 +29,8 @@ class AdminSeeder extends Seeder
 
         Period::create([
             'semester' => 1,
-            'batch' => '2022-2023'
+            'begin' => NOW(),
+            'end' => NOW()->addMonths(6)
         ]);
     }
 }

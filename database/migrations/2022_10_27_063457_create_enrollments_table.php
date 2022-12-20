@@ -22,6 +22,7 @@ return new class extends Migration
             $table->foreignId('course_id')->constrained()->onDelete('cascade');
             $table->integer('year_level');
             $table->string('status');
+            $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });
     }

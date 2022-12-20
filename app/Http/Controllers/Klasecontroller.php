@@ -48,7 +48,12 @@ class Klasecontroller extends Controller
 
     public function assignInstructorProcess(Request $request, Klase $klase)
     {
-        if(!$klase->update(['instructor' => $request->instructor]))
+        if(!$klase->update([
+            'instructor' => $request->instructor,
+            'day' => $request->day,
+            'begin' => $request->begin,
+            'end' => $request->end
+        ]))
             return back()->with('message', 'Error in assigning instructor. Please try again.');
 
         return redirect(route('klase.manage', $klase->block_id))->with('message', 'Instructor assigned.');
@@ -59,60 +64,6 @@ class Klasecontroller extends Controller
         $students = $klase->klaseStudents;
         
         return view('klase.students', compact('klase', 'students'));
-    }
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
     }
 
     /**

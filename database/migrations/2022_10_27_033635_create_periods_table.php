@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('periods', function (Blueprint $table) {
             $table->id();
             $table->integer('semester');
-            $table->year('begin');
-            $table->year('end');
+            $table->date('begin');
+            $table->date('end');
             $table->date('beginEnroll')->nullable();
             $table->date('endEnroll')->nullable();
             $table->date('beginEval')->nullable();

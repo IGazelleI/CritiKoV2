@@ -170,6 +170,7 @@
     </div>
 </div>
 <!-- Off Canvas -->
+<x-admin-toast/>
 <x-admin-modals/>
 <script>
     const userInfoCanvas = document.getElementById('offcanvasInfo')
@@ -204,7 +205,6 @@
         const ecpRelEl = userInfoCanvas.querySelector('.offcanvas-body .ecpRel');
         const ecpNumEl = userInfoCanvas.querySelector('.offcanvas-body .ecpNum');
         const ecpAddEl = userInfoCanvas.querySelector('.offcanvas-body .ecpAdd');
-        console.log(imgPath);
 
         idEl.textContent = id;
         nameEl.textContent = name;
@@ -217,4 +217,7 @@
         ecpNumEl.textContent = ecpNum;
         ecpAddEl.textContent = ecpAdd;
     });
+    //initialize toast
+    const toastElList = document.querySelectorAll('.toast');
+    const toastList = [...toastElList].map(toastEl => new bootstrap.Toast(toastEl));
 </script>

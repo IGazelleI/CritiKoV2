@@ -25,7 +25,8 @@ class PeriodStoreRequest extends FormRequest
     {
         return [
             'semester' => 'required',
-            'batch' => 'required'
+            'begin' => 'required',
+            'end' => ['required', 'after:begin']
         ];
     }
 
@@ -38,7 +39,9 @@ class PeriodStoreRequest extends FormRequest
     {
         return [
             'semester.required' => 'Semester field is required.',
-            'batch' => 'Batch field is required.'
+            'begin.required' => 'Period begin date field is required.',
+            'end.required' => 'Period end date field is required.',
+            'end.after' => 'The end date of the period cannot be the date before it starts.'
         ];
     }
 }

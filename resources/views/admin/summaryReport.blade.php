@@ -114,7 +114,7 @@
                             @if($summaryS->where('q_type_id', 1) != null)
                             <div class="row" id="my-section">
                                 <div class="col">
-                                    <table class="table table-hover text-start">
+                                    <table class="table table-hover text-start p-0">
                                         <thead>
                                             <th> <strong> Question </strong> </th>
                                             <th> <strong> Mean </strong> </th>

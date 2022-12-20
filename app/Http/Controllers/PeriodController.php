@@ -36,12 +36,18 @@ class PeriodController extends Controller
      */
     public function store(PeriodStoreRequest $request)
     {
+        if((isset($request->beginEnroll) && !isset($request->endEnroll)) || (!isset($request->beginEnroll) && isset($request->endEnroll)))
+            return back()->with('message', 'It is recommended set both dates instead of just only one.');
+
         if((isset($request->beginEval) && !isset($request->endEval)) || (!isset($request->beginEval) && isset($request->endEval)))
             return back()->with('message', 'It is recommended set both dates instead of just only one.');
 
         if(!Period::create([
             'semester' => $request->semester,
-            'batch' => $request->batch,
+            'begin' => $request->begin,
+            'end' => $request->end,
+            'beginEnroll' => $request->beginEnroll,
+            'endEnroll' => $request->endEnroll,
             'beginEval' => $request->beginEval,
             'endEval' => $request->endEval
             
@@ -58,16 +64,43 @@ class PeriodController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(PeriodStoreRequest $request)
+    public function update(Request $request)
     {
+        if((isset($request->beginEnroll) && !isset($request->endEnroll)) || (!isset($request->beginEnroll) && isset($request->endEnroll)))
+            return back()->with('message', 'It is recommended set both dates instead of just only one.');
+
         if((isset($request->beginEval) && !isset($request->endEval)) || (!isset($request->beginEval) && isset($request->endEval)))
             return back()->with('message', 'It is recommended set both dates instead of just only one.');
+
+        if(isset($request->beginEnroll))
+        {
+            $formFields = $request->validate([
+                'endEnroll' => 'after:beginEnroll',
+            ],
+            [
+                'endEnroll.after' => 'The end date of the enrollment cannot be the date before it starts.'
+            ]);
+        }
+
+        if(isset($request->beginEval))
+        {
+            $formFields = $request->validate([
+                'endEval' => 'after:beginEval',
+            ],
+            [
+                'endEval.after' => 'The end date of the evaluation cannot be the date before it starts.'
+            ]);
+        }
+        
 
         $period = Period::find($request->id);
         
         if(!$period->update([
             'semester' => $request->semester,
-            'batch' => $request->batch,
+            'begin' => $request->begin,
+            'end' => $request->end,
+            'beginEnroll' => $request->beginEnroll,
+            'endEnroll' => $request->endEnroll,
             'beginEval' => $request->beginEval,
             'endEval' => $request->endEval
         ]))

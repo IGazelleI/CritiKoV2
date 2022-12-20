@@ -103,11 +103,11 @@
                         @endif
                         <div class="mb-3">
                             <label for="name" class="col-form-label ms-2">Name</label>
-                            <input type="text" class="form-control rounded-pill name" name="name">
+                            <input type="text" class="form-control rounded-pill" name="name">
                         </div>
                         <div class="mb-3">
                             <label for="description" class="col-form-label ms-2">Description</label>
-                            <input type="text" class="form-control rounded-pill description" name="description">
+                            <input type="text" class="form-control rounded-pill" name="description">
                         </div>
                 </div>
                 <div class="modal-footer">

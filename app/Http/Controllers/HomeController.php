@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Block;
 use App\Models\Period;
 use App\Models\Faculty;
 use App\Models\Evaluate;
@@ -446,18 +447,9 @@ class HomeController extends Controller
                 $subjects =  isset($enrollment)? KlaseStudent::with('klase')
                                                     -> where('user_id', auth()->user()->id)       
                                                     -> latest('id')
-                                                    -> get() : null;
-        
-                $currentSelected = Session::get('selected');
-        
-                $evaluation = $currentSelected != null? Evaluate::where('evaluator', auth()->user()->id)
-                                                            -> where('evaluatee', $subjects->find($currentSelected)->klase->instructor)
-                                                            -> where('period_id', Session::get('period'))
-                                                            -> latest('id')
-                                                            -> get()
-                                                            -> first() : null;
+                                                    -> get() : null;                
 
-                return view('student.index', compact('subjects', 'enrollment'));
+                return view('student.index', compact('period', 'subjects', 'enrollment'));
                 break;
         }
     }
@@ -516,15 +508,26 @@ class HomeController extends Controller
         $evaluation = new Collection();
         //get evaluations of user
         if(!isset($user))
-            $user = auth()->user()->faculties[0];
+            $user = auth()->user()->faculties->first();
         
         if($type == 3)
         {
-            $evaluation = Evaluate::with('evalDetails')
-                            -> where('evaluatee', $user->user_id)
-                            -> where('evaluator', $user->department->faculties->where('isChairman', true)->first()->user_id)
-                            -> whereDate('created_at', '>=', $period->beginEval)
-                            -> whereDate('created_at', '<=', $period->endEval)
+            $heads = Faculty::where('department_id', $user->department_id)
+                        -> latest('id')
+                        -> get();
+            $head = [];
+
+            if($heads->isEmpty())
+                return null;
+            else
+            {
+                foreach($heads as $h)
+                    $head = array_merge($head, [$h->user_id]);
+            }
+
+            $evaluation = Evaluate::where('evaluatee', $user->user_id)
+                            -> whereIn('evaluator', $head)
+                            -> where('period_id', $period->id)
                             -> latest('id')
                             -> get();
         }
@@ -548,8 +551,7 @@ class HomeController extends Controller
             $evaluation = Evaluate::with('evalDetails')
                             -> where('evaluatee', $user->user_id)
                             -> whereIn('evaluator', $students)
-                            -> whereDate('created_at', '>=', $period->beginEval)
-                            -> whereDate('created_at', '<=', $period->endEval)
+                            -> where('period_id', $period->id)
                             -> latest('id')
                             -> get();
         }
@@ -635,10 +637,22 @@ class HomeController extends Controller
         //get evaluations of user
         if($type == 3)
         {
+            $heads = Faculty::where('department_id', auth()->user()->faculties->first()->department_id)
+                        -> latest('id')
+                        -> get();
+            $head = [];
+
+            if($heads->isEmpty())
+                return null;
+            else
+            {
+                foreach($heads as $h)
+                    $head = array_merge($head, [$h->user_id]);
+            }
+
             $evaluation = Evaluate::where('evaluatee', auth()->user()->id)
-                            -> where('evaluator', auth()->user()->faculties[0]->department->faculties->where('isChairman', true)->first()->user_id)
-                            -> whereDate('created_at', '>=', $period->beginEval)
-                            -> whereDate('created_at', '<=', $period->endEval)
+                            -> whereIn('evaluator', $head)
+                            -> where('period_id', $period->id)
                             -> latest('id')
                             -> get();
         }
@@ -663,8 +677,7 @@ class HomeController extends Controller
             $evaluation = Evaluate::with('evalDetails')
                             -> where('evaluatee', auth()->user()->id)
                             -> whereIn('evaluator', $students)
-                            -> whereDate('created_at', '>=', $period->beginEval)
-                            -> whereDate('created_at', '<=', $period->endEval)
+                            -> where('period_id', $period->id)
                             -> latest('id')
                             -> get();
         }

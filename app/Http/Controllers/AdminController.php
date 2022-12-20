@@ -249,6 +249,9 @@ class AdminController extends Controller
     {
         $faculty = Faculty::find($request->faculty);
 
+        if($faculty == null)
+            return back()->with('message', 'Faculty not found.');
+
         $periods = Period::latest('id')->get();
         $perSelected = $request->period;
 
@@ -425,8 +428,21 @@ class AdminController extends Controller
         //get evaluations of user
         if($type == 3)
         {
+            $heads = Faculty::where('department_id', $faculty->department_id)
+                        -> latest('id')
+                        -> get();
+            $head = [];
+
+            if($heads->isEmpty())
+                return null;
+            else
+            {
+                foreach($heads as $h)
+                    $head = array_merge($head, [$h->user_id]);
+            }
+
             $evaluation = Evaluate::where('evaluatee', $faculty->user_id)
-                            -> where('evaluator', $faculty->department->faculties->where('isChairman', true)->first()->user_id)
+                            -> whereIn('evaluator', $head)
                             -> whereDate('created_at', '>=', $period->beginEval)
                             -> whereDate('created_at', '<=', $period->endEval)
                             -> latest('id')

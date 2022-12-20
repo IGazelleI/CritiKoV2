@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('enrollment_details', function (Blueprint $table) {
             $table->id();
             $table->foreignId('enrollment_id')->constrained()->onDelete('cascade');
+            $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });
     }

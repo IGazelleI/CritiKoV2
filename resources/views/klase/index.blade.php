@@ -75,7 +75,11 @@
                                             </a>
                                         </td>
                                         <td>
-                                            Monday, 7:00 AM - 10:00 AM
+                                            @if(isset($det->begin) && isset($det->end))
+                                            {{$det->schedule()}}
+                                            @else
+                                            <span class="text-uppercase text-danger fw-bold"> Unassigned </span>
+                                            @endif
                                         </td>
                                         <td>
                                             @if(isset($det->instructor))

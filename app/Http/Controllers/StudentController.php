@@ -107,15 +107,17 @@ class StudentController extends Controller
             $request->session()->put('selected', (int) decrypt($request->subject));
         
         $currentSelected = Session::get('selected');
+        $subject_id = $currentSelected == null? null : $subjects->find($currentSelected)->klase->subject_id;
         //get the evaluations from the selected 
         $evaluation = $currentSelected != null? Evaluate::where('evaluator', auth()->user()->id)
                                                         -> where('evaluatee', $subjects->find($currentSelected)->klase->instructor)
+                                                        -> where('subject_id', $subject_id)
                                                         -> where('period_id', Session::get('period'))
                                                         -> latest('id')
                                                         -> get()
                                                         -> first() : null;
 
-        return view('student.evaluate', compact('enrollment', 'period', 'subjects', 'question', 'evaluation'));
+        return view('student.evaluate', compact('enrollment', 'period', 'subjects', 'question', 'evaluation', 'subject_id'));
     }
 
     public function evaluateProcess(Request $request)
@@ -162,14 +164,10 @@ class StudentController extends Controller
             $courseSelected = $enrollment->course_id;
             $yearSelected = $enrollment->year_level;
         }
-        
-        $det = Student::where('user_id', auth()->user()->students[0]->user_id)
-                    -> get()
-                    -> first();
         //get all available courses
         $course = Course::orderBy('name')->get();
 
-        $variables = ['det', 'course', 'enrollment', 'enrollType', 'courseSelected', 'yearSelected'];
+        $variables = ['period', 'course', 'enrollment', 'enrollType', 'courseSelected', 'yearSelected'];
         //get subjects from selection when irregular
         if($enrollType == 1)
         {
@@ -221,6 +219,17 @@ class StudentController extends Controller
     public function enroll(Request $request)
     {
         $enrollType = Session::get('enrollType');
+
+        if($enrollType == 0)
+        {
+            if(Subject::where('semester', Period::find(Session::get('period'))->semester)
+                            -> where('course_id', Session::get('course'))
+                            -> where('year_level', Session::get('year'))
+                            -> latest('id')
+                            -> get()
+                            -> count() == 0)
+                return back()->with('message', 'Course selected has no subjects. Please try again tommorow.');            
+        }
 
         $enrollment = Enrollment::create([
             'type' => $enrollType,

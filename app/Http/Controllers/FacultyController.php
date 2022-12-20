@@ -77,7 +77,7 @@ class FacultyController extends Controller
 
     public function enrollment()
     {
-        $courses = Department::find(auth()->user()->faculties[0]->department_id)
+        $courses = Department::find(auth()->user()->faculties->first()->department_id)
                                 -> courses;
         
         $enrollment = new Collection;
@@ -88,6 +88,7 @@ class FacultyController extends Controller
             $enrolls = $det->enrollments
                         -> where('status', '=', 'Pending')
                         -> where('period_id', Session::get('period'));
+
             foreach($enrolls  as $cat)
             {
                 $enrollment[$i] = $cat;
@@ -140,7 +141,7 @@ class FacultyController extends Controller
         }
         $question = $question->sortBy('q_type_id');
         
-        $faculty = Faculty::where('department_id', auth()->user()->faculties[0]->department_id)
+        $faculty = Faculty::where('department_id', auth()->user()->faculties->first()->department_id)
                         -> where('user_id', '!=', auth()->user()->id)
                         -> latest('id')
                         -> get();
@@ -215,7 +216,7 @@ class FacultyController extends Controller
                 'responsive' => true
             ]);
             //get current attributes
-            $details = $this->getDetails($period, 3, $det->user_id);
+            $details = $this->getDetails($period, 3, $det);
             //get the recommendations
             $recommendation[$det->id] = isset($details)? Question::select('keyword')
                                             -> where('q_category_id', $details->lowestAttribute)
@@ -242,7 +243,7 @@ class FacultyController extends Controller
                 {
                     if($i <= $prevLimit)
                     {
-                        $prevDetails = $this->getDetails($p, 3, $det->user_id);
+                        $prevDetails = $this->getDetails($p, 3, $det);
                     
                         if($prevDetails == null)
                         {
@@ -287,7 +288,7 @@ class FacultyController extends Controller
                 'responsive' => true
             ]);
             
-            $details = $this->getDetails($period, 4, $det->user_id);
+            $details = $this->getDetails($period, 4, $det);
 
             if(isset($recommendation[$det->id]))
             {
@@ -328,7 +329,7 @@ class FacultyController extends Controller
                 {
                     if($i <= $prevLimit)
                     {
-                        $prevDetails = $this->getDetails($p, 4, $det->user_id);
+                        $prevDetails = $this->getDetails($p, 4, $det);
                     
                         if($prevDetails == null)
                         {
@@ -412,11 +413,22 @@ class FacultyController extends Controller
         //get evaluations of user
         if($type == 3)
         {
-            $evaluation = Evaluate::with('evalDetails')
-                            -> where('evaluatee', $faculty)
-                            -> where('evaluator', auth()->user()->faculties[0]->department->faculties->where('isChairman', true)->first()->user_id)
-                            -> whereDate('created_at', '>=', $period->beginEval)
-                            -> whereDate('created_at', '<=', $period->endEval)
+            $heads = Faculty::where('department_id', $faculty->department_id)
+                        -> latest('id')
+                        -> get();
+            $head = [];
+
+            if($heads->isEmpty())
+                return null;
+            else
+            {
+                foreach($heads as $h)
+                    $head = array_merge($head, [$h->user_id]);
+            }
+
+            $evaluation = Evaluate::where('evaluatee', $faculty->user_id)
+                            -> whereIn('evaluator', $head)
+                            -> where('period_id', $period->id)
                             -> latest('id')
                             -> get();
         }
@@ -440,8 +452,7 @@ class FacultyController extends Controller
             $evaluation = Evaluate::with('evalDetails')
                             -> where('evaluatee', $faculty)
                             -> whereIn('evaluator', $students)
-                            -> whereDate('created_at', '>=', $period->beginEval)
-                            -> whereDate('created_at', '<=', $period->endEval)
+                            -> where('period_id', $period->id)
                             -> latest('id')
                             -> get();
         }

@@ -113,7 +113,7 @@
                                 <a href="#collapse{{$det->id}}" class="text-decoration-underline" data-bs-toggle="collapse" aria-expanded="true" aria-controls="collapseOne">
                                     Show Attributes
                                 </a> &nbsp;
-                                <a href="#collapse{{$det->id}}" class="text-decoration-underline" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Click To Show Detailed Report on {{$det->fullName(true)}}">
+                                <a href="{{route('admin.summaryReport', $det->id)}}" class="text-decoration-underline" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Click To Show Detailed Report on {{$det->fullName(true)}}">
                                     Summary
                                 </a>
                             </div>

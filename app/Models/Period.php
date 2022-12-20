@@ -12,7 +12,10 @@ class Period extends Model
 
     protected $fillable = [
         'semester',
-        'batch',
+        'begin',
+        'end',
+        'beginEnroll',
+        'endEnroll',
         'beginEval',
         'endEval', 
         'status'
@@ -20,7 +23,7 @@ class Period extends Model
 
     public function getDescription()
     {
-        return self::str_ordinal($this->semester) . " Semester SY " . $this->batch;
+        return self::str_ordinal($this->semester) . " Semester SY " . date('Y', strtotime($this->begin)) . '-' . date('Y', strtotime($this->end));
     }
 
     public function str_ordinal($value)

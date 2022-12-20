@@ -37,10 +37,10 @@
                     @csrf
                     <!-- Email input -->
                     <div class="form-outline mb-4">
-                        <input type="email" name="email" id="email" class="form-control" value=""/>
+                        <input type="email" name="email_login" id="email_login" class="form-control" value=""/>
                         <label class="form-label" for="email">Email</label>
 
-                        @error('email')
+                        @error('email_login')
                             <p class="text-sm text-danger ms-3">
                                 {{$message}}
                             </p>
@@ -49,10 +49,10 @@
             
                     <!-- Password input -->
                     <div class="form-outline mb-4">
-                        <input type="password" name="password" id="password" class="form-control" />
-                        <label class="form-label" for="password">Password</label>
+                        <input type="password" name="password_login" id="password_login" class="form-control" />
+                        <label class="form-label" for="password_login">Password</label>
 
-                        @error('password')
+                        @error('password_login')
                             <p class="text-sm text-danger ms-3">
                                 {{$message}}
                             </p>
@@ -81,6 +81,7 @@
             </div>
             <div class="tab-pane fade" id="pills-register" role="tabpanel" aria-labelledby="tab-register">
                 @if ($errors->any())
+                    @if($errors->first() != 'Invalid login attempt' && $errors->first() != 'Required')
                     <div class="alert alert-danger">
                         <ul>
                             @foreach ($errors->all() as $error)
@@ -88,6 +89,7 @@
                             @endforeach
                         </ul>
                     </div>
+                    @endif
                 @endif
                 <form action="{{route('register')}}" method="POST">
                     @csrf

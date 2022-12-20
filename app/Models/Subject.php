@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Subject extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'course_id',
@@ -21,5 +22,10 @@ class Subject extends Model
     public function course()
     {
         return $this->belongsTo(Course::class, 'course_id');
+    }
+    //klase relationship
+    public function klase()
+    {
+        return $this->hasMany(Klase::class, 'subject_id');
     }
 }

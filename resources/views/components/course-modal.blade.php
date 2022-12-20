@@ -24,7 +24,7 @@
                         @endif
                         <div class="mb-3">
                             <label for="department_id" class="col-form-label ms-2">Department</label>
-                            <select class="form-control rounded-pill" name="department_id" id="department_id">
+                            <select class="form-control rounded-pill" name="department_id">
                                 <option selected disabled> -Select- </option>
                                 @unless($dept->isEmpty())
                                     @foreach($dept as $det)

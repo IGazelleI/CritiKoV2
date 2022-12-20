@@ -35,7 +35,10 @@
                                             <button type="button" class="dropdown-item" data-bs-target="#editPerModal" data-bs-toggle="modal"
                                                 data-bs-id="{{$det->id}}"
                                                 data-bs-semester="{{$det->semester}}"
-                                                data-bs-batch="{{$det->batch}}"
+                                                data-bs-begin="{{$det->begin}}"
+                                                data-bs-end="{{$det->end}}"
+                                                data-bs-beginEnroll="{{$det->beginEnroll}}"
+                                                data-bs-endEnroll="{{$det->endEnroll}}"
                                                 data-bs-beginEval="{{$det->beginEval}}"
                                                 data-bs-endEval="{{$det->endEval}}"
                                             >
@@ -108,11 +111,11 @@
                     <div class="row">
                         <div class="col">
                             <label for="description" class="col-form-label ms-2">Begin</label>
-                            <input type="date" name="begin" id="begin" class="form-control rounded-pill begin"/>
+                            <input type="date" name="begin" class="form-control rounded-pill"/>
                         </div>
                         <div class="col">
                             <label for="description" class="col-form-label ms-2">End</label>
-                            <input type="date" name="end" id="end" class="form-control rounded-pill end"/>
+                            <input type="date" name="end" class="form-control rounded-pill"/>
                         </div>
                     </div>
                     <div class="row mt-3">
@@ -123,11 +126,11 @@
                     <div class="row">
                         <div class="col">
                             <label for="description" class="col-form-label ms-2">Begin</label>
-                            <input type="date" name="beginEnroll" id="beginEnroll" class="form-control rounded-pill beginEnroll"/>
+                            <input type="date" name="beginEnroll" class="form-control rounded-pill"/>
                         </div>
                         <div class="col">
                             <label for="description" class="col-form-label ms-2">End</label>
-                            <input type="date" name="endEnroll" id="endEnroll" class="form-control rounded-pill endEnroll"/>
+                            <input type="date" name="endEnroll" class="form-control rounded-pill"/>
                         </div>
                     </div>
                     <div class="row mt-3">
@@ -138,11 +141,11 @@
                     <div class="row">
                         <div class="col">
                             <label for="description" class="col-form-label ms-2">Begin</label>
-                            <input type="date" name="beginEval" id="beginEval" class="form-control rounded-pill beginEval"/>
+                            <input type="date" name="beginEval" class="form-control rounded-pill"/>
                         </div>
                         <div class="col">
                             <label for="description" class="col-form-label ms-2">End</label>
-                            <input type="date" name="endEval" id="endEval" class="form-control rounded-pill endEval"/>
+                            <input type="date" name="endEval" class="form-control rounded-pill"/>
                         </div>
                     </div>  
                 </div>
@@ -167,11 +170,20 @@
                 @csrf
                 @method('PUT')
                 <div class="modal-body">
+                    @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
                     <input type="hidden" class="id" name="id"/>
                     <div class="row">
                         <div class="col">
                             <div class="mb-3">
-                                <select class="select form-select rounded-pill" name="semester">
+                                <select class="select form-select rounded-pill semester" name="semester">
                                     <option selected disabled>Semester</option>
                                     @for($i = 1; $i <= 3; $i++)
                                         <option value="{{$i}}" >{{$i}}</option>
@@ -270,7 +282,10 @@
         // Extract info from data-bs-* attributes
         const id = button.getAttribute('data-bs-id');
         const semester = button.getAttribute('data-bs-semester');
-        const batch = button.getAttribute('data-bs-batch');
+        const begin = button.getAttribute('data-bs-begin');
+        const end = button.getAttribute('data-bs-end');
+        const beginEnroll = button.getAttribute('data-bs-beginEnroll');
+        const endEnroll = button.getAttribute('data-bs-endEnroll');
         const beginEval = button.getAttribute('data-bs-beginEval');
         const endEval = button.getAttribute('data-bs-endEval');
         // If necessary, you could initiate an AJAX request here
@@ -279,13 +294,19 @@
         // Update the modal's content.
         const idInput = editPerModal.querySelector('.modal-body .id');
         const semesterInput = editPerModal.querySelector('.modal-body .semester');
-        const batchInput = editPerModal.querySelector('.modal-body .batch');
+        const beginInput = editPerModal.querySelector('.modal-body .begin');
+        const endInput = editPerModal.querySelector('.modal-body .end');
+        const beginEnrollInput = editPerModal.querySelector('.modal-body .beginEnroll');
+        const endEnrollInput = editPerModal.querySelector('.modal-body .endEnroll');
         const beginEvalInput = editPerModal.querySelector('.modal-body .beginEval');
         const endEvalInput = editPerModal.querySelector('.modal-body .endEval');
 
         idInput.value = id;
         semesterInput.value = semester;
-        batchInput.value = batch;
+        beginInput.value = begin;
+        endInput.value = end;
+        beginEnrollInput.value = beginEnroll;
+        endEnrollInput.value = endEnroll;
         beginEvalInput.value = beginEval;
         endEvalInput.value = endEval;
     });

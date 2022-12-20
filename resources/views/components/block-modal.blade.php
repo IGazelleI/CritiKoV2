@@ -32,7 +32,7 @@
                     <div class="row">
                         <div class="mb-3">
                             <label for="course_id" class="col-form-label ms-2">Course</label>
-                            <select class="form-control rounded-pill" name="course_id" id="course_id">
+                            <select class="form-control rounded-pill" name="course_id">
                                 <option selected disabled> -Select- </option>
                                 @unless($course->isEmpty())
                                     @foreach($course as $det)

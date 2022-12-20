@@ -9,6 +9,7 @@ use App\Models\Department;
 use Illuminate\Support\Str;
 use App\Charts\FacultyChart;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\UserStoreRequest;
@@ -41,6 +42,15 @@ class UserController extends Controller
 
     public function create(Request $request)
     {
+        $formFields = $request->validate([
+            'email' => ['required', 'email', Rule::unique('users', 'email')],
+            'password' => 'required'
+        ],[
+            'email.required' => 'Required',
+            'email.unique' => 'Email already exist.',
+            'password.required' => 'Required'
+        ]);
+
         $request['password'] = Hash::make($request->password);
         $user = User::create($request->all());
 
@@ -57,21 +67,24 @@ class UserController extends Controller
     public function auth(Request $request)
     {
         $formFields = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => 'required'
+            'email_login' => ['required', 'email'],
+            'password_login' => 'required'
         ],[
-            'email.required' => 'Required',
-            'password.required' => 'Required'
+            'email_login.required' => 'Required',
+            'password_login.required' => 'Required'
         ]);
 
-        if(auth()->attempt($formFields, $request->remember))
+        $auth['email'] = $formFields['email_login'];
+        $auth['password'] = $formFields['password_login'];
+
+        if(auth()->attempt($auth, $request->remember))
         {
             $request->session()->regenerate();
 
             return redirect(route('home'))->with('message', 'You are now logged in.');
         }
         else
-            return back()->withErrors(['email' => 'Invalid login attempt.'])->onlyInput('email');
+            return back()->withErrors(['email_login' => 'Invalid login attempt'])->onlyInput('email');
     }
 
     public function logout(Request $request)

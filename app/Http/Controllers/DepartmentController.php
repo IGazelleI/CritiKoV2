@@ -54,6 +54,38 @@ class DepartmentController extends Controller
     public function destroy(Request $request)
     {
         $department = Department::find($request->id);
+        //delete department courses
+        foreach($department->courses as $course)
+        {
+            //delete the subjects of the course
+            foreach($course->subjects as $sub)
+            {
+                if(!$sub->delete())
+                    return back()->with('message', 'Error in deleting subjects. Please try again.');
+            }
+            //delete the enrollments of the course
+            foreach($course->enrollments as $enroll)
+            {
+                if(!$enroll->delete())
+                    return back()->with('message', 'Error in deleting enrollments. Please try again.');
+            }
+
+            if(!$course->delete())
+                return back()->with('message', 'Error in deleting courses. Please try again.'); 
+        }
+        //delete department faculties
+        foreach($department->faculties as $fac)
+        {
+            //delete faculty classes
+            foreach($fac->klases as $klase)
+            {
+                if(!$klase->delete())
+                    return back()->with('message', 'Error in deleting faculty classes. Please try again.');
+            }
+
+            if(!$fac->delete())
+                return back()->with('message', 'Error in deleting faculty. Please try again.');
+        }
 
         if(!$department->delete())
             return back()->with('message', 'Error in deleting department. Please try again.');

@@ -54,7 +54,9 @@ class UserStoreRequest extends FormRequest
             'lname.required' => 'Last name is required.',
             'email.required' => 'Email is required.',
             'password.required' => 'Password is required.',
-            'password.confirmed' => 'The password does not match.'
+            'password.confirmed' => 'The password does not match.',
+            'email.unique' => 'Email is already taken.',
+            'id_number' => 'ID Number is already taken.'
         ];
     }
 }
