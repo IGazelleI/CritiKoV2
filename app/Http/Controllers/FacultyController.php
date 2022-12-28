@@ -190,7 +190,7 @@ class FacultyController extends Controller
         //get current period
         $period = Session::get('period') == null? Period::latest('id')->get()->first() : Period::find(Session::get('period')); 
         //get faculties under department
-        $faculty = Faculty::where('department_id', auth()->user()->faculties[0]->id)
+        $faculty = Faculty::where('department_id', auth()->user()->faculties->first()->department_id)
                         -> where('user_id', '!=', auth()->user()->id)
                         -> latest('id')
                         -> get();
@@ -356,7 +356,7 @@ class FacultyController extends Controller
                 $averageSt[$det->id] = collect($details->attributes)->avg();
         }
 
-        return view('dean.facultyReport', compact('faculty', 'facultyChart', 'averageFac', 'prevAvgFac', 'studentChart', 'averageSt', 'prevAvgSt', 'recommendation'));
+        return view('dean.facultyReport', compact('period', 'faculty', 'facultyChart', 'averageFac', 'prevAvgFac', 'studentChart', 'averageSt', 'prevAvgSt', 'recommendation'));
     }
     //local methods
     function colors($i)
@@ -450,7 +450,7 @@ class FacultyController extends Controller
             }
 
             $evaluation = Evaluate::with('evalDetails')
-                            -> where('evaluatee', $faculty)
+                            -> where('evaluatee', $faculty->user_id)
                             -> whereIn('evaluator', $students)
                             -> where('period_id', $period->id)
                             -> latest('id')

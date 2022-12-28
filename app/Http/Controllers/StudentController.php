@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Block;
 use App\Models\Course;
 use App\Models\Period;
 use App\Models\Faculty;
@@ -11,16 +12,16 @@ use App\Models\Evaluate;
 use App\Models\Question;
 use App\Models\QCategory;
 use App\Models\Enrollment;
+use App\Models\KlaseStudent;
 use Illuminate\Http\Request;
+use App\Models\EnrollmentDetail;
+use App\Models\EnrollmentSubject;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\ChangePicRequest;
 use Illuminate\Support\Facades\Session;
 use App\Http\Requests\StudentStoreRequest;
 use App\Http\Requests\EnrollmentSubmitRequest;
-use App\Models\EnrollmentDetail;
-use App\Models\EnrollmentSubject;
-use App\Models\KlaseStudent;
 
 class StudentController extends Controller
 {
@@ -98,10 +99,25 @@ class StudentController extends Controller
         //sort the questions by type
         $question = $question->sortBy('q_type_id');
 
-        $subjects =  isset($enrollment)? KlaseStudent::with('klase')
-                                                    -> where('user_id', auth()->user()->id)       
-                                                    -> latest('id')
-                                                    -> get() : null;
+        //get the subjects taken
+        $blocks =  Block::with('klases')
+                    -> where('period_id', $period->id)   
+                    -> latest('id')
+                    -> get();
+        $klases = [];
+        foreach($blocks as $det)
+        {
+            foreach($det->klases as $klase)
+            {
+                if($klase->klaseStudents->where('user_id', auth()->user()->id)->first())
+                    $klases = array_merge($klases, [$klase->id]);
+            }
+        }
+        $subjects = isset($enrollment)? KlaseStudent::with('klase')
+                                    -> where('user_id', auth()->user()->id)
+                                    -> whereIn('klase_id', $klases)      
+                                    -> latest('id')
+                                    -> get() : null;    
 
         if(isset($request->subject))
             $request->session()->put('selected', (int) decrypt($request->subject));

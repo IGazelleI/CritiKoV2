@@ -35,7 +35,7 @@
                               <td class="align-middle">
                                   <h6 class="mb-0">
                                       @if($det->klase->instructor != null)
-                                        @if($det->klase->faculties->first()->evaluated->where('evaluator', auth()->user()->id)->isEmpty())
+                                        @if($det->klase->faculties->first()->evaluated->where('evaluator', auth()->user()->id)->where('subject_id', $det->klase->subject_id)->isEmpty())
                                           <a href="{{route('student.evaluate', ['subject' => encrypt($det->id)])}}" class="btn btn-transparent shadow-none px-0"
                                             data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Click To Evaluate {{$det->klase->subject->code}} Instructor"
                                           >

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Block;
 use App\Models\Period;
 use App\Models\Faculty;
 use App\Models\Evaluate;
@@ -16,6 +17,210 @@ use Illuminate\Support\Facades\Session;
 
 class AdminController extends Controller
 {
+    /**
+     * Show the completion report page.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function completion()
+    {
+        $variables = [];
+        //previous limit
+        $prevLimit = Session::get('prevLimit') == null? 1 : Session::get('prevLimit');
+
+        $chart = new FacultyChart();
+
+        //get all departments
+        $chart->labels($this->getDepartmentsAsArray());
+
+        $department = Department::with('faculties')
+                            -> latest('id')
+                            -> get();
+
+        if(!$department->isEmpty())
+        {
+            //variable array
+            $variables = array_merge($variables, ['department']);
+
+            //get all periods
+            $periods = Period::latest('id')
+                            -> get();
+            $periodArr = [];
+
+            $i = 0;
+
+            foreach($department as $dept)
+            {            
+                $data = [];     
+                //get evaluation count of department by period
+                foreach($periods as $per)
+                {
+                    $finished = [];
+                    $pending = [];
+                    $total = [];
+                    //checks if currnet department's faculty is empty
+                    if(!$dept->faculties->isEmpty())
+                    {
+                        $stTotal = 0;
+                        $stFinished = 0;
+                        $stPending = 0;
+                        ///loop through all faculties
+                        foreach($dept->faculties as $fac)
+                        {
+                            //get the blocks on that period
+                            $block = Block::where('period_id', $per->id)
+                                        -> latest('id')
+                                        -> get();
+                
+                            if(!$block->isEmpty())
+                            {
+                                foreach($block as $b)
+                                {
+                                    //filter classes where the faculty is the instructor
+                                    if(!$b->klases->where('instructor', $fac->user_id)->isEmpty())
+                                    {                                       
+                                        foreach($b->klases->where('instructor', $fac->user_id) as $klase)
+                                        {
+                                            //get the students from that class
+                                            $student = $klase->klaseStudents;
+                                            $stTotal += $student->count();
+
+                                            $students = [];
+                                            //convert to array for whereIn
+                                            foreach($student as $stud)
+                                                $students = array_merge($students, [$stud->user_id]);
+
+                                            //get evaluations with that subject, faculty and period
+                                            $evaluation = Evaluate::where('period_id', $per->id)
+                                                                -> whereIn('evaluator', $students)
+                                                                -> where('evaluatee', $fac->user_id)
+                                                                -> where('subject_id', $klase->subject_id)
+                                                                -> latest('id')
+                                                                -> get();
+                                            
+                                            $stFinished += $evaluation->count();
+                                        }
+
+                                        $stPending = $stTotal - $stFinished;
+                                    }
+                                }
+                            }
+                        }
+                        //get the finished evaluation from that period
+                        $finished[$per->id] = isset($finished[$per->id])? $finished[$per->id] + $stFinished : $stFinished;
+                        //get the pending evaluation from that period
+                        $pending[$per->id] = isset($pending[$per->id])? $pending[$per->id] + $stPending : $stPending;
+                        //get total evaluation expected
+                        $total[$per->id] = isset($total[$per->id])? $total[$per->id] + $stTotal : $stTotal; 
+                    }
+                    //merge array so it will start to 1
+                    $finish = array();
+                    $finish = array_merge($finish, $finished);
+                    //merge array so it will start to 1
+                    $pend = array();
+                    $pend = array_merge($pend, $pending);
+                      //merge array so it will start to 1
+                    $tot = array();
+                    $tot = array_merge($tot, $total);
+
+                    for($k = 0; $k < count($tot); $k++)
+                    {
+                        $data = array_merge($data, [[
+                            'x' => $finish[$k],
+                            'y' => $pend[$k],
+                            'r' => $tot[$k]
+                        ]]);
+                    }
+                    //getting chart label purposes
+                    if($i == 0)
+                        $periodArr = array_merge($periodArr, [$per->getDescription()]);
+                }
+                //chart details
+                $chart->dataset($dept->name, 'bubble', $data); //[['x' => random_int(1, 50), 'y' => random_int(1, 50), 'r' => random_int(1, 50)], ['x' => random_int(1, 50), 'y' => random_int(1, 50), 'r' => random_int(1, 50)]]
+                
+                $i += 1;
+            }
+            //initialize the chart labels
+            $chart-> labels($periodArr);
+            /* foreach($department as $dept)
+            {
+                //department faculties
+                if(!$dept->faculties->isEmpty())
+                {
+                    foreach($dept->faculties as $fac)
+                    {
+                        //get all periods
+                        $periods = Period::latest('id')
+                                        -> get();
+                        
+                        if(!$periods->isEmpty())
+                        {
+                            $j = 0;
+
+                            foreach($periods as $per)
+                            {
+                                if($j < $prevLimit)
+                                {
+                                    $total = 0;
+                                    $finished = 0;
+                                    //get the blocks on that period
+                                    $block = Block::where('period_id', $per->id)
+                                                -> latest('id')
+                                                -> get();
+                                    
+                                    if(!$block->isEmpty())
+                                    {
+                                        foreach($block as $b)
+                                        {
+                                            //filter classes where the faculty is the instructor
+                                            if(!$b->klases->where('instructor', $fac->user_id)->isEmpty())
+                                            {
+                                                $total += $b->klases->where('instructor', $fac->user_id)->count();
+                                                
+                                                foreach($b->klases->where('instructor', $fac->user_id) as $klase)
+                                                {
+                                                    //get the students from that class
+                                                    $student = $klase->klaseStudents;
+                                                    
+                                                    $students = [];
+                                                    //convert to array for whereIn
+                                                    foreach($student as $stud)
+                                                        $students = array_merge($students, [$stud->user_id]);
+
+                                                    //get evaluations with that subject, faculty and period
+                                                    $evaluation = Evaluate::where('period_id', $per->id)
+                                                                        -> whereIn('evaluator', $students)
+                                                                        -> where('evaluatee', $fac->user_id)
+                                                                        -> where('subject_id', $klase->subject_id)
+                                                                        -> latest('id')
+                                                                        -> get();
+
+                                                    $finished += $evaluation->count();
+                                                }
+                                            }
+                                        }
+
+                                        if($i == 0)
+                                            $chart->dataset($per->getDescription(), 'bar', [$finished, $total]);
+                                    }
+                                }
+                                $j += 1;
+                            }
+                        }
+                    }
+                }
+                $i += 1;
+            } */
+        }
+        else
+            $chart = null;
+
+        //variable array
+        $variables = array_merge($variables, ['chart']);
+
+        return view('admin.completion', compact($variables));
+    }
+
     /**
      * Show the report page.
      *
@@ -273,6 +478,18 @@ class AdminController extends Controller
         
         return $detail;
     }
+    function getDepartmentsAsArray()
+    {
+        $department = Department::latest('id')
+                    -> get();
+        
+        $departments = [];
+
+        foreach($department as $det)
+            $departments = array_merge($departments, [$det->name]);
+
+        return $departments;
+    }
     function getCategoriesAsArray($type)
     {
         $cat = QCategory::where('type', $type)
@@ -314,11 +531,22 @@ class AdminController extends Controller
         //get evaluations of user
         if($type == 3)
         {
-            $evaluation = Evaluate::with('evalDetails')
-                            -> where('evaluatee', $faculty->user_id)
-                            -> where('evaluator', $faculty->department->faculties->where('isChairman', true)->first()->user_id)
-                            -> whereDate('created_at', '>=', $period->beginEval)
-                            -> whereDate('created_at', '<=', $period->endEval)
+            $heads = Faculty::where('department_id', $faculty->department_id)
+                        -> latest('id')
+                        -> get();
+            $head = [];
+
+            if($heads->isEmpty())
+                return null;
+            else
+            {
+                foreach($heads as $h)
+                    $head = array_merge($head, [$h->user_id]);
+            }
+
+            $evaluation = Evaluate::where('evaluatee', $faculty->user_id)
+                            -> whereIn('evaluator', $head)
+                            -> where('period_id', $period->id)
                             -> latest('id')
                             -> get();
         }

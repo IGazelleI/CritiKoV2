@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,8 +12,6 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-
 Route::middleware('guest')->group(function ()
 {
     Route::controller(App\Http\Controllers\UserController::class)->group(function ()
@@ -33,16 +30,10 @@ Route::middleware('auth')->group(function ()
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::post('/logout', [App\Http\Controllers\UserController::class, 'logout'])->name('logout');
 
-    /* Route::controller(App\Http\Controllers\AdminController::class)->group(function ()
+    Route::controller(App\Http\Controllers\PDFController::class)->group(function ()
     {
-        Route::get('/profile', 'show')->name('student.profile');
-        Route::put('/update', 'update')->name('student.update');
-        Route::get('/evaluate', 'evaluate')->name('student.evaluate');
-        Route::post('/changePic/{student}', 'changeProfilePicture')->name('student.changePic');
-        Route::post('/changePeriod', 'changePeriod')->name('student.changePeriod');
-        Route::get('/enrollment', 'enrollment')->name('student.enrollment');
-        Route::post('/enroll', 'enroll')->name('student.submitEnroll');
-    }); */
+        Route::get('/pdf/report/{period}/{type}/{faculty}', 'view')->name('pdf.view');
+    });
 
     Route::middleware('user-access:admin')->group(function ()
     {
@@ -50,6 +41,7 @@ Route::middleware('auth')->group(function ()
         {
             Route::get('/a/report', 'report')->name('admin.report');
             Route::post('/a/prevLimit', 'changePrevLimit')->name('admin.changePrevLimit');
+            Route::get('/completion', 'completion')->name('admin.completion');
             Route::get('/summary', 'summary')->name('admin.summary');
             Route::post('/s/search', 'summarySearch')->name('admin.summarySearch');
             Route::get('/summary/{faculty}', 'summaryReport')->name('admin.summaryReport');
@@ -144,12 +136,12 @@ Route::middleware('auth')->group(function ()
         Route::controller(App\Http\Controllers\FacultyController::class)->group(function ()
         {
             //dean routes
-            Route::middleware('user-access:dean')->group(function ()
-            {
+            /* Route::middleware('user-access:dean')->group(function ()
+            { */
                 Route::get('/enrollments', 'enrollment')->name('dean.enrollment');
                 Route::post('/enrollment/{enroll}', 'processEnrollment')->name('dean.processEnrollment');
-                Route::get('/d/report', 'report')->name('dean.report');
-            });
+                Route::get('/d/report', 'report')->name('dean.report');/* 
+            }); */
 
             Route::get('/mf/profile', 'show')->name('faculty.profile');
             Route::put('/faculty', 'update')->name('faculty.update');

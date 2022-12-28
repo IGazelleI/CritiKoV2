@@ -59,7 +59,7 @@
                 <div id="panelsStayOpen-evaluation" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
                     <div class="accordion-body">
                         <div class="list-group">
-                            <a href="{{route('user.manage')}}" class="list-group-item list-group-item-action">
+                            <a href="{{route('admin.completion')}}" class="list-group-item list-group-item-action">
                                 Completion Report
                             </a>
                             <a href="{{route('admin.report')}}" class="list-group-item list-group-item-action">
@@ -173,6 +173,9 @@
 <x-admin-toast/>
 <x-admin-modals/>
 <script>
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    
     const userInfoCanvas = document.getElementById('offcanvasInfo')
 
     userInfoCanvas.addEventListener('show.bs.offcanvas', event => {

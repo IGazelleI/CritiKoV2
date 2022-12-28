@@ -65,11 +65,12 @@ class BlockController extends Controller
                             if($year_level != null)
                                 $query->where('year_level', $year_level);
                         })
+                        -> where('period_id', $period->id)
                         -> where('course_id', $course->id)
                         -> orderBy('year_level')
                         -> get();
 
-        $year_level = ($year_level == null)? null : $block[0]->getYear();
+        $year_level = ($year_level == null)? null : $block->first()->getYear();
 
         return view('block.show', compact('period', 'course', 'periods', 'block', 'year_level'));
     }

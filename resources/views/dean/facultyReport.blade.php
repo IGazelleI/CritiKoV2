@@ -48,6 +48,17 @@
                                     Show Details
                                 </a>
                             </div>
+                            @if($averageFac[$det->id] != 0 || $averageSt[$det->id] != 0)
+                            <div class="col text-end align-self-center">
+                                <button type="button" class="btn btn-transparent shadow-none text-underline link-dark" data-bs-toggle="dropdown" aria-expanded="false">
+                                  Export
+                                </button>
+                                <ul class="dropdown-menu">
+                                  <li><a class="dropdown-item {{$averageSt[$det->id] == 0? 'disabled' : ''}}" href="{{route('pdf.view', [$period->id, 4, $det->id])}}" target="_blank">Student Evaluation Report</a></li>
+                                  <li><a class="dropdown-item {{$averageFac[$det->id] == 0? 'disabled' : ''}}" href="{{route('pdf.view', [$period->id, 3, $det->id])}}" target="_blank">Faculty Evaluation Report</a></li>
+                                </ul>
+                            </div>
+                            @endif
                         </div>
                     </div>                    
                     @if(isset($recommendation[$det->id]))

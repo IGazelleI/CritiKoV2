@@ -31,4 +31,9 @@ class Evaluate extends Model
     {
         return $this->hasMany(EvaluateDetail::class, 'evaluate_id');
     }
+    //subject relationship
+    public function subject()
+    {
+        return $this->belongsTo(Subject::class, 'subject_id');
+    }
 }

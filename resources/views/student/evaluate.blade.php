@@ -137,7 +137,7 @@
                                         <label for="{{'qAns' . $qnum}}">
                                             <input type="radio" name="{{'qAns' . $qnum}}" value="1" 
                                                 @if(isset($evaluation))
-                                                    @if(isset($evaluation->evalDetails[$i]))
+                                                    @if($evaluation->evalDetails->where('question_id', $q->id)->first() != null)
                                                         {{checkQuestion($q->id, $evaluation, 1)}}
                                                     @endif
                                                 @endif
@@ -149,7 +149,7 @@
                                         <label for="{{'qAns' . $qnum}}">
                                             <input type="radio" name="{{'qAns' . $qnum}}" value="2" 
                                                 @if(isset($evaluation))
-                                                    @if(isset($evaluation->evalDetails[$i]))
+                                                    @if($evaluation->evalDetails->where('question_id', $q->id)->first() != null)
                                                         {{checkQuestion($q->id, $evaluation, 2)}}
                                                     @endif
                                                 @endif
@@ -160,7 +160,7 @@
                                         <label for="{{'qAns' . $qnum}}">
                                             <input type="radio" name="{{'qAns' . $qnum}}" value="3" 
                                                 @if(isset($evaluation))
-                                                    @if(isset($evaluation->evalDetails[$i]))
+                                                    @if($evaluation->evalDetails->where('question_id', $q->id)->first() != null)
                                                         {{checkQuestion($q->id, $evaluation, 3)}}
                                                     @endif
                                                 @endif
@@ -171,7 +171,7 @@
                                         <label for="{{'qAns' . $qnum}}">   
                                             <input type="radio" name="{{'qAns' . $qnum}}" value="4" 
                                                 @if(isset($evaluation))
-                                                    @if(isset($evaluation->evalDetails[$i]))
+                                                    @if($evaluation->evalDetails->where('question_id', $q->id)->first() != null)
                                                         {{checkQuestion($q->id, $evaluation, 4)}}
                                                     @endif
                                                 @endif
@@ -182,7 +182,7 @@
                                         <label for="{{'qAns' . $qnum}}">
                                             <input type="radio" name="{{'qAns' . $qnum}}" value="5" 
                                                 @if(isset($evaluation))
-                                                    @if(isset($evaluation->evalDetails[$i]))
+                                                    @if($evaluation->evalDetails->where('question_id', $q->id)->first() != null)
                                                         {{checkQuestion($q->id, $evaluation, 5)}}
                                                     @endif
                                                 @endif
@@ -204,8 +204,8 @@
                                     <div class="col d-flex align-items-center">
                                         <input type="text" class="form-control w-100" name="{{'qAns' . $qnum}}"
                                             @if(isset($evaluation))
-                                                @if(isset($evaluation->evalDetails[$i]))
-                                                    value="{{$evaluation->evalDetails[$i]->answer}}"
+                                                @if($evaluation->evalDetails->where('question_id', $q->id)->first() != null)
+                                                    value="{{$evaluation->evalDetails->where('question_id', $q->id)->first()->answer}}"
                                                     disabled
                                                 @else
                                                     value="Not Answered"

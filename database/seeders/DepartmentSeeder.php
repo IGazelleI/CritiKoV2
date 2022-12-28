@@ -17,7 +17,7 @@ class DepartmentSeeder extends Seeder
     {
         $departments = [
             [
-                'description' => 'College of Communication and Internet Computing Technology',
+                'description' => 'College of Computer, Information and Communications Technology',
                 'name' => 'CCICT'
             ],
             [

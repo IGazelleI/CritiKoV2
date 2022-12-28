@@ -68,14 +68,14 @@ class HomeController extends Controller
                                         if($facEvalDetails !=  null)
                                             $facAvg = $facAvg == 0? collect($facEvalDetails->attributes)->avg() : ($facAvg + collect($facEvalDetails->attributes)->avg()) / 2;
                                         else
-                                            $facAvg = $facAvg == 0? collect($this->randomAttributes($cat->where('type', 3)->count()))->avg() : ($facAvg + collect($this->randomAttributes(3))->avg()) / 2;
+                                            $facAvg = $facAvg == 0? collect($this->randomAttributes($cat->where('type', 3)->count()))->avg() : ($facAvg + collect($this->randomAttributes($cat->where('type', 3)->count()))->avg())/*  / 2 */;
                                         //student evaluations
                                         $stEvalDetails = $this->getDetails($per, 4, $fac);
                                         //get average of students evaluation
                                         if($stEvalDetails != null)
                                             $stAvg = $stAvg == 0? collect($stEvalDetails->attributes)->avg() : ($stAvg + collect($stEvalDetails->attributes)->avg()) / 2;
                                         else
-                                            $stAvg = $stAvg == 0? collect($this->randomAttributes($cat->where('type', 4)->count()))->avg() : ($stAvg + collect($this->randomAttributes(5))->avg()) / 2;
+                                            $stAvg = $stAvg == 0? collect($this->randomAttributes($cat->where('type', 4)->count()))->avg() : ($stAvg + collect($this->randomAttributes($cat->where('type', 4)->count()))->avg())/*  / 2 */;
                                     }
                                     //get the average of the two but only put one if there is no evaluations on other
                                     $avgRaw[$per->id] = ($facAvg > 0 && $stAvg == 0 || $facAvg == 0 && $stAvg > 0)? ($facAvg == 0? number_format($stAvg, 0) : number_format($facAvg, 0))  : number_format(($facAvg + $stAvg) / 2, 0);
@@ -425,7 +425,7 @@ class HomeController extends Controller
                     }
                 }
                 //get faculties in same department
-                $faculty = Faculty::where('department_id', auth()->user()->faculties[0]->department_id)
+                $faculty = Faculty::where('department_id', auth()->user()->faculties->first()->department_id)
                             -> where('user_id', '!=', auth()->user()->id)
                             -> latest('id')
                             -> get();
@@ -440,14 +440,29 @@ class HomeController extends Controller
                 //get enrollment status
                 $enrollment = Enrollment::where('user_id', auth()->user()->id)
                                     -> where('period_id', $period->id)
-                                    -> latest('id')
                                     -> get()
                                     -> first();
+                
                 //get the subjects taken
-                $subjects =  isset($enrollment)? KlaseStudent::with('klase')
-                                                    -> where('user_id', auth()->user()->id)       
-                                                    -> latest('id')
-                                                    -> get() : null;                
+                $blocks =  Block::with('klases')
+                            -> where('period_id', $period->id)   
+                            -> latest('id')
+                            -> get();
+                $klases = [];
+                foreach($blocks as $det)
+                {
+                    foreach($det->klases as $klase)
+                    {
+                        if($klase->klaseStudents->where('user_id', auth()->user()->id)->first())
+                            $klases = array_merge($klases, [$klase->id]);
+                    }
+                }
+
+                $subjects = isset($enrollment)? KlaseStudent::with('klase')
+                                    -> where('user_id', auth()->user()->id)
+                                    -> whereIn('klase_id', $klases)      
+                                    -> latest('id')
+                                    -> get() : null;
 
                 return view('student.index', compact('period', 'subjects', 'enrollment'));
                 break;
