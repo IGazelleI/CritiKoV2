@@ -26,6 +26,13 @@
                 border-width: 0px;
                 padding: 5px 10px;
             }
+            .grid-container 
+            {
+            display: grid;
+            column-gap: 50px;
+            grid-template-columns: auto auto auto;
+            padding: 10px;
+            }
         </style>
     </head>
     <body>
@@ -111,8 +118,9 @@
             $catCount = 0;
             $cat = 0;
         @endphp
+        <div class="grid-container">
         <div style="margin-top: 30px;" class="center">
-            <div style="display: inline-table">
+            <div class="grid-item" style="display: inline-table">
                 <table class="no-border" style="padding: 2px">
                     <thead>
                         <tr class="no-border" style="padding: 2px">
@@ -138,7 +146,7 @@
                     </tbody>
                 </table>
             </div>
-            <div style="display: inline-table; margin-left: auto">
+            <div class="grid-item" style="display: inline-table; position: relative; left: 510px">
                 <table class="text-center no-border" style="padding: 2px">
                     <tbody>
                         <tr>
@@ -156,6 +164,7 @@
                     </tbody>
                 </table>
             </div>
+        </div>
         </div>
         <br/>
         <table class="text-center no-border center" style="width: 90%">
