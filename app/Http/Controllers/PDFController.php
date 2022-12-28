@@ -17,9 +17,14 @@ class PDFController extends Controller
     public function view(Period $period, $type, Faculty $faculty)
     {
         $data = $this->getSummary($period, $type, $faculty);
+
+        if(($type != 3 && $type != 4) || $data == null)
+            abort(404);
+
         /* $subject = $faculty->klases;  */
-        $pdf = PDF::loadview('pdf.report', array('type' =>  $type, 'faculty' => $faculty, /* 'subject' => $subject, */ 'period' => $period, 'data' => $data))
-                -> setPaper('letter', 'landscape');
+        $pdf = $type == 3? PDF::loadview('pdf.facultyReport', array('type' =>  $type, 'faculty' => $faculty, /* 'subject' => $subject, */ 'period' => $period, 'data' => $data)) : 
+                           PDF::loadview('pdf.studentReport', array('type' =>  $type, 'faculty' => $faculty, /* 'subject' => $subject, */ 'period' => $period, 'data' => $data))
+                                -> setPaper('letter', 'landscape');
 
         return $pdf->stream();
     }
@@ -105,7 +110,7 @@ class PDFController extends Controller
                 }
             }
         }
-
+        
         return $summary;
     }
 }

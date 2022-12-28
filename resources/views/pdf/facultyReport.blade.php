@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title> PDF Preview-{{$type == 3? 'Faculty' : 'Student'}} Evaluation Report </title>
+        <title> PDF Preview-{{$type == 3? 'Faculty' : 'Student'}} SAST Report </title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
         <style>
             body
@@ -45,6 +45,7 @@
                     $catPts = 0;
                     $catCount = 0;
                     $totalPts = 0;
+                    $cat = 0;
                 @endphp
                 @foreach($data->where('q_type_id', 1) as $det)
                     @if($prevCat != $det->q_category_id && $prevCat != 0)
@@ -58,8 +59,11 @@
                     @endphp
                     @endif
                     @if($prevCat != $det->q_category_id)
+                        @php
+                            $cat += 1;
+                        @endphp
                        <tr>
-                            <th colspan="2"> {{$det->qCat->name}} </th>
+                            <th colspan="2"> Area of Concern {{numberToRoman($cat)}}: {{$det->qCat->name}} </th>
                        </tr>
                     @endif
                     @php
@@ -103,7 +107,7 @@
         <br/>
         <div style="margin-left: 55px">
             @foreach($data->where('q_type_id', 2) as $det)
-                <span style="font-weight: bold"> {{ucfirst($det->sentence)}}{{Str::contains($det->sentence, '?')? '' : '?'}} </span>
+                <span style="font-weight: bold"> {{ucfirst($det->sentence)}}{{Str::contains($det->sentence, '?')? '' : ':'}} </span>
                 @php
                     $mesCount = 1;
                 @endphp
@@ -120,20 +124,8 @@
                 <br/> <br/>
             @endforeach
         </div>
-        <div class="text-end" style="color: gray">
-            Downloaded by: 
-            @if(auth()->user()->type == 1)
-            Admin
-            @elseif(auth()->user()->type == 3)
-                @if(auth()->user()->faculties->first()->isDean)
-                {{auth()->user()->faculties->first()->department->name}} Dean
-                @elseif(auth()->user()->faculties->first()->isChairman)
-                {{auth()->user()->faculties->first()->department->name}} Chairman
-                @else
-                Yours Truly
-                @endif
-            @endif
-        </div>
+       
+
     </body>
 </html>
 @php
@@ -153,4 +145,32 @@
                     break;
         }
     }
+
+    function numberToRoman($num)  
+    { 
+        // Be sure to convert the given parameter into an integer
+        $n = intval($num);
+        $result = ''; 
+    
+        // Declare a lookup array that we will use to traverse the number: 
+        $lookup = array(
+            'M' => 1000, 'CM' => 900, 'D' => 500, 'CD' => 400, 
+            'C' => 100, 'XC' => 90, 'L' => 50, 'XL' => 40, 
+            'X' => 10, 'IX' => 9, 'V' => 5, 'IV' => 4, 'I' => 1
+        ); 
+    
+        foreach ($lookup as $roman => $value)  
+        {
+            // Look for number of matches
+            $matches = intval($n / $value); 
+    
+            // Concatenate characters
+            $result .= str_repeat($roman, $matches); 
+    
+            // Substract that from the number 
+            $n = $n % $value; 
+        } 
+
+        return $result; 
+    } 
 @endphp

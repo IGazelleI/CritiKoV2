@@ -42,10 +42,10 @@
                     </div>
                     <div class="col border-start border-dark ps-5 text-white px-2">
                         1 = <span class="text-decoration-underline text-danger  m-1"> Poor </span> <br/>
-                        2 = <span class="text-decoration-underline text-warning m-1"> Bad </span> <br/> 
-                        3 = <span class="text-decoration-underline m-1"> Average </span> <br/>
-                        4 = <span class="text-decoration-underline text-primary m-1"> Great </span> <br/>
-                        5 = <span class="text-decoration-underline text-success m-1"> Excellent </span> <br/>
+                        2 = <span class="text-decoration-underline text-warning m-1"> Fair </span> <br/> 
+                        3 = <span class="text-decoration-underline m-1"> Good </span> <br/>
+                        4 = <span class="text-decoration-underline text-primary m-1"> Very Good </span> <br/>
+                        5 = <span class="text-decoration-underline text-success m-1"> Outstanding </span> <br/>
                     </div>
                     <div class="col">
                         <div class="row px-5 py-2">
@@ -61,7 +61,7 @@
                         </div>
                         <div class="row">
                             <div class="col text-center">
-                                <h4 class="fw-bold"> 
+                                <h4 class="fw-bold">
                                     @if($faculty->where('user_id', selected())->first() != null)
                                     {{$faculty->where('user_id', selected())->first()->evaluated->where('evaluator', auth()->user()->id)->isEmpty()? 'Pending' : 'Finished'}} 
                                     @else
