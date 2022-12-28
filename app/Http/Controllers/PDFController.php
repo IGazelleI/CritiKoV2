@@ -14,7 +14,7 @@ use Illuminate\Support\Collection;
 
 class PDFController extends Controller
 {
-    public function view(Period $period, $type, Faculty $faculty)
+    public function view(Period $period, $type, Faculty $faculty, $subject = null)
     {
         $data = $this->getSummary($period, $type, $faculty);
 
@@ -29,7 +29,7 @@ class PDFController extends Controller
         return $pdf->stream();
     }
     
-    function getSummary($period, $type, $faculty)
+    function getSummary($period, $type, $faculty, $subject = null)
     {
         if(!isset($period->beginEval))
             return null;

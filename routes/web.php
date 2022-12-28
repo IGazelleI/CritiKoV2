@@ -32,7 +32,7 @@ Route::middleware('auth')->group(function ()
 
     Route::controller(App\Http\Controllers\PDFController::class)->group(function ()
     {
-        Route::get('/pdf/report/{period}/{type}/{faculty}', 'view')->name('pdf.view');
+        Route::get('/pdf/report/{period}/{type}/{faculty}/{subject?}', 'view')->name('pdf.view');
     });
 
     Route::middleware('user-access:admin')->group(function ()

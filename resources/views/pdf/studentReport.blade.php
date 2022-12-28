@@ -34,32 +34,32 @@
             {{$period->getDescription()}}
         </header> <br/>
         <div>
-            <table class="no-border center">
-                <tr class="no-border">
-                    <td class="no-border"> </td>
-                    <td class="no-border"> </td>
-                    <td class="no-border"> </td>
-                    <td colspan="2" class="no-border" style="text-align: center"> <strong> RANGE and Verbal Description (VD) </strong> </td>
+            <table class="no-border center" style="padding: 1px 5px">
+                <tr>
+                    <td class="no-border" style="padding: 1px 5px"> </td>
+                    <td class="no-border" style="padding: 1px 5px"> </td>
+                    <td class="no-border" style="padding: 1px 5px"> </td>
+                    <td colspan="2" class="no-border" style="text-align: center; padding: 1px 5px"> <strong> RANGE and Verbal Description (VD) </strong> </td>
                 </tr>
-                <tr class="no-border">
-                    <td class="no-border"> Name of Instructor/Professor </td>
-                    <td class="no-border"> : &nbsp; {{$faculty->fullName(true)}} </td>
-                    <td class="no-border"> Campus - Main </td>
-                    <td class="no-border"> 4.20 - 5.00 Outstanding (O) </td>
-                    <td class="no-border"> 2.60 - 3.39 Satisfactory (S) </td>
+                <tr>
+                    <td class="no-border" style="padding: 1px 5px"> Name of Instructor/Professor </td>
+                    <td class="no-border" style="padding: 1px 5px"> : &nbsp; {{$faculty->fullName(true)}} </td>
+                    <td class="no-border" style="padding: 1px 5px"> Campus : Main </td>
+                    <td class="no-border" style="padding: 1px 5px"> 4.20 - 5.00 Outstanding (O) </td>
+                    <td class="no-border" style="padding: 1px 5px"> 2.60 - 3.39 Satisfactory (S) </td>
                 </tr>
-                <tr class="no-border">
-                    <td class="no-border"> Course Taught </td>
-                    <td class="no-border"> : &nbsp; {{$faculty->klases->first()->subject->descriptive_title}} </td>
-                    <td class="no-border"> </td>
-                    <td class="no-border"> 3.40 - 4.19 Very Satisfactory (VS) </td>
-                    <td class="no-border"> 1.80 - 2.59 Fair (F) </td>
+                <tr>
+                    <td class="no-border" style="padding: 1px 5px"> Course Taught </td>
+                    <td class="no-border" style="padding: 1px 5px"> : &nbsp; {{$faculty->klases->first()->subject->descriptive_title}} </td>
+                    <td class="no-border" style="padding: 1px 5px"> </td>
+                    <td class="no-border" style="padding: 1px 5px"> 3.40 - 4.19 Very Satisfactory (VS) </td>
+                    <td class="no-border" style="padding: 1px 5px"> 1.80 - 2.59 Fair (F) </td>
                 </tr>
-                <tr class="no-border">
-                    <td class="no-border"> No. of Student Evaluators </td>
-                    <td class="no-border"> : &nbsp; {{$faculty->evaluated->where('period_id', $period->id)->count()}} </td>
-                    <td class="no-border"> </td>
-                    <td colspan="2" class="no-border" style="text-align: center"> 1.00 - 1.79 Unsatisfactory (US) </td>
+                <tr>
+                    <td class="no-border" style="padding: 1px 5px"> No. of Student Evaluators </td>
+                    <td class="no-border" style="padding: 1px 5px"> : &nbsp; {{$faculty->evaluated->where('period_id', $period->id)->count()}} </td>
+                    <td class="no-border" style="padding: 1px 5px"> </td>
+                    <td colspan="2" class="no-border" style="text-align: center; padding: 1px 5px"> 1.00 - 1.79 Unsatisfactory (US) </td>
                 </tr>
             </table>
         </div>

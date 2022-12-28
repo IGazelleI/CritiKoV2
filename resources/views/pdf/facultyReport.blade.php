@@ -13,7 +13,7 @@
             table, th, td
             {
                 border-width: 2px;
-                padding: 3px
+                padding: 1px
             }
             .center
             {
@@ -31,11 +31,12 @@
             M.J. Cuenco Avenue Cor. R. Palma Street, Cebu City, Philippines <br/>
             Website: http://www.ctu.edu.ph E-mail: <span class="text-lowercase">{{$faculty->department->name}}</span>dean@ctu.edu.ph <br/>
             Phone: +6332-402-4060 loc. 1104 <br/> <br/>
-            <span class="fw-bold text-uppercase"> {{$type == 3? 'Faculty' : 'Student'}} Evaluation Report </span>
+            <span class="fw-bold text-uppercase"> {{$type == 3? 'Faculty' : 'Student'}} Evaluation Report </span> <br/>
+            {{$period->getDescription()}}
         </header> <br/>
         <div style="margin-left: 69px">
-            <strong> Instructor/Professor: </strong> {{$faculty->fullName(true)}} &nbsp; <strong> Date: </strong> {{date('M. d, Y @ g:i A',  strtotime(NOW()))}} <br/>
-            <strong> Period: </strong> {{$period->getDescription()}} &nbsp;
+            <strong> Instructor/Professor: </strong> {{$faculty->fullName(true)}} &nbsp;
+            <span style="text-align: end"> <strong> Date: </strong> {{date('M. d, Y @ g:i A',  strtotime(NOW()))}} </span> <br/>
         </div> <br/> <br/>
         <table class="center">
             <tbody>
@@ -51,7 +52,7 @@
                     @if($prevCat != $det->q_category_id && $prevCat != 0)
                     <tr>
                         <td class="text-end"> <strong> Mean  </strong> </td>
-                        <td class="text-center"> <strong> {{number_format($catPts / $catCount, 1)}} </strong> </td>
+                        <td class="text-center"> <strong> {{number_format($catPts / $catCount, 2)}} </strong> </td>
                     </tr>
                     @php
                         $catPts = 0;
@@ -71,7 +72,7 @@
                     @endphp
                     <tr>
                         <td> <strong> {{$catCount + 1}}. </strong> {{ucfirst($det->sentence)}} </td>
-                        <td class="text-center"> {{number_format($det->mean, 1)}}</td>
+                        <td class="text-center"> {{number_format($det->mean, 2)}}</td>
                     </tr>
                     @if($count == $data->where('q_type_id', 1)->count())
                     @php
@@ -80,7 +81,7 @@
                     {{-- Last Row Will be shown as it is not counted in loop --}}
                     <tr>
                         <td class="text-end"> <strong> Mean  </strong> </td>
-                        <td class="text-center"> <strong> {{number_format($catPts / $catCount, 1)}} </strong> </td>
+                        <td class="text-center"> <strong> {{number_format($catPts / $catCount, 2)}} </strong> </td>
                     </tr>
                     @php
                         $catPts = 0;
@@ -96,11 +97,11 @@
                 @endforeach
                 <tr>
                     <td class="text-end"> <strong> Grand Mean </strong> </td>
-                    <td class="text-center"> <strong> {{number_format($totalPts / ($count - 1), 1)}} </strong> </td>  
+                    <td class="text-center"> <strong> {{number_format($totalPts / ($count - 1), 2)}} </strong> </td>  
                 </tr>
                 <tr>
                     <td class="text-end"> <strong> Descriptive Rating </strong> </td>
-                    <td class="text-center"> <strong> {{rating($totalPts / ($count - 1))}} </strong> </td>  
+                    <td class="text-center"> <strong> {{rating($totalPts / ($count - 2))}} </strong> </td>  
                 </tr>
             </tbody>
         </table>
@@ -124,8 +125,15 @@
                 <br/> <br/>
             @endforeach
         </div>
-       
-
+        <table class="text-center center" style="margin-top: 69px; width: 80%; border-left: 0px; border-right: 0px; border-bottom: 0px">
+            <tbody>
+                <tr>
+                    <td style="border-left: 0px; border-right: 0px; border-bottom: 0px"> Signature of Instructor/Professor Observed </td>
+                    <td style="border: 0px; color: white"> TTB Pangag Agtang </td>
+                    <td style="border-left: 0px; border-right: 0px; border-bottom: 0px"> Signature of Supervisor/Observer </td>
+                </tr>
+            </tbody>
+        </table>
     </body>
 </html>
 @php
