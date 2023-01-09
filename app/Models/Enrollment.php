@@ -264,7 +264,7 @@ class Enrollment extends Model
     }
     public function student()
     {
-        return $this->belongsTo(Student::class, 'user_id');
+        return $this->hasMany(Student::class, 'user_id');
     }
     //course relationship
     public function course()

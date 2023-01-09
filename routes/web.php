@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function ()
             Route::get('/a/report', 'report')->name('admin.report');
             Route::post('/a/prevLimit', 'changePrevLimit')->name('admin.changePrevLimit');
             Route::get('/completion', 'completion')->name('admin.completion');
+            Route::get('/completion/{department}', 'completionDetail')->name('admin.completionDetail');
             Route::get('/summary', 'summary')->name('admin.summary');
             Route::post('/s/search', 'summarySearch')->name('admin.summarySearch');
             Route::get('/summary/{faculty}', 'summaryReport')->name('admin.summaryReport');

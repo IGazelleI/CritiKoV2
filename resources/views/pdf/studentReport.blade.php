@@ -26,11 +26,22 @@
                 border-width: 0px;
                 padding: 5px 10px;
             }
+            .grid-container 
+            {
+                display: grid;
+                column-gap: 50px;
+                grid-template-columns: auto auto auto;
+                padding: 10px;
+            }
+            div.page-break
+            {
+                page-break-before: always;
+            }
         </style>
     </head>
     <body>
         <header style="margin-top:-30px; text-align:center">
-            Student's Assesment ST <br/>
+            Student's Assessment Survey for Teachers <br/>
             {{$period->getDescription()}}
         </header> <br/>
         <div>
@@ -50,14 +61,14 @@
                 </tr>
                 <tr>
                     <td class="no-border" style="padding: 1px 5px"> Course Taught </td>
-                    <td class="no-border" style="padding: 1px 5px"> : &nbsp; {{$faculty->klases->first()->subject->descriptive_title}} </td>
+                    <td class="no-border" style="padding: 1px 5px"> : &nbsp; {{$faculty->klases->where('subject_id', $subject)->first()->subject->descriptive_title}} </td>
                     <td class="no-border" style="padding: 1px 5px"> </td>
                     <td class="no-border" style="padding: 1px 5px"> 3.40 - 4.19 Very Satisfactory (VS) </td>
                     <td class="no-border" style="padding: 1px 5px"> 1.80 - 2.59 Fair (F) </td>
                 </tr>
                 <tr>
                     <td class="no-border" style="padding: 1px 5px"> No. of Student Evaluators </td>
-                    <td class="no-border" style="padding: 1px 5px"> : &nbsp; {{$faculty->evaluated->where('period_id', $period->id)->count()}} </td>
+                    <td class="no-border" style="padding: 1px 5px"> : &nbsp; {{$faculty->evaluated->where('evaluatee', $faculty->user_id)->where('period_id', $period->id)->where('subject_id', $subject)->count()}} </td>
                     <td class="no-border" style="padding: 1px 5px"> </td>
                     <td colspan="2" class="no-border" style="text-align: center; padding: 1px 5px"> 1.00 - 1.79 Unsatisfactory (US) </td>
                 </tr>
@@ -108,53 +119,49 @@
         </table>
         @php
             $prevCat = 0;
-            $catCount = 0;
-            $cat = 0;
         @endphp
-        <div style="margin-top: 30px;" class="center">
-            <div style="display: inline-table">
-                <table class="no-border" style="padding: 2px">
-                    <thead>
-                        <tr class="no-border" style="padding: 2px">
-                            <th class="no-border" style="padding: 2px"> <strong> Summary Statistics </strong> </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    @foreach($data as $det)
-                        @php
-                            $catCount = 0;
-                            $cat += 1;
-                        @endphp
-                        @if($prevCat != $det->q_category_id)
-                        <tr class="no-border" style="padding: 2px">
-                            <td class="no-border" style="padding: 2px"> {{$det->qCat->name}} Mean ({{$det->qCat->name[0]}}M) </td>
-                            <td class="no-border" style="padding: 2px"> &nbsp; : &nbsp; <span style="font-weight: bold; font-size: 12"> {{number_format($data->where('q_category_id', $det->q_category_id)->avg('mean'), 2)}} </span> </td>
-                        </tr>
-                        @endif
-                        @php
-                            $prevCat = $det->q_category_id;
-                        @endphp
-                    @endforeach
-                    </tbody>
-                </table>
-            </div>
-            <div style="display: inline-table; margin-left: auto">
-                <table class="text-center no-border" style="padding: 2px">
-                    <tbody>
-                        <tr>
-                            <td class="fw-bold no-border" style="padding: 2px"> You are a/an </td>
-                        </tr>
-                        <tr>
-                            <td class="text-uppercase fw-bold no-border" style="font-size: 16; padding: 2px"> {{rating($data->avg('mean'))['message']}} </td>
-                        </tr>
-                        <tr>
-                            <td class="no-border" style="padding: 2px"> General Average &nbsp; {{number_format($data->avg('mean'), 2)}} </td>
-                        </tr>
-                        <tr>
-                            <td class="fw-bold no-border" style="padding: 2px"> Instructor/Professor </td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div class="grid-container">
+            <div style="margin-top: 30px; margin:left: 50px" class="center">
+                <div class="grid-item" style="display: inline-table">
+                    <table class="no-border" style="padding: 2px">
+                        <thead>
+                            <tr class="no-border" style="padding: 2px">
+                                <th class="no-border" style="padding: 2px"> <strong> Summary Statistics </strong> </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($data as $det)
+                            @if($prevCat != $det->q_category_id)
+                            <tr class="no-border" style="padding: 2px">
+                                <td class="no-border" style="padding: 2px"> {{$det->qCat->name}} Mean ({{$det->qCat->name[0]}}M) </td>
+                                <td class="no-border" style="padding: 2px"> &nbsp; : &nbsp; <span style="font-weight: bold; font-size: 12"> {{number_format($data->where('q_category_id', $det->q_category_id)->avg('mean'), 2)}} </span> </td>
+                            </tr>
+                            @endif
+                            @php
+                                $prevCat = $det->q_category_id;
+                            @endphp
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <div class="grid-item" style="display: inline-table; position: relative; left: 510px">
+                    <table class="text-center no-border" style="padding: 2px">
+                        <tbody>
+                            <tr>
+                                <td class="fw-bold no-border" style="padding: 2px"> You are a/an </td>
+                            </tr>
+                            <tr>
+                                <td class="text-uppercase fw-bold no-border" style="font-size: 16; padding: 2px"> {{rating($data->avg('mean'))['message']}} </td>
+                            </tr>
+                            <tr>
+                                <td class="no-border" style="padding: 2px"> General Average &nbsp; {{number_format($data->avg('mean'), 2)}} </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold no-border" style="padding: 2px"> Instructor/Professor </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <br/>
@@ -192,6 +199,126 @@
                 </tr>
             </tbody>
         </table>
+        <div class="page-break" style="margin: 10%">
+            <strong> Name of Instructor/Professor: </strong> {{$faculty->fullName(true)}} <br/> <br/>
+            <strong> Course/Subject Taught: </strong> {{$faculty->klases->where('subject_id', $subject)->first()->subject->descriptive_title}} <br/> <br/>
+            @foreach($data->where('q_type_id', 2) as $det)
+                <strong> {{ucfirst($det->sentence)}}{{Str::contains($det->sentence, '?')? '' : ':'}} </strong> <br/> <br/>
+                <ul type="circle" style="margin-left: 10%">
+                    @foreach($det->message as $message)
+                        <li> {{$message}} </li>
+                    @endforeach
+                </ul>
+            @endforeach
+        </div>
+        <div class="page-break">
+            <header style="margin-top:-30px; text-align:center">
+                {{-- <img src="{{asset('images/logo.png')}}" alt="CTU Logo"/> --}}
+                Republic of the Philippines <br/>
+                <span style="font-weight: bold"> CEBU TECHNOLOGICAL UNIVERSITY </span> <br/>
+                MAIN CAMPUS <br/>
+                M.J. Cuenco Avenue Cor. R. Palma Street, Cebu City, Philippines <br/>
+                Website: http://www.ctu.edu.ph <br/> <br/>
+                <span class="fw-bold text-uppercase"> {{$faculty->department->description}} </span> <br/>
+                <hr class="center" style="width: 85%"/>
+                <span class="fw-bold text-uppercase"> Intervention Plan </span> <br/>
+                <span class="fw-bold"> Student's Assessment Survey for Teachers (SAST) </span> <br/>
+                <span class="fw-bold"> {{$period->getDescription()}} </span> <br/>
+            </header> <br/>
+            <table class="center text-center" width="85%" style="margin-bottom: 0">
+                <thead>
+                    <tr>
+                        <th class="text-uppercase"> Name </th>
+                        <th class="text-uppercase">  </th>
+                        <td> Mean </td>
+                        <td> VD </td>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-uppercase" rowspan="{{$catCount + 2}}"> {{$faculty->fullName(true)}} </td>
+                        <td class="fw-bold text-uppercase" width="15%"> Overall </td>
+                        <td width="10%"> {{number_format($data->avg('mean'), 2)}} </td>
+                        <td width="10%"> {{rating($data->avg('mean'))['vd']}} </td>
+                    </tr>
+                    @php
+                        $prevCat = 0;
+                        $cat = 0;   
+                    @endphp
+                    @foreach($data as $det)
+                        @php
+                            $cat += 1;
+                        @endphp
+                        @if($prevCat != $det->q_category_id)
+                            <tr>
+                                <td class="fw-bold text-uppercase" width="15%"> {{$det->qCat->name}} </td>
+                                <td width="10%"> {{number_format($data->where('q_category_id', $det->q_category_id)->avg('mean'), 2)}} </td>
+                                <td width="10%"> {{rating($data->where('q_category_id', $det->q_category_id)->avg('mean'))['vd']}} </td>
+                            </tr>
+                        @endif
+                        @php
+                            $prevCat = $det->q_category_id;
+                        @endphp
+                    @endforeach
+                </tbody>
+            </table>
+            <table class="center text-center" style="margin-top: -8px" width="85%">
+                <tbody>
+                    @foreach($data->where('q_type_id', 2) as $det)
+                    <tr>
+                        <th class="fw-bold text-uppercase"> Positive {{$det->sentence}} </th>
+                        <th class="fw-bold text-uppercase"> Negative {{$det->sentence}} </th>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold text-start">
+                            1. <br/>
+                            2. <br/>
+                            3. <br/> <br/> <br/>
+                        </td>
+                        <td class="fw-bold text-start">
+                            1. <br/>
+                            2. <br/>
+                            3. <br/> <br/> <br/>
+                        </td>   
+                    </tr>
+                    <tr>
+                        <th class="fw-bold"> Action Plans </th>
+                        <th class="fw-bold"> Action Plans </th>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold text-start">
+                            1. <br/>
+                            2. <br/>
+                            3. <br/> <br/> <br/>
+                        </td>
+                        <td class="fw-bold text-start">
+                            1. <br/>
+                            2. <br/>
+                            3. <br/> <br/> <br/>
+                        </td>   
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <table class="center" width="85%">
+                <thead>
+                    <tr>
+                        <td> Prepared by: </td>
+                        <td> Recommended by: </td>
+                        <td> Approved by: </td>
+                    </tr>
+                    <tr class="text-center fw-bold text-uppercase">
+                        <td> <br/> <br/> {{$faculty->fullName(true)}} </td> 
+                        <td> <br/> <br/> {{$faculty->department->faculties->where('isChairman', true)->first()->fullName(true)}} </td>
+                        <td> <br/> <br/> {{$faculty->department->faculties->where('isDean', true)->first()->fullName(true)}} </td>
+                    </tr>
+                    <tr class="text-center">
+                        <td> Instructor </td>
+                        <td> Program Chairperson </td>
+                        <td> Dean </td>
+                    </tr>
+                </thead>
+            </table>
+        </div>
     </body>
 </html>
 @php
@@ -263,5 +390,5 @@
         } 
 
         return $result; 
-    } 
+    }
 @endphp

@@ -38,6 +38,15 @@
             <strong> Instructor/Professor: </strong> {{$faculty->fullName(true)}} &nbsp;
             <span style="text-align: end"> <strong> Date: </strong> {{date('M. d, Y @ g:i A',  strtotime(NOW()))}} </span> <br/>
         </div> <br/> <br/>
+      {{-- <div class="center"> 
+                <table>
+                    <tbody>
+                        <tr>
+                            5 - Outstandings
+                        </tr>
+                    </tbody>
+                </table>
+        </div> --}}
         <table class="center">
             <tbody>
                 @php
@@ -108,7 +117,7 @@
         <br/>
         <div style="margin-left: 55px">
             @foreach($data->where('q_type_id', 2) as $det)
-                <span style="font-weight: bold"> {{ucfirst($det->sentence)}}{{Str::contains($det->sentence, '?')? '' : ':'}} </span>
+                <span style="font-weight: bold" class="text-capitalize"> {{ucfirst($det->sentence)}}{{Str::contains($det->sentence, '?')? '' : ':'}} </span>
                 @php
                     $mesCount = 1;
                 @endphp

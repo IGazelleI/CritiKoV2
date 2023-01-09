@@ -16,15 +16,15 @@ class PDFController extends Controller
 {
     public function view(Period $period, $type, Faculty $faculty, $subject = null)
     {
-        $data = $this->getSummary($period, $type, $faculty);
+        $data = $this->getSummary($period, $type, $faculty, $subject);
 
         if(($type != 3 && $type != 4) || $data == null)
             abort(404);
 
         /* $subject = $faculty->klases;  */
-        $pdf = $type == 3? PDF::loadview('pdf.facultyReport', array('type' =>  $type, 'faculty' => $faculty, /* 'subject' => $subject, */ 'period' => $period, 'data' => $data)) : 
-                           PDF::loadview('pdf.studentReport', array('type' =>  $type, 'faculty' => $faculty, /* 'subject' => $subject, */ 'period' => $period, 'data' => $data))
-                                -> setPaper('letter', 'landscape');
+        $pdf = $type == 3? PDF::loadview('pdf.facultyReport', array('type' =>  $type, 'faculty' => $faculty, 'period' => $period, 'data' => $data)) : 
+                           PDF::loadview('pdf.studentReport', array('type' =>  $type, 'faculty' => $faculty, 'subject' => $subject, 'period' => $period, 'data' => $data))
+                                -> setPaper('a4', 'landscape');
 
         return $pdf->stream();
     }
@@ -83,6 +83,7 @@ class PDFController extends Controller
                             -> where('evaluatee', $faculty->user_id)
                             -> whereIn('evaluator', $students)
                             -> where('period_id', $period->id)
+                            -> where('subjecT_id', $subject)
                             -> latest('id')
                             -> get(); 
         }

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Period;
 use App\Models\Faculty;
 use App\Models\Student;
 use App\Models\Department;
+use App\Models\Enrollment;
 use Illuminate\Support\Str;
 use App\Charts\FacultyChart;
 use Illuminate\Http\Request;
@@ -151,9 +153,39 @@ class UserController extends Controller
                     : back()->withErrors(['email' => [__($status)]]);
     }
 
-    public function manage($type = null)
+    public function manage(Request $request, $type = null)
     {
-        if($type != 5)
+        $variables = array();
+
+        if($type == 4)
+        {
+            $perSelected = $request->period;
+            $periods = Period::latest('id')->get();
+            $variables = array_merge($variables, ['perSelected', 'periods']);    
+            
+            $enrollment = Enrollment::where('period_id', isset($perSelected)? $perSelected : $periods->first())
+                                    -> latest('id')
+                                    -> get();
+
+            $students = array(); 
+
+            if(!$enrollment->isEmpty())
+            {
+                foreach($enrollment as $det)
+                    $students = array_merge($students, [$det->user_id]);
+                    dump($students);
+                $user = User::whereIn('id', $students)
+                        -> latest('id')
+                        -> get();
+            }
+            else
+            {
+                $user = User::where('id', 42069)
+                        -> latest('id')
+                        -> get();
+            }
+        }
+        else if($type != 5)
         {
             $user = User::where(function ($query) use ($type)
                     {
@@ -169,7 +201,9 @@ class UserController extends Controller
                         -> get();
         }
 
-        return view('user.manage', compact('user', 'type'));
+        $variables = array_merge($variables, ['user', 'type']);
+
+        return view('user.manage', compact($variables));
     }
 
     public function assignDean(Department $department)
@@ -246,25 +280,5 @@ class UserController extends Controller
             return back()->with('message', 'Error in assigning college chairman. Please try again.');
 
         return redirect(route('user.manage', 5))->with('message', 'New College Chairman assigned.');
-    }
-
-    
-    public function s()
-    {
-        //overall chart
-        $overAllChart = new FacultyChart();
-
-        $overAllChart-> labels(['One', 'Two', 'Three', 'Four'])
-            -> dataset('Chart Name', 'line', [50, 20, 70, 15]);
-
-        //evaluation progress chart
-        $evalProgress = new FacultyChart();
-
-        $evalProgress-> labels(['Pending', 'Finished'])
-            -> dataset('Progess', 'doughnut', [75, 25])
-            -> backgroundColor(['Yellow', 'Green'])
-            -> options(['responsive' => true]);
-        
-        return view('admin.s', compact('overAllChart', 'evalProgress'));
     }
 }

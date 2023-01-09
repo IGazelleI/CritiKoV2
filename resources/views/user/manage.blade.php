@@ -10,6 +10,42 @@
                                 <b>Management</b>
                             </h2>
                         </div>
+                        @if($type == 4)
+                        <div class="col text-end">
+                            <div class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle rounded-pill" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    @if (isset($perSelected))
+                                        {{$periods->find($perSelected)->getDescription()}} 
+                                    @else
+                                        Period
+                                    @endif
+                                </button>
+                              
+                                <ul class="dropdown-menu">
+                                    @unless($periods->isEmpty())
+                                        <li>
+                                            <a  href="{{route('user.manage', ['type' => 4, 'period' => $periods->first()->id])}}" class="dropdown-item">
+                                                Latest
+                                            </a>
+                                        </li>
+                                        @foreach($periods as $per)
+                                        <li>
+                                            <a  href="{{route('user.manage', ['type' => 4, 'period' => $per->id])}}" class="dropdown-item">
+                                                {{$per->getDescription()}}
+                                            </a>
+                                        </li>
+                                        @endforeach
+                                    @else
+                                    <li>
+                                        <a class="dropdown-item disabled"> Period is empty </a>
+                                    </li>
+                                    @endunless
+                                </ul>
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+                    <div class="row">
                         <div class="col">
                             <div class="btn-group">
                                 <button type="button" class="btn btn-primary" data-bs-target="#addUserModal" data-bs-toggle="modal">
@@ -267,7 +303,7 @@
                                                         <div class="col">
                                                             {{$chairman->fullName(false)}} &nbsp;
                                                             <a href="{{route('user.assignChairman', $det->id, $dean->user_id)}}" class="text-decoration-underline"
-                                                                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Change {{$det->name}} College Dean"
+                                                                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Change {{$det->name}} Program Chairman"
                                                             >
                                                                 Change
                                                             </a>

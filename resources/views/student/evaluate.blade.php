@@ -7,10 +7,21 @@
             @if(isset($period->beginEval))
                 @if($period->beginEval <= NOW()->format('Y-m-d'))
                 <header>
-                    <div class="text-center">
-                        <h1 class="mb-3" style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif">
-                            Evaluate Instructor <br/>{{--  <span class="text-danger text-uppercase alert-danger"> Bisag nakadisabled makailis gapon sila sa radio </span> --}}
-                        </h1>
+                    @if($period->endEval < NOW()->format('Y-m-d'))
+                    <div class="row">
+                        <div class="col">
+                            <h3 class="text-center text-uppercase bg-light p-3 mt-n5 mx-n5 text-danger fw-bold rounded fs-6"> Evaluation ended on {{date('F d, Y @ D', strToTime($period->endEval))}} </h3>
+                        </div>
+                    </div>
+                    @endif
+                    <div class="row">
+                        <div class="col">
+                            <div class="text-center">
+                                <h1 class="mb-3" style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif">
+                                    Evaluate Instructor <br/>{{--  <span class="text-danger text-uppercase alert-danger"> Bisag nakadisabled makailis gapon sila sa radio </span> --}}
+                                </h1>
+                            </div>
+                        </div>
                     </div>
                     <form action="{{route('student.changeSelected')}}" method="POST">
                         @csrf
@@ -227,7 +238,7 @@
                         <div class="row d-flex justify-content-end me-5">
                             <div class="col-1 mt-5">
                                 <!-- Submit button -->
-                                <button type="submit" class="btn btn-primary rounded-pill {{(selected() == null || !isset($subjects->where('id', selected())->first()->klase->instructor) || isset($evaluation))? 'disabled' : null}}">Submit</button>
+                                <button type="submit" class="btn btn-primary rounded-pill {{(selected() == null || !isset($subjects->where('id', selected())->first()->klase->instructor) || isset($evaluation)) || ($period->endEval < NOW()->format('Y-m-d'))? 'disabled' : null}}">Submit</button>
                             </div>
                         </div>
                     @else
@@ -238,8 +249,6 @@
                     </div>
                     @endunless
                 </form>
-                @elseif($period->endEval < NOW()->format('Y-m-d'))
-                <h3 class="text-center text-uppercase bg-light p-3 rounded"> Evaluation ended on {{date('F d, Y @ D', strToTime($period->endEval))}} </h3>
                 @else
                 <h3 class="text-center text-uppercase bg-light p-3 rounded"> Evaluation will open on {{date('F d, Y @ D', strToTime($period->beginEval))}} </h3>
                 @endif

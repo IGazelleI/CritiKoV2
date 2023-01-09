@@ -142,75 +142,6 @@ class AdminController extends Controller
             }
             //initialize the chart labels
             $chart-> labels($periodArr);
-            /* foreach($department as $dept)
-            {
-                //department faculties
-                if(!$dept->faculties->isEmpty())
-                {
-                    foreach($dept->faculties as $fac)
-                    {
-                        //get all periods
-                        $periods = Period::latest('id')
-                                        -> get();
-                        
-                        if(!$periods->isEmpty())
-                        {
-                            $j = 0;
-
-                            foreach($periods as $per)
-                            {
-                                if($j < $prevLimit)
-                                {
-                                    $total = 0;
-                                    $finished = 0;
-                                    //get the blocks on that period
-                                    $block = Block::where('period_id', $per->id)
-                                                -> latest('id')
-                                                -> get();
-                                    
-                                    if(!$block->isEmpty())
-                                    {
-                                        foreach($block as $b)
-                                        {
-                                            //filter classes where the faculty is the instructor
-                                            if(!$b->klases->where('instructor', $fac->user_id)->isEmpty())
-                                            {
-                                                $total += $b->klases->where('instructor', $fac->user_id)->count();
-                                                
-                                                foreach($b->klases->where('instructor', $fac->user_id) as $klase)
-                                                {
-                                                    //get the students from that class
-                                                    $student = $klase->klaseStudents;
-                                                    
-                                                    $students = [];
-                                                    //convert to array for whereIn
-                                                    foreach($student as $stud)
-                                                        $students = array_merge($students, [$stud->user_id]);
-
-                                                    //get evaluations with that subject, faculty and period
-                                                    $evaluation = Evaluate::where('period_id', $per->id)
-                                                                        -> whereIn('evaluator', $students)
-                                                                        -> where('evaluatee', $fac->user_id)
-                                                                        -> where('subject_id', $klase->subject_id)
-                                                                        -> latest('id')
-                                                                        -> get();
-
-                                                    $finished += $evaluation->count();
-                                                }
-                                            }
-                                        }
-
-                                        if($i == 0)
-                                            $chart->dataset($per->getDescription(), 'bar', [$finished, $total]);
-                                    }
-                                }
-                                $j += 1;
-                            }
-                        }
-                    }
-                }
-                $i += 1;
-            } */
         }
         else
             $chart = null;
@@ -219,6 +150,19 @@ class AdminController extends Controller
         $variables = array_merge($variables, ['chart']);
 
         return view('admin.completion', compact($variables));
+    }
+    
+    public function completionDetail(Department $department, Request $request)
+    {
+        $variables = array();
+        $perSelected = $request->period;
+        $faculty = $department->faculties;
+        $periods = Period::latest('id')
+                        -> get();
+
+        $variables = array_merge($variables, ['perSelected', 'department', 'faculty', 'periods']);
+
+        return view('admin.completionDetail', compact($variables));
     }
 
     /**
