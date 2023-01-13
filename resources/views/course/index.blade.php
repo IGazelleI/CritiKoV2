@@ -17,15 +17,10 @@
                                 @endif
                             </h2>
                         </div>
-                        <div class="col-5">
+                        <div class="col text-end me-5">
                             <button type="button" class="btn btn-primary" data-bs-target="#addCourseModal" data-bs-toggle="modal">
                                 <span>
                                     New
-                                </span>
-                            </button>
-                            <button type="button" class="btn btn-success" data-bs-target="#addCourseModal" data-bs-toggle="modal">
-                                <span>
-                                    Upload Data
                                 </span>
                             </button>
                         </div>

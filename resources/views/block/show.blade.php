@@ -154,26 +154,21 @@
                         @endphp
                     @endforeach
                 @else
-                    @for($i = 0; $i < 4; $i++)
-                        <div class="col mb-3">
-                            <div class="card">
-                                <div class="card-header {{randomBg()}}">
-                                    <a href="#" class="link-light disabled"
-                                        onMouseOver="this.style.textDecoration='underline'"
-                                        onMouseOut="this.style.textDecoration='none'"
-                                    >
-                                        Block is empty.
-                                    </a>
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title">Manually create from by clicking below:</h5>
-                                    <button type="button" class="btn btn-primary" data-bs-target="#addBlockModal" data-bs-toggle="modal">
-                                        Click here
-                                    </button>
-                                </div>
+                    <div class="col mb-3">
+                        <div class="card">
+                            <div class="card-header {{randomBg()}}">
+                                <a href="#" class="link-light disabled"
+                                    onMouseOver="this.style.textDecoration='underline'"
+                                    onMouseOut="this.style.textDecoration='none'"
+                                >
+                                    Block is empty.
+                                </a>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title text-secondary">No Student has been enrolled in selected period.</h5>
                             </div>
                         </div>
-                    @endfor
+                    </div>
                 @endunless
             </div>
             @endif

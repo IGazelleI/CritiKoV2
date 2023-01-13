@@ -56,6 +56,7 @@ class Enrollment extends Model
                         //Add block subjects
                         $subject = Subject::where('year_level', $block->year_level)
                                         -> where('semester', $block->period->semester)
+                                        -> where('course_id', $enroll->course_id)
                                         -> latest('id')
                                         -> get();
                         
@@ -156,6 +157,7 @@ class Enrollment extends Model
                         //Add block subjects
                         $subject = Subject::where('year_level', $block->year_level)
                                         -> where('semester', $block->period->semester)
+                                        -> where('course_id', $enroll->course_id)
                                         -> latest('id')
                                         -> get();
                         

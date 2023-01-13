@@ -51,7 +51,7 @@
                         <div class="card-header {{randomBg()}}">
                             <div class="row">
                                 <div class="col-1">
-                                    <img src="{{isset($faculty->imgPath)? '../' . $faculty->imgPath() : 'https://www.pngitem.com/pimgs/m/226-2267516_male-shadow-circle-default-profile-image-round-hd.png'}}" 
+                                    <img src="{{isset($det->imgPath)? '../' . $det->imgPath() : 'https://www.pngitem.com/pimgs/m/226-2267516_male-shadow-circle-default-profile-image-round-hd.png'}}" 
                                         class="img-fluid rounded-circle" alt="Faculty Photo"
                                     />
                                 </div>
@@ -110,14 +110,14 @@
                                                         </div>
                                                         <div class="col text-end">
                                                             @if($det->evaluated->where('period_id', isset($perSelected)? $perSelected : $periods->first()->id)->where('evaluatee', $det->user_id)->where('evaluator', $student->user_id)->where('subject_id', $klase->subject_id)->isEmpty())
-                                                            <span class="badge bg-warning rounded-circle px-2 py-2">
+                                                            <span class="badge bg-warning rounded-circle px-2 py-2" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Pending" >
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
                                                                     <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
                                                                     <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
                                                                 </svg>
                                                             </span>
                                                             @else
-                                                            <span class="badge bg-success rounded-circle px-2 py-2">
+                                                            <span class="badge bg-success rounded-circle px-2 py-2" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{date('D, F d, Y @ g:i A', strToTime($det->evaluated->where('period_id', isset($perSelected)? $perSelected : $periods->first()->id)->where('evaluatee', $det->user_id)->where('evaluator', $student->user_id)->where('subject_id', $klase->subject_id)->first()->created_at))}}">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2" viewBox="0 0 16 16">
                                                                     <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
                                                                 </svg>

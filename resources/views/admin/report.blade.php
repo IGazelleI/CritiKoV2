@@ -81,8 +81,8 @@
                 @foreach($faculty as $det)
                 <div class="row p-3 border-bottom">
                     <div class="col-2">
-                        <img src="{{isset($det->imgPath)? '../' . $det->imgPath() : 'https://www.pngitem.com/pimgs/m/226-2267516_male-shadow-circle-default-profile-image-round-hd.png'}}" 
-                            class="img-fluid rounded-circle" alt="Report Icon"
+                        <img src="{{isset($det->imgPath)? '../../' . $det->imgPath() : 'https://www.pngitem.com/pimgs/m/226-2267516_male-shadow-circle-default-profile-image-round-hd.png'}}" 
+                            class="img-fluid rounded-circle" alt="Faculty Photo"
                         />
                     </div>
                     <div class="col">

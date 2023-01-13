@@ -16,7 +16,7 @@
             <div class="row">
                 <div class="col-3">
                     <img src="{{isset($faculty->imgPath)? '../' . $faculty->imgPath() : 'https://www.pngitem.com/pimgs/m/226-2267516_male-shadow-circle-default-profile-image-round-hd.png'}}" 
-                        class="img-fluid rounded-circle" alt="Report Icon"
+                        class="img-fluid rounded-circle" alt="Faculty Photo"
                     />
                 </div>
                 <div class="col">

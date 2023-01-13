@@ -27,10 +27,10 @@ class UserController extends Controller
 
     public function store(UserStoreRequest $request)
     {
+        $request->validate(['email' => 'email_domain:' . $request->email], ['email.email_domain' => 'Only CTU-provided emails allowed.']);
         $request['password'] = Hash::make($request->password);
 
         $user = User::create($request->all());
-
 
         if(!$user)
             return back()->with('message', 'Error in creating user. Try again later.');
@@ -45,15 +45,16 @@ class UserController extends Controller
     public function create(Request $request)
     {
         $formFields = $request->validate([
-            'email' => ['required', 'email', Rule::unique('users', 'email')],
+            'email' => ['required', 'email', Rule::unique('users', 'email'), 'email_domain:' . $request->email],
             'password' => 'required'
         ],[
-            'email.required' => 'Required',
+            'email.required' => 'Email field is required.',
             'email.unique' => 'Email already exist.',
-            'password.required' => 'Required'
+            'email.email_domain' => 'Only CTU-provided emails allowed.',
+            'password.required' => 'Password field is required.'
         ]);
 
-        $request['password'] = Hash::make($request->password);
+        $request['password'] = bcrypt($request->password);
         $user = User::create($request->all());
 
         if(!$user)
@@ -65,7 +66,7 @@ class UserController extends Controller
 
         return back()->with('message', 'Account added.');
     }
-    //DILI PA MUGAWAS ANG DEAN KAY NABUANG SIYA 
+   
     public function auth(Request $request)
     {
         $formFields = $request->validate([
@@ -87,6 +88,50 @@ class UserController extends Controller
         }
         else
             return back()->withErrors(['email_login' => 'Invalid login attempt'])->onlyInput('email');
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $formFields = $request->validate([
+            'password' => ['required', 'confirmed', 'min:6']
+        ], [
+            'password.required' => 'Password field is required.',
+            'password.confirmed' => 'The password does not match.',
+            'password.min' => 'The password must contain atleast 6 characters.'
+        ]);
+        $user = User::find($request->id);
+
+        if(!$user->update([
+            'password' => bcrypt($formFields['password'])
+        ]))
+            return back()->with('message', 'Error in resetting user password. Please try again.');
+
+        return back()->with('message', 'User password resetted successfully.');
+    }
+
+    public function changePassword(Request $request)
+    {
+        $formFields = $request->validate([
+            'currentPass' => 'required',
+            'newPass' => ['required', 'confirmed', 'min:6']
+        ],[
+            'currentPass.required' => 'Please enter current password.',
+            'newPass.required' => 'New password field is required.',
+            'newPass.confirmed' => 'The new password does not match.',
+            'newPass.min' => 'Password must have atleast 6 characters.'
+        ]);
+
+        if(Hash::check($formFields['currentPass'], auth()->user()->password))
+        {
+            $user = User::find(auth()->user()->id);
+
+            if(!$user->update(['password' => bcrypt($formFields['newPass'])]))
+                return back()->with('message', 'Error in updating new password. Please try again.');
+        }
+        else
+            return back()->with('message', 'Current password is incorrect. Please try again.');
+
+        return back()->with('message', 'Password changed.');
     }
 
     public function logout(Request $request)
@@ -221,15 +266,16 @@ class UserController extends Controller
             -> where('department_id', $request->department_id)
             -> update(['isDean' => false]);
 
-        $faculty = Faculty::find($request->user_id);
-        
-        if(!$faculty->update([
-            'isDean' => true
-        ]))
+        if(DB::table('faculties')
+            -> where('id', $request->user_id)
+            -> update([
+            'isDean' => true,
+            'isAssDean' => false,
+            'isChairman' => false
+        ]) == 0)
             return back()->with('message', 'Error in assigning dean. Please try again.');
 
-        return redirect(route('user.manage', 5))->with('message', 'New College Dean assigned.');
-            
+        return redirect(route('user.manage', 5))->with('message', 'New College Dean assigned.');            
     }
 
     public function assignAssociate(Department $department)
@@ -247,11 +293,12 @@ class UserController extends Controller
             -> where('department_id', $request->department_id)
             -> update(['isAssDean' => false]);
         
-        if(!DB::table('faculties')
-            -> where('department_id', $request->department_id)
+        if(DB::table('faculties')
             -> where('id', $request->user_id)
-            -> update(['isAssDean' => true])
-        )
+            -> update(['isAssDean' => true, 
+                       'isDean' => false, 
+                       'isChairman' => false
+        ]) == 0)
             return back()->with('message', 'Error in assigning associate dean. Please try again.');
 
         return redirect(route('user.manage', 5))->with('message', 'New College Associate Dean assigned.');
@@ -272,11 +319,12 @@ class UserController extends Controller
             -> where('department_id', $request->department_id)
             -> update(['isChairman' => false]);
 
-        if(!DB::table('faculties')
-            -> where('department_id', $request->department_id)
+        if(DB::table('faculties')
             -> where('id', $request->user_id)
-            -> update(['isChairman' => true])
-        )
+            -> update(['isChairman' => true, 
+                       'isDean' => false, 
+                       'isAssDean' => false
+        ]) == 0)
             return back()->with('message', 'Error in assigning college chairman. Please try again.');
 
         return redirect(route('user.manage', 5))->with('message', 'New College Chairman assigned.');

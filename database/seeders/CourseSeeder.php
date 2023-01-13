@@ -28,11 +28,6 @@ class CourseSeeder extends Seeder
             ],
             [
                 'department_id' => 1,
-                'description' => 'Bachelor of Science in Computer Technology',
-                'name' => 'BSCompTech'
-            ],
-            [
-                'department_id' => 1,
                 'description' => 'Bachelor of Science in Information System',
                 'name' => 'BSIS'
             ]

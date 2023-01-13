@@ -81,6 +81,7 @@
                                                     <span class="badge bg-primary rounded-pill">{{number_format($expectedf)}}</span>
                                                 </li>
                                             </ul>
+                                            <a href="{{route('sast.facultyReport')}}" class="d-flex justify-content-end mt-3 me-1 text-decoration-underline"> More Details </a>
                                         </div>
                                     </div>
                                 </div>
@@ -121,6 +122,7 @@
                                                     <span class="badge bg-warning rounded-pill">{{number_format($pendings)}}</span>
                                                 </li>
                                             </ul>
+                                            <a href="{{route('sast.studentReport')}}" class="d-flex justify-content-end mt-3 me-1 text-decoration-underline"> More Details </a>
                                         </div>
                                     </div>
                                     @endif

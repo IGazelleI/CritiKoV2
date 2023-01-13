@@ -163,7 +163,6 @@
     </div>
 </div>
 <!-- Off Canvas -->
-<x-admin-toast/>
 <x-admin-modals/>
 <script>
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');

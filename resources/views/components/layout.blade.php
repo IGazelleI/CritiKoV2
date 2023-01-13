@@ -51,6 +51,17 @@
                 <div class="collapse navbar-collapse d-flex float-end" id="navbarExample01">
                     <ul class="navbar-nav me-3 mb-2 mb-lg-0 position-absolute d-flex align-items-center end-0">
                         @auth
+                        <li class="nav-link">
+                            @if(auth()->user()->type == 1)
+                            <x-admin-notification/>
+                            @elseif(auth()->user()->type == 2)
+                            <x-sast-notification/>
+                            @elseif(auth()->user()->type == 3)
+                            <x-faculty-notification/>
+                            @elseif(auth()->user()->type == 4)
+                            <x-student-notification/>
+                            @endif
+                        </li>
                         <li>
                             <span class="nav-link mt-4 text-light"> 
                                 <b> 
@@ -89,6 +100,14 @@
                                         </svg>
                                     </button>
                                     <ul class="dropdown-menu">
+                                        <li>
+                                            <button type="button" class="dropdown-item" data-bs-target="#changePasswordModal" data-bs-toggle="modal">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock me-2" viewBox="0 0 16 16">
+                                                    <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/>
+                                                </svg>
+                                                Change Password
+                                            </button>
+                                        </li>
                                         @if(auth()->user()->type == 1 || auth()->user()->type == 3)
                                         <li>
                                             <button type="button" class="dropdown-item" data-bs-target="#prevLimitModal" data-bs-toggle="modal">
@@ -120,6 +139,51 @@
             </div>
         </nav>
         <!-- Navbar -->
+        <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Change Password</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="{{route('changePassword')}}" method="POST">
+                            @csrf
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col">
+                                        @if ($errors->any())
+                                        <div class="alert alert-danger">
+                                            <ul>
+                                                @foreach ($errors->all() as $error)
+                                                    <li>{{ $error }}</li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="currentPass" class="ms-2"> Current Password </label>
+                                    <input type="password" class="form-control rounded-pill" name="currentPass"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="newPass" class="ms-2"> New Password </label>
+                                    <input type="password" class="form-control rounded-pill" name="newPass"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="newPass_confirmation" class="ms-2"> Confirm New Password </label>
+                                    <input type="password" class="form-control rounded-pill" name="newPass_confirmation"/>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary rounded-pill">Change</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
         <!-- MDB -->
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/5.0.0/mdb.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>

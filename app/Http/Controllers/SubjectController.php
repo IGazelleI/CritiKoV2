@@ -17,15 +17,18 @@ class SubjectController extends Controller
     public function index($course = null)
     {
         $course = Course::find($course);
-        $subject = Subject::where(function ($query) use ($course)
+        $courses = Course::with('subjects')
+                        -> latest('id')
+                        -> get();
+        /* $subject = Subject::where(function ($query) use ($course)
                     {
                         if($course != null)
                             $query->where('course_id', $course->id);
                     })
                     -> orderBy('year_level')
-                    -> get();
+                    -> get(); */
 
-        return view('subject.index', compact('subject', 'course'));
+        return view('subject.index', compact('courses', 'course'));
     }
 
     /**
@@ -40,7 +43,8 @@ class SubjectController extends Controller
             'course_id' => $request->course_id,
             'code' => $request->code,
             'descriptive_title' => $request->descriptive_title,
-            'semester' => $request->semester
+            'semester' => $request->semester,
+            'year_level' => $request->year_level
         ]))
             return back()->with('message', 'Error in adding subject. Please try again');
 
@@ -62,7 +66,8 @@ class SubjectController extends Controller
             'course_id' => $request->course_id,
             'code' => $request->code,
             'descriptive_title' => $request->descriptive_title,
-            'semester' => $request->semester
+            'semester' => $request->semester,
+            'year_level' => $request->year_level
         ]))
             return back()->with('message', 'Error in updating subject. Please try again.');
 

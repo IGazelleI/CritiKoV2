@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Auth::routes(['verify' => true]);
 Route::middleware('guest')->group(function ()
 {
     Route::controller(App\Http\Controllers\UserController::class)->group(function ()
@@ -25,10 +27,19 @@ Route::middleware('guest')->group(function ()
         Route::post('/reset-password', 'updatePassword')->name('password.update');
     });
 });
-Route::middleware('auth')->group(function ()
+Route::middleware(['auth'/* , 'verified' */])->group(function ()
 {
+    Route::controller(App\Controllers\Auth\VerificationController::class)->group(function ()
+    {
+        Route::get('/email/verify', 'show')->name('verification.notice');
+        Route::get('/email/verify/{id}/{hash}', 'handler')->middleware('signed')->name('verification.verify');
+        Route::post('/email/verification-notification', 'resend')->middleware('throttle:6,1')->name('verification.send');
+    });
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::post('/changePassword', [App\Http\Controllers\UserController::class, 'changePassword'])->name('changePassword');
+    Route::post('/resetPassword', [App\Http\Controllers\UserController::class, 'resetPassword'])->name('resetPassword');
     Route::post('/logout', [App\Http\Controllers\UserController::class, 'logout'])->name('logout');
+    Route::get('/summary/{faculty}', [App\Http\Controllers\AdminController::class, 'summaryReport'])->name('admin.summaryReport');
 
     Route::controller(App\Http\Controllers\PDFController::class)->group(function ()
     {
@@ -43,9 +54,9 @@ Route::middleware('auth')->group(function ()
             Route::post('/a/prevLimit', 'changePrevLimit')->name('admin.changePrevLimit');
             Route::get('/completion', 'completion')->name('admin.completion');
             Route::get('/completion/{department}', 'completionDetail')->name('admin.completionDetail');
+            Route::get('/completionFaculty', 'completionFaculty')->name('admin.completionFaculty');
             Route::get('/summary', 'summary')->name('admin.summary');
             Route::post('/s/search', 'summarySearch')->name('admin.summarySearch');
-            Route::get('/summary/{faculty}', 'summaryReport')->name('admin.summaryReport');
         });
         Route::controller(App\Http\Controllers\UserController::class)->group(function ()
         {
@@ -102,6 +113,7 @@ Route::middleware('auth')->group(function ()
         {
             Route::get('/k/{block}', 'index')->name('klase.manage');
             Route::get('/k', 'assignInstructor')->name('klase.assignInstructor');
+            Route::post('k/allowCrossDept', 'crossDept')->name('klase.crossDept');
             Route::post('/k/{klase}', 'assignInstructorProcess')->name('klase.assignInstructorProcess');
             Route::get('k/s/{klase}', 'classStudent')->name('klase.students');
         });
@@ -116,6 +128,8 @@ Route::middleware('auth')->group(function ()
             Route::put('/sast', 'update')->name('sast.update');
             Route::post('/changePeriodsast', 'changePeriod')->name('sast.changePeriod');
             Route::put('/setEvaluationDate', 'setEvaluationDate')->name('sast.setEvaluationDate');
+            Route::get('/sast/s/report', 'studentReport')->name('sast.studentReport');
+            Route::get('/sast/f/report', 'facultyReport')->name('sast.facultyReport');
         });
         Route::controller(App\Http\Controllers\QCategoryController::class)->group(function ()
         {

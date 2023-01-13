@@ -13,48 +13,57 @@
             <form action="{{route('subject.store')}}" method="POST">
                 @csrf
                 <div class="modal-body">
-                        @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
+                    @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
+                    <div class="mb-3">
+                        <label for="course_id" class="col-form-label ms-2"> Course </label>
+                        <select class="select form-select rounded-pill" name="course_id">
+                            <option selected disabled>-Select-</option>
+                            @unless ($course->isEmpty())
+                                @foreach($course as $c)
+                                    <option value="{{$c->id}}"> {{$c->description}} </option>
                                 @endforeach
-                            </ul>
-                        </div>
-                        @endif
-                        <div class="mb-3">
-                            <label for="course_id" class="col-form-label ms-2"> Course </label>
-                            <select class="select form-select rounded-pill" name="course_id">
-                                <option selected disabled>Course</option>
-                                @unless ($course->isEmpty())
-                                    @foreach($course as $c)
-                                        <option value="{{$c->id}}"> {{$c->name}} {{$c->description}} </option>
-                                    @endforeach
-                                @else
-                                    <option disabled> Course is empty. </option>
-                                @endunless
-                              </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="code" class="col-form-label ms-2">Code</label>
-                            <input type="text" class="form-control rounded-pill" name="code">
-                        </div>
-                        <div class="mb-3">
-                            <label for="descriptive_title" class="col-form-label ms-2">Descriptive Title</label>
-                            <input type="text" class="form-control rounded-pill" name="descriptive_title">
-                        </div>
-                        <div class="mb-3">
-                            <label for="semester" class="col-form-label ms-2">Semester</label>
-                            <select class="select form-select rounded-pill" name="semester">
-                                <option selected disabled>-Select-</option>
-                                @for($i = 1; $i <= 3; $i++)
-                                    <option value="{{$i}}" >{{$i}}</option>
-                                @endfor
+                            @else
+                                <option disabled> Course is empty. </option>
+                            @endunless
                             </select>
-                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="code" class="col-form-label ms-2">Code</label>
+                        <input type="text" class="form-control rounded-pill" name="code">
+                    </div>
+                    <div class="mb-3">
+                        <label for="descriptive_title" class="col-form-label ms-2">Descriptive Title</label>
+                        <input type="text" class="form-control rounded-pill" name="descriptive_title">
+                    </div>
+                    <div class="mb-3">
+                        <label for="semester" class="col-form-label ms-2">Semester</label>
+                        <select class="select form-select rounded-pill" name="semester">
+                            <option selected disabled>-Select-</option>
+                            @for($i = 1; $i <= 2; $i++)
+                                <option value="{{$i}}" >{{$i}}</option>
+                            @endfor
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="year_level" class="col-form-label ms-2">Year Level</label>
+                        <select class="select form-select rounded-pill" name="year_level">
+                            <option selected disabled>-Select-</option>
+                            @for($i = 1; $i <= 4; $i++)
+                                <option value="{{$i}}" >{{$i}}</option>
+                            @endfor
+                        </select>
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary rounded-pill" data-bs-target="#departmentModal" data-bs-toggle="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary rounded-pill">Add</button>
                 </div>
             </form>
@@ -78,10 +87,10 @@
                     <div class="mb-3">
                         <label for="course_id" class="col-form-label ms-2"> Course </label>
                         <select class="select form-select rounded-pill course" name="course_id">
-                            <option selected disabled>Course</option>
+                            <option selected disabled>-Select-</option>
                             @unless ($course->isEmpty())
                                 @foreach($course as $c)
-                                    <option value="{{$c->id}}"> {{$c->name}} {{$c->description}} </option>
+                                    <option value="{{$c->id}}"> {{$c->description}} </option>
                                 @endforeach
                             @else
                                 <option disabled> Course is empty. </option>
@@ -100,7 +109,16 @@
                         <label for="semester" class="col-form-label ms-2">Semester</label>
                         <select class="select form-select rounded-pill semester" name="semester">
                             <option selected disabled>-Select-</option>
-                            @for($i = 1; $i <= 3; $i++)
+                            @for($i = 1; $i <= 2; $i++)
+                                <option value="{{$i}}" >{{$i}}</option>
+                            @endfor
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="year_level" class="col-form-label ms-2">Year Level</label>
+                        <select class="select form-select rounded-pill year_level" name="year_level">
+                            <option selected disabled>-Select-</option>
+                            @for($i = 1; $i <= 4; $i++)
                                 <option value="{{$i}}" >{{$i}}</option>
                             @endfor
                         </select>
@@ -153,6 +171,7 @@
         const code = button.getAttribute('data-bs-code');
         const description = button.getAttribute('data-bs-description');
         const semester = button.getAttribute('data-bs-semester');
+        const year = button.getAttribute('data-bs-year_level');
         // If necessary, you could initiate an AJAX request here
         // and then do the updating in a callback.
         //
@@ -162,12 +181,14 @@
         const codeInput = editSubModal.querySelector('.modal-body .code');
         const descInput = editSubModal.querySelector('.modal-body .description');
         const semInput = editSubModal.querySelector('.modal-body .semester');
+        const yearInput = editSubModal.querySelector('.modal-body .year_level');
 
         idInput.value = id;
         courseInput.value = course;
         codeInput.value = code;
         descInput.value = description;
         semInput.value = semester;
+        yearInput.value = year;
     });
 
     const delSubModal = document.getElementById('delSubModal')

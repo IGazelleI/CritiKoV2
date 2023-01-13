@@ -149,7 +149,7 @@
                                     <div class="col-2 mx-4">
                                         <!-- Button trigger modal -->
                                         <button type="button" class="btn btn-primary rounded-pill 
-                                            {{isset($enrollment)? 'disabled' : (isset($subjects)? ($subjects->isEmpty()? 'disabled' : '') : '')}}" 
+                                            {{isset($enrollment) || !isset($courseSelected) || !isset($yearSelected)? 'disabled' : (isset($subjects)? ($subjects->isEmpty()? 'disabled' : '') : '')}}" 
                                             data-bs-toggle="modal" data-bs-target="#confirm"
                                         >
                                             Submit
@@ -164,7 +164,7 @@
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                 <div class="modal-body">
-                                                    I hereby enroll chu chu.
+                                                    &nbsp; &nbsp; &nbsp;I, <strong>{{auth()->user()->students->first()->fullName(true)}}</strong> hereby enroll that the subjects taken are carefully choosen and proceed in enrolling in the selected semester.
                                                 </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>

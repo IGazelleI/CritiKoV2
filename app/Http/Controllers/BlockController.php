@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Block;
 use App\Models\Course;
 use App\Models\Period;
+use App\Models\Enrollment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\BlockStoreRequest;
@@ -89,9 +90,9 @@ class BlockController extends Controller
             'year_level' => $request->year_level,
             'section' => $request->section
         ]))
-            return back()->with('danger', 'Error in adding block. Please try again');
+            return back()->with('message', 'Error in adding block. Please try again');
 
-        return back()->with('success', 'Block added.');
+        return back()->with('message', 'Block added.');
     }
 
     /**
@@ -111,9 +112,9 @@ class BlockController extends Controller
             'year_level' => $request->year_level,
             'section' => $request->section
         ]))
-            return back()->with('danger', 'Error in updating block. Please try again.');
+            return back()->with('message', 'Error in updating block. Please try again.');
 
-        return back()->with('success', 'Block updated.');
+        return back()->with('message', 'Block updated.');
     }
 
     /**
@@ -125,10 +126,48 @@ class BlockController extends Controller
     public function destroy(Request $request)
     {
         $block = Block::find($request->id);
+        $period = $block->period_id;
+
+        //delete the block students
+        if(!$block->blockStudents->isEmpty())
+        {
+            foreach($block->blockStudents as $blockStud)
+            {
+                if(!$blockStud->delete())
+                    return back()->with('message', 'Error in deleting block students. Please try again.');
+            }
+        }
+        //delete block classes
+        foreach($block->klases as $klase)
+        {
+            if(!$klase->klaseStudents->isEmpty())
+            {
+                foreach($klase->klaseStudents as $klaseStud)
+                {
+                    //delete enrollment from those students
+                    $enroll = Enrollment::where('period_id', $klaseStud->klase->block->period_id)
+                                        -> where('user_id', $klaseStud->user_id)
+                                        -> get()
+                                        -> first();
+                    
+                    if($enroll != null)
+                    {
+                        if(!$enroll->delete())
+                            return back()->with('message', 'Error in deleting enrollment from that block classes. Please try again.');
+                    }
+
+                    if(!$klaseStud->delete())
+                        return back()->with('message', 'Error in deleting block class students. Please try again.');
+                }
+            }
+
+            if(!$klase->delete())
+                return back()->with('message', 'Error in deleting block classes. Please try again.');
+        }
 
         if(!$block->delete())
-            return back()->with('danger', 'Error in deleting block. Please try again.');
+            return back()->with('message', 'Error in deleting block. Please try again.');
 
-        return back()->with('success', 'Block deleted.');
+        return redirect(route('block.manage', $period))->with('message', 'Block deleted.');
     }
 }

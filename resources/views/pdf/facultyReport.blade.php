@@ -20,6 +20,11 @@
                 margin-left: auto;
                 margin-right: auto;
             }
+            .no-border
+            {
+                border-width: 0px;
+                padding: 5px 10px;
+            }
         </style>
     </head>
     <body>
@@ -38,15 +43,28 @@
             <strong> Instructor/Professor: </strong> {{$faculty->fullName(true)}} &nbsp;
             <span style="text-align: end"> <strong> Date: </strong> {{date('M. d, Y @ g:i A',  strtotime(NOW()))}} </span> <br/>
         </div> <br/> <br/>
-      {{-- <div class="center"> 
-                <table>
-                    <tbody>
-                        <tr>
-                            5 - Outstandings
-                        </tr>
-                    </tbody>
-                </table>
-        </div> --}}
+        <div>
+            <table class="center no-border">
+                <thead>
+                    <tr class="no-border" style="text-align: center">
+                        <th class="no-border" colspan="2"> Rating Scale </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="no-border">
+                        <td class="no-border"> 5 - Outstanding </td>
+                        <td class="no-border"> 2 - Fair </td>
+                    </tr>
+                    <tr class="no-border">
+                        <td class="no-border"> 4 - Very Good </td>
+                        <td class="no-border"> 1 - Poor </td>
+                    </tr>
+                    <tr class="no-border">
+                        <td class="no-border" colspan="2"> 3 - Good </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         <table class="center">
             <tbody>
                 @php

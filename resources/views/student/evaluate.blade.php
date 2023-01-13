@@ -223,7 +223,6 @@
                                                     disabled
                                                 @endif
                                             @endif
-                                            required
                                         />
                                     </div>
                                 </div>

@@ -7,13 +7,25 @@
                         <div class="row px-2">
                             <div class="col">
                               <div class="row">
+                                <div class="col ms-2 mt-2 text-secondary">
+                                  <h5 style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif"> Student Result </h5>
+                                </div>
+                              </div>
+                              <div class="row">
                                   <div class="col pb-0">
                                       {!! $studentChart->container() !!}
                                       {!! $studentChart->script() !!}
                                   </div>
-                                  <div class="col pb-0">
-                                      {!! $facultyChart->container() !!}
-                                      {!! $facultyChart->script() !!}
+                              </div>
+                              <div class="row mt-2">
+                                <div class="col ms-2 mt-2 text-secondary">
+                                  <h5 style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif"> Faculty Result </h5>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col pb-0">
+                                  {!! $facultyChart->container() !!}
+                                  {!! $facultyChart->script() !!}
                                 </div>
                               </div>
                             </div>
@@ -87,7 +99,16 @@
                                       <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
                                         alt="avatar 1" style="width: 45px; height: auto"/>
           
-                                      <span class="ms-2"> {{$det->fullName(1)}} </span>
+                                      <span class="ms-2"> {{$det->fullName(1)}} </span> <br/> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                                      <span class="text-secondary">
+                                        @if($det->isDean)
+                                        College Dean
+                                        @elseif($det->isAssDean)
+                                        Associate Dean
+                                        @elseif($det->isChairman)
+                                        Chairman
+                                        @endif
+                                      </span>
                                   </th>
                                   <td class="align-middle">
                                       <h6 class="mb-0">
@@ -511,7 +532,7 @@
   function status($mean)
   {
     $background = ['bg-danger', 'bg-warning', 'bg-secondary', 'bg-primary', 'bg-success'];
-    $message = ['Poor', 'Fair', 'Good', 'Very Good', 'Outstanding'];
+    $message = ['Unsatisfactory', 'Fair', 'Satisfactory', 'Very Satisfactory', 'Outstanding'];
 
     $detail = new Illuminate\Support\Collection();
 

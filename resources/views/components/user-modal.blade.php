@@ -75,29 +75,14 @@
                                 <div class="col" id="faculty" style="display: none">
                                     <div class="mb-3">
                                         <label for="department_id" class="col-form-label ms-2">Department</label>
-                                        <select class="select form-select rounded-pill" name="department_id">
-                                            <option selected disabled> -Select- </option>
+                                        <select class="select form-select rounded-pill" name="department_id" id="selectDepartment">
+                                            <option disabled> -Select- </option>
                                             @unless($dept->isEmpty())
                                                 @foreach($dept as $det)
                                                     <option value="{{$det->id}}"> {{$det->description}} </option>
                                                 @endforeach
                                             @else
                                                 <option disabled> Department is empty. </option>
-                                            @endunless
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col" id="student" style="display: none">
-                                    <div class="mb-3">
-                                        <label for="course_id" class="col-form-label ms-2">Course</label>
-                                        <select class="select form-select rounded-pill" name="course_id">
-                                            <option selected disabled> -Select- </option>
-                                            @unless($course->isEmpty())
-                                                @foreach($course as $det)
-                                                    <option value="{{$det->id}}"> {{$det->description}} </option>
-                                                @endforeach
-                                            @else
-                                                <option disabled> Course is empty. </option>
                                             @endunless
                                         </select>
                                     </div>
@@ -156,8 +141,62 @@
     </div>
 </div>
 <!-- Add User Modal -->
+<!-- Reset Password Modal -->
+<div class="modal fade" id="resetPassModal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Reset Password</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{route('resetPassword')}}" method="POST">
+                @csrf
+                <div class="modal-body">
+                    @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
+                    <input type="hidden" class="id" name="id"/>
+                    <div class="mb-3">
+                        <label for="code" class="col-form-label ms-2">New Password</label>
+                        <input type="password" class="form-control rounded-pill" name="password">
+                    </div>
+                    <div class="mb-3">
+                        <label for="descriptive_title" class="col-form-label ms-2">Confirm Password</label>
+                        <input type="password" class="form-control rounded-pill" name="password_confirmation">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary rounded-pill">Reset</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Reset Password Modal -->
 <!-- Manage User Modals -->
 <script>
+    const resetPassModal = document.getElementById('resetPassModal');
+
+    resetPassModal.addEventListener('show.bs.modal', event => {
+        // Button that triggered the modal
+        const button = event.relatedTarget;
+        // Extract info from data-bs-* attributes
+        const id = button.getAttribute('data-bs-id');
+        // If necessary, you could initiate an AJAX request here
+        // and then do the updating in a callback.
+        //
+        // Update the modal's content.
+        const idInput = resetPassModal.querySelector('.modal-body .id');
+
+        idInput.value = id;
+    });
     //Add User Scripts
     function showDets()
     {
@@ -166,29 +205,34 @@
         const divF = document.getElementById('faculty');
         const divS = document.getElementById('student');
         const divSID = document.getElementById('SID');
+        var idInput = document.getElementById('id_number');
 
         if(currentSelected.value == 3)
         {
             divA.style.display = 'block';
             divF.style.display = 'block';
-            divS.style.display = 'none';
             divSID.style.display = 'none';
+            idInput.removeAttribute('required');
         }
         else if(currentSelected.value == 4)
         {
             divA.style.display = 'block';
             divF.style.display = 'none';
-            divS.style.display = 'block';
             divSID.style.display = 'block';
+            //set id number required
+            idInput.setAttribute('required', '');
         }
         else if(currentSelected.value == 2)
         {
             divA.style.display = 'block';
             divF.style.display = 'none';
-            divS.style.display = 'none';
             divSID.style.display = 'none';
+            idInput.removeAttribute('required');
         }
         else
+        {
             divA.style.display = 'none';
+            idInput.removeAttribute('required');
+        }
     }
 </script>

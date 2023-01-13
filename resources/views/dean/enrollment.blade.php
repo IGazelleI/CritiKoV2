@@ -6,14 +6,14 @@
               <div class="text-center pt-3 pb-2">
                 <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-todo-list/check1.webp"
                   alt="Check" width="60">
-                <h2 class="my-4">Enrollment</h2>
+                <h2 class="my-4 mb-0">Enrollment</h2>
+                <p class="text-secondary"> {{$enrollment->first()->period->getDescription()}} </p>
               </div>
               <table class="table mb-0">
                 <thead class="bg-light">
                   <tr>
                     <th scope="col">ID Number</th>
                     <th scope="col"> Type</th>
-                    <th scope="col">Period</th>
                     <th scope="col">Name</th>
                     <th scope="col">Course</th>
                     <th scope="col">Year Level</th>
@@ -27,10 +27,30 @@
                             <span>{{$det->user->students[0]->id_number}}</span>
                         </td>
                         <td class="align-middle">
-                            <span>{{$det->type == 0? 'Regular' : 'Irregular'}}</span>
-                        </td>
-                        <td class="align-middle">
-                            <span>{{$det->period->getDescription()}}</span>
+                            @if($det->type == 0)
+                            Regular
+                            @else
+                            <span data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="View Subjects Taken">
+                                @php
+                                    $subjects = new Illuminate\Support\Collection();
+
+                                    foreach($det->enrollDetails->first()->enrollSubjects as $sub)
+                                    {
+                                        $data = array();
+                                        $data['code'] = $sub->subject->code;
+                                        $data['title'] = $sub->subject->descriptive_title;
+
+                                        $subjects->push($data);
+                                    }
+                                @endphp
+                                <button class="btn btn-transparent btn-lg shadow-none text-capitalize p-0 m-0" 
+                                    data-bs-toggle="offcanvas" data-bs-target="#offcanvasEnroll" aria-controls="offcanvasTop"
+                                    data-bs-subjects="{{$subjects->toJson()}}"
+                                >
+                                    Irregular
+                                </button>
+                            </span>
+                            @endif
                         </td>
                         <th>
                             <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"

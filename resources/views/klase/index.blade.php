@@ -106,17 +106,7 @@
                                                         </a>
                                                     </li>
                                                     <li>
-                                                        <button type="button" class="dropdown-item" data-bs-target="#editCourseModal" data-bs-toggle="modal"
-                                                            data-bs-id="{{$det->id}}"
-                                                            data-bs-department_id="{{$det->department_id}}"
-                                                            data-bs-name="{{$det->name}}"
-                                                            data-bs-description="{{$det->description}}"
-                                                        >
-                                                            Modify
-                                                        </button>
-                                                    </li>
-                                                    <li>
-                                                        <button type="button" class="dropdown-item text-danger" data-bs-target="#delCourseModal" data-bs-toggle="modal"
+                                                        <button type="button" class="dropdown-item text-danger" data-bs-target="#delKlaseModal" data-bs-toggle="modal"
                                                             data-bs-id="{{$det->id}}"
                                                             data-bs-description="{{$det->description}}"
                                                         >

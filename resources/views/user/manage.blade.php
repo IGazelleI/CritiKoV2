@@ -190,19 +190,19 @@
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li>
-                                            <button type="button" class="dropdown-item" data-bs-target="#Modal" data-bs-toggle="modal"
+                                            <button type="button" class="dropdown-item" data-bs-target="#resetPassModal" data-bs-toggle="modal"
                                                 data-bs-id="{{$det->id}}"
                                             >
                                                 Reset Password
                                             </button>
-                                        </li>
+                                        </li>{{-- 
                                         <li>
                                             <button type="button" class="dropdown-item text-danger" data-bs-target="#Modal" data-bs-toggle="modal"
                                                 data-bs-id="{{$det->id}}"
                                             >
                                                 Disable Account
                                             </button>
-                                        </li>
+                                        </li> --}}
                                     </ul>
                                 </div>
                             </td>

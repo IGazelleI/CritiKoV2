@@ -8,8 +8,6 @@
         </div>
         <div class="row">
             <div class="col">
-                <form action="{{route('klase.assignInstructorProcess', $klase->id)}}" method="POST">
-                    @csrf
                     <div class="row m-4 d-flex justify-content-center">
                         <div class="col-8">
                             <div class="form-outline mb-4">
@@ -17,6 +15,17 @@
                                 <p class="text-secondary" style="font-size: 15px"> 
                                     Select Faculty member to be assigned as the instructor of {{$klase->subject->descriptive_title}} 
                                 </p>
+                                <form action="{{route('klase.crossDept')}}" method="POST">
+                                    @csrf
+                                    <div class="form-check d-flex justify-content-center">
+                                        <input class="form-check-input" type="checkbox" name="crossDept" id="flexCheckDefault" {{$allowCrossDept? 'checked' : ''}} onchange="this.form.submit()">
+                                        <label class="form-check-label" for="flexCheckDefault">
+                                        Allow Cross-Department Assignment
+                                        </label>
+                                    </div>
+                                </form>
+                                <form action="{{route('klase.assignInstructorProcess', $klase->id)}}" method="POST">
+                                    @csrf
                                 <select class="select form-select rounded-pill" name="instructor">
                                     <option selected disabled>-Select-</option>
                                     @unless ($faculty->isEmpty())

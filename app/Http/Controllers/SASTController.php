@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sast;
+use App\Models\Course;
 use App\Models\Period;
+use App\Models\Department;
+use App\Models\Evaluate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
@@ -14,6 +17,31 @@ class SASTController extends Controller
         $det = Sast::with('user')->where('user_id', '=', auth()->user()->id)->first();
 
         return view('sast.profile', compact('det'));
+    }
+
+    public function facultyReport()
+    {
+        $period = Session::get('period') != null? Session::get('period') : Period::latest('id')->get()->first()->id;
+        $department = Department::with('faculties')
+                            -> latest('id')
+                            -> get();
+        
+        $evaluation = Evaluate::where('period_id', $period)
+                            -> latest('id')
+                            -> get();
+
+        return view('sast.facultyReport', compact('period', 'department', 'evaluation'));
+    }
+
+    public function studentReport()
+    {
+        $period = Session::get('period') != null? Session::get('period') : Period::latest('id')->get()->first()->id;
+
+        $courses = Course::with('enrollments')
+                    -> latest('id')
+                    -> get();
+
+        return view('sast.studentReport', compact('courses', 'period'));
     }
 
     /**

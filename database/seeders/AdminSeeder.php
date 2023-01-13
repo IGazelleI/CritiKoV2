@@ -19,7 +19,7 @@ class AdminSeeder extends Seeder
     {
         $user = User::factory()->create([
             'type' => 1,
-            'email' => 'admin@gmail.com',
+            'email' => 'admin@ctu.edu.ph',
             'password' => bcrypt('admin')
         ]);
 

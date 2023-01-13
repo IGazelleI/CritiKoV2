@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('q_type_id')->constrained()->onDelete('cascade');
             $table->foreignId('q_category_id')->default(1)->constrained()->onDelete('cascade');
+            $table->boolean('isLec')->nullable();
             $table->tinyText('sentence');
             $table->string('keyword')->nullable();
             $table->timestamp('deleted_at')->nullable();

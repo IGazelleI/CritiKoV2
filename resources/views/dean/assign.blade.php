@@ -18,7 +18,7 @@
                                 <p class="text-secondary" style="font-size: 15px"> 
                                     Select Faculty member to be assigned as the College Dean 
                                 </p>
-                                <select class="select form-select rounded-pill" name="user_id" onchange="console.log(value)">
+                                <select class="select form-select rounded-pill" name="user_id">
                                     <option selected disabled>-Select-</option>
                                     @unless ($faculty->isEmpty())
                                         @foreach($faculty as $det)

@@ -34,16 +34,29 @@ class Klasecontroller extends Controller
         return view('klase.index', compact('block', 'klase', 'students'));
     }
 
+    public function crossDept(Request $request)
+    {
+        $request->session()->put('crossDept', (boolean) $request->crossDept);
+
+        return back()->with('message', $request->crossDept? 'Cross department assignment allowed.' : 'Cross department assignment not allowed.');
+    }
+
     public function assignInstructor(Request $request)
     {
+        $allowCrossDept = Session::get('crossDept') != null? Session::get('crossDept') : false;
         $klase = decrypt($request->klase);
         $klase = Klase::find($klase);
+        $department = decrypt($request->department);
 
-        $faculty = Faculty::where('department_id', decrypt($request->department))
+        $faculty = Faculty::where(function ($query) use ($department, $allowCrossDept)
+                            {
+                                if(!$allowCrossDept)
+                                    $query->where('department_id', $department);
+                            })
                             -> latest('id')
                             -> get();
 
-        return view('klase.assignClass', compact('klase', 'faculty'));
+        return view('klase.assignClass', compact('klase', 'faculty', 'allowCrossDept'));
     }
 
     public function assignInstructorProcess(Request $request, Klase $klase)
@@ -55,6 +68,8 @@ class Klasecontroller extends Controller
             'end' => $request->end
         ]))
             return back()->with('message', 'Error in assigning instructor. Please try again.');
+
+        $request->session()->put('crossDept', null);
 
         return redirect(route('klase.manage', $klase->block_id))->with('message', 'Instructor assigned.');
     }

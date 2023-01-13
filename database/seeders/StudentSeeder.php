@@ -46,17 +46,17 @@ class StudentSeeder extends Seeder
                 'lname' => 'Amores'
             ],
             [
-                'id_number' => 1190436,
+                'id_number' => 1190425,
                 'fname' => 'Neo Frank',
-                'lname' => 'Uyy'
+                'lname' => 'Uy'
             ],
             [
-                'id_number' => 1190437,
+                'id_number' => 1190462,
                 'fname' => 'John Lloyd',
                 'lname' => 'Cornejo'
             ],
             [
-                'id_number' => 1190438,
+                'id_number' => 1170470,
                 'fname' => 'Christine Alissa',
                 'lname' => 'Caintapan'
             ]

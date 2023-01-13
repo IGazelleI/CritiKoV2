@@ -235,7 +235,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="text-uppercase" rowspan="{{$catCount + 2}}"> {{$faculty->fullName(true)}} </td>
+                        <td class="text-uppercase" rowspan="{{$cat + 1}}"> {{$faculty->fullName(true)}} </td>
                         <td class="fw-bold text-uppercase" width="15%"> Overall </td>
                         <td width="10%"> {{number_format($data->avg('mean'), 2)}} </td>
                         <td width="10%"> {{rating($data->avg('mean'))['vd']}} </td>

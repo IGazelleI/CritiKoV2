@@ -5,7 +5,31 @@
                 <div class="col shadow-sm">
                     <div class="row">
                         <div class="col mt-2 text-secondary ms-5">
-                            <strong> Faculty Performance </strong>
+                            <div class="row">
+                                <div class="col">
+                                    <strong> Faculty Performance </strong>
+                                </div>
+                                <div class="col text-end me-3">
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-primary btn-sm rounded-pill" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            -Show By {{isset($sortByAcad)? 'Academic Year' : 'Semester'}}-
+                                        </button>
+                                      
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a href="{{route('home')}}" class="dropdown-item {{isset($sortByAcad)? '' : 'active'}}">
+                                                    Semester
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{route('home', ['sortByAcad' => true])}}" class="dropdown-item {{isset($sortByAcad)? 'active' : ''}}">
+                                                    Academic Year
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
@@ -45,57 +69,6 @@
                         </div>
                         @endif
                     </div>
-                </div>
-            </div>
-            <div class="row fw-bold p-3 mt-2 rounded">
-                <div class="col border-bottom">
-                    <h3 style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif"> 
-                        Faculty Report 
-                    </h3>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th colspan="2"> <strong> Department </strong> </th>
-                                <th> <strong> Name </strong> </th>
-                                <th> <strong> Performance Rate </strong> </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($department as $det)
-                                <tr>
-                                    <td rowspan="3"> {{$det->name}} </td>
-                                </tr>   
-                                @unless($det->faculties->isEmpty())
-                                <tr>
-                                    <td> Most Improved </td>
-                                    <td>
-                                        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-                                            alt="avatar 1" style="width: 45px; height: auto"/>
-                                        Pet 
-                                    </td>
-                                    <td> 50% </td>
-                                </tr>
-                                <tr>
-                                    <td> Least Improved </td>
-                                    <td>
-                                        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-                                            alt="avatar 1" style="width: 45px; height: auto"/>
-                                        Pet
-                                    </td>
-                                    <td> 50% </td>
-                                </tr>
-                                @else
-                                <tr>
-                                    <td colspan="3" class="text-center"> Faculty is empty. </td>
-                                </tr>
-                                @endunless
-                            @endforeach
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>

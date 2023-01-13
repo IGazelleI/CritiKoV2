@@ -37,4 +37,9 @@ class Course extends Model
     {
         return $this->hasMany(Enrollment::class, 'course_id');
     }
+    //block relationship
+    public function blocks()
+    {
+        return $this->hasMany(Block::class, 'course_id');
+    }
 }

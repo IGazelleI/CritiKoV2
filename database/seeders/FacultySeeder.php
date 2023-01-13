@@ -50,7 +50,7 @@ class FacultySeeder extends Seeder
             [
                 'type' => 3,/* 
                 'name' => 'Starzy Bicare Baluarte-Bacus', */
-                'email' => 'starzy.bacus@ctu.edu.ph',
+                'email' => 'suzette.bacus@ctu.edu.ph',
                 'password' => bcrypt('amores15')
             ],
             [
@@ -83,7 +83,7 @@ class FacultySeeder extends Seeder
                 'lname' => 'Logpit'
             ],
             [
-                'fname' => 'Starzy Bicare',
+                'fname' => 'Suzette Bicare',
                 'lname' => 'Baluarte-Bacus'
             ],
             [

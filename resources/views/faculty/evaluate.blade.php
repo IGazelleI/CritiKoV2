@@ -3,6 +3,13 @@
         @if(isset($period->beginEval))
             @if($period->beginEval <= NOW()->format('Y-m-d'))
             <header>
+                @if($period->endEval < NOW()->format('Y-m-d'))
+                <div class="row">
+                    <div class="col">
+                        <h3 class="text-center text-uppercase bg-light p-3 mt-n5 mx-n5 text-danger fw-bold rounded fs-6"> Evaluation ended on {{date('F d, Y @ D', strToTime($period->endEval))}} </h3>
+                    </div>
+                </div>
+                @endif
                 <div class="d-flex justify-content-center align-items-center h-100">
                     <h1 class="mb-3" style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif">
                         Evaluate Co-Faculty
@@ -18,6 +25,13 @@
                                 @unless ($faculty->isEmpty())
                                     @foreach ($faculty as $det)
                                         <option value="{{$det->user_id}}" {{selected() == $det->user_id? 'selected' : ''}}>
+                                            @if($det->isDean)
+                                            College Dean - 
+                                            @elseif($det->isAssDean)
+                                            Associate Dean - 
+                                            @elseif($det->isChairman)
+                                            Chairman -
+                                            @endif
                                             {{$det->fullName(1)}}
                                         </option>
                                     @endforeach
@@ -51,7 +65,7 @@
                         <div class="row px-5 py-2">
                             <div class="col">
                                 @if($faculty->where('user_id', selected())->first() != null)
-                                <img src="{{$faculty->where('user_id', selected())->first()->evaluated->where('evaluator', auth()->user()->id)->isEmpty()? asset('images/pending.png') : asset('images/finished.png')}}" 
+                                <img src="{{$faculty->where('user_id', selected())->first()->evaluated->where('evaluator', auth()->user()->id)->where('period_id', $period->id)->isEmpty()? asset('images/pending.png') : asset('images/finished.png')}}" 
                                     class="img-fluid" alt="Status"
                                 />
                                 @else
@@ -63,7 +77,7 @@
                             <div class="col text-center">
                                 <h4 class="fw-bold">
                                     @if($faculty->where('user_id', selected())->first() != null)
-                                    {{$faculty->where('user_id', selected())->first()->evaluated->where('evaluator', auth()->user()->id)->isEmpty()? 'Pending' : 'Finished'}} 
+                                    {{$faculty->where('user_id', selected())->first()->evaluated->where('evaluator', auth()->user()->id)->where('period_id', $period->id)->isEmpty()? 'Pending' : 'Finished'}} 
                                     @else
                                     Status
                                     @endif
@@ -182,7 +196,7 @@
                             @endphp
                         @else
                             <div class="row">
-                                <div class="col d-flex align-items-center ms-2 mt-5">
+                                <div class="col d-flex align-items-center ms-2 mt-5 text-capitalize">
                                     {{ucfirst($q->sentence)}}
                                 </div>
                             </div>
@@ -212,7 +226,7 @@
                     <div class="row d-flex justify-content-end me-5">
                         <div class="col-1 mt-5">
                             <!-- Submit button -->
-                            <button type="submit" class="btn btn-primary rounded-pill {{(selected() == null || isset($evaluation))? 'disabled' : null}}">Submit</button>
+                            <button type="submit" class="btn btn-primary rounded-pill {{(selected() == null || isset($evaluation)) || ($period->endEval < NOW()->format('Y-m-d'))? 'disabled' : null}}">Submit</button>
                         </div>
                     </div>
                 @else
@@ -223,10 +237,10 @@
                 </div>
                 @endunless
             </form>
-            @elseif($period->endEval > NOW()->format('Y-m-d'))
-            <h3 class="text-center text-uppercase bg-light p-3 rounded"> Evaluation ended on {{date('F d, Y @ D', strToTime($period->endEval))}} </h3>
-            @else
+            @elseif(($period->beginEval > NOW()->format('Y-m-d')))
             <h3 class="text-center text-uppercase bg-light p-3 rounded"> Evaluation will open on {{date('F d, Y @ D', strToTime($period->beginEval))}} </h3>
+            @else
+            <h3 class="text-center text-uppercase bg-light p-3 rounded"> Evaluation ended on {{date('F d, Y @ D', strToTime($period->endEval))}} </h3>
             @endif
         @else
         <h3 class="text-center text-uppercase bg-light p-3 rounded"> Evaluation date not set </h3>

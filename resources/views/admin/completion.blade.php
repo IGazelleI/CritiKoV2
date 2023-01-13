@@ -11,6 +11,9 @@
                         <span data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="e.g. CCICT: (420, 69, 489)" > Format: Department (Finished, Pending, Total) </span>
                     </header>
                 </div>
+                <div class="col text-end d-flex align-self-center ">
+                    <a href="{{route('admin.completionFaculty')}}" class="btn btn-primary rounded-pill"> Faculty Completion Report </a>
+                </div>
             </div>
             <div class="row">
                 @if(isset($chart))
