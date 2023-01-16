@@ -11,7 +11,8 @@ class Course extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'department_id', 
+        'department_id',
+        'chairman',
         'name', 
         'description', 
         'status'
@@ -41,5 +42,10 @@ class Course extends Model
     public function blocks()
     {
         return $this->hasMany(Block::class, 'course_id');
+    }
+    //faculty relationship
+    public function chairmann()
+    {
+        return $this->belongsTo(Faculty::class, 'chairman', 'user_id');
     }
 }

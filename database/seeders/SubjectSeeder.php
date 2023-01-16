@@ -20,6 +20,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'GEC-RPH',
                 'descriptive_title' => 'Readings in Philippine History',
+                'isLec' => 1,
                 'year_level' => 1,
                 'semester' => 1
             ],
@@ -27,6 +28,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'GEC-MMW',
                 'descriptive_title' => 'Mathematics in the Modern Word',
+                'isLec' => 1,
                 'year_level' => 1,
                 'semester' => 1
             ],
@@ -34,6 +36,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'GEC-TEM',
                 'descriptive_title' => 'The Entrepreneurial Mind',
+                'isLec' => 1,
                 'year_level' => 1,
                 'semester' => 1
             ],
@@ -41,6 +44,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'CC 111',
                 'descriptive_title' => 'Introduction to Computing',
+                'isLec' => 3,
                 'year_level' => 1,
                 'semester' => 1
             ],
@@ -48,6 +52,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'CC 112',
                 'descriptive_title' => 'Programming 1 (Lec)',
+                'isLec' => 1,
                 'year_level' => 1,
                 'semester' => 1
             ],
@@ -55,6 +60,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'CC 112 L',
                 'descriptive_title' => 'Programming 1 (Lab)',
+                'isLec' => 2,
                 'year_level' => 1,
                 'semester' => 1
             ],
@@ -62,6 +68,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'AP 1',
                 'descriptive_title' => 'Multimedia',
+                'isLec' => 3,
                 'year_level' => 1,
                 'semester' => 1
             ],
@@ -69,6 +76,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'PE 1',
                 'descriptive_title' => 'Physical Education 1',
+                'isLec' => 1,
                 'year_level' => 1,
                 'semester' => 1
             ],
@@ -76,6 +84,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'NSTP 1',
                 'descriptive_title' => 'National Service Training Program 1',
+                'isLec' => 1,
                 'year_level' => 1,
                 'semester' => 1
             ], //2nd sem 1st year
@@ -83,6 +92,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'GEC-PC',
                 'descriptive_title' => 'Purposive Communication',
+                'isLec' => 1,
                 'year_level' => 1,
                 'semester' => 2
             ],
@@ -90,6 +100,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'GEC-STS',
                 'descriptive_title' => 'Science, Technology and Society',
+                'isLec' => 1,
                 'year_level' => 1,
                 'semester' => 2
             ],
@@ -97,6 +108,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'GEC-US',
                 'descriptive_title' => 'Understanding the Self',
+                'isLec' => 1,
                 'year_level' => 1,
                 'semester' => 2
             ],
@@ -104,6 +116,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'GEE-RRES',
                 'descriptive_title' => 'Religions, Religious Experiences and Spirituality',
+                'isLec' => 1,
                 'year_level' => 1,
                 'semester' => 2
             ],
@@ -111,6 +124,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'CC 123',
                 'descriptive_title' => 'Programming 2 (Lec)',
+                'isLec' => 1,
                 'year_level' => 1,
                 'semester' => 2
             ],
@@ -118,6 +132,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'CC 123 L',
                 'descriptive_title' => 'Programming 2 (Lab)',
+                'isLec' => 2,
                 'year_level' => 1,
                 'semester' => 2
             ],
@@ -125,6 +140,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'PC 121',
                 'descriptive_title' => 'Discrete Mathematics',
+                'isLec' => 1,
                 'year_level' => 1,
                 'semester' => 2
             ],
@@ -132,6 +148,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'AP 2',
                 'descriptive_title' => 'Digital Logic Design',
+                'isLec' => 1,
                 'year_level' => 1,
                 'semester' => 2
             ],
@@ -139,6 +156,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'PE 2',
                 'descriptive_title' => 'Physical Education 2',
+                'isLec' => 1,
                 'year_level' => 1,
                 'semester' => 2
             ],
@@ -146,6 +164,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'NSTP 2',
                 'descriptive_title' => 'National Service Training Program 2',
+                'isLec' => 1,
                 'year_level' => 1,
                 'semester' => 2
             ],//2nd year
@@ -153,6 +172,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'GEC-E',
                 'descriptive_title' => 'Ethics',
+                'isLec' => 1,
                 'year_level' => 2,
                 'semester' => 1
             ],
@@ -160,6 +180,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'GEE-ES',
                 'descriptive_title' => 'Environmental Science',
+                'isLec' => 1,
                 'year_level' => 2,
                 'semester' => 1
             ],
@@ -167,6 +188,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'GEC-LWR',
                 'descriptive_title' => 'Life and Works of Rizal',
+                'isLec' => 1,
                 'year_level' => 2,
                 'semester' => 1
             ],
@@ -174,6 +196,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'PC 212',
                 'descriptive_title' => 'Quantitative Methods (Modeling & Simulation)',
+                'isLec' => 1,
                 'year_level' => 2,
                 'semester' => 1
             ],
@@ -181,6 +204,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'CC 214',
                 'descriptive_title' => 'Data Structures and Algorithms (Lec)',
+                'isLec' => 1,
                 'year_level' => 2,
                 'semester' => 1
             ],
@@ -188,6 +212,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'CC 214 L',
                 'descriptive_title' => 'Data Structures and Algorithms (Lab)',
+                'isLec' => 2,
                 'year_level' => 2,
                 'semester' => 1
             ],
@@ -195,6 +220,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'P Elec 1',
                 'descriptive_title' => 'Professional Elective 1',
+                'isLec' => 3,
                 'year_level' => 2,
                 'semester' => 1
             ],
@@ -202,6 +228,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'P Elec 2',
                 'descriptive_title' => 'Professional Elective 2',
+                'isLec' => 3,
                 'year_level' => 2,
                 'semester' => 1
             ],
@@ -209,6 +236,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'PE 3',
                 'descriptive_title' => 'Physical Education 3',
+                'isLec' => 1,
                 'year_level' => 2,
                 'semester' => 1
             ],//2nd sem 
@@ -216,6 +244,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'GEC-TCW',
                 'descriptive_title' => 'The Contemporary World',
+                'isLec' => 1,
                 'year_level' => 2,
                 'semester' => 2
             ],
@@ -223,6 +252,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'PC 223',
                 'descriptive_title' => 'Integrative Programming and Technologies 1',
+                'isLec' => 3,
                 'year_level' => 2,
                 'semester' => 2
             ],
@@ -230,6 +260,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'PC 224',
                 'descriptive_title' => 'Networking 1',
+                'isLec' => 3,
                 'year_level' => 2,
                 'semester' => 2
             ],
@@ -237,6 +268,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'CC 225',
                 'descriptive_title' => 'Information Management (Lec)',
+                'isLec' => 1,
                 'year_level' => 2,
                 'semester' => 2
             ],
@@ -244,6 +276,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'CC 225 L',
                 'descriptive_title' => 'Information Management (Lab)',
+                'isLec' => 2,
                 'year_level' => 2,
                 'semester' => 2
             ],
@@ -251,6 +284,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'P Elec 3',
                 'descriptive_title' => 'Professional Elective 3',
+                'isLec' => 3,
                 'year_level' => 2,
                 'semester' => 2
             ],
@@ -258,6 +292,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'AP 3',
                 'descriptive_title' => 'ASP.NET',
+                'isLec' => 3,
                 'year_level' => 2,
                 'semester' => 2
             ],
@@ -265,6 +300,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'PE 4',
                 'descriptive_title' => 'Physical Education 4',
+                'isLec' => 1,
                 'year_level' => 2,
                 'semester' => 2
             ],//3rd year */
@@ -272,6 +308,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'GEC-KAF',
                 'descriptive_title' => 'Komunikasyon sa Akademikong Filipino',
+                'isLec' => 1,
                 'year_level' => 3,
                 'semester' => 1
             ],
@@ -279,6 +316,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'PC 315',
                 'descriptive_title' => 'Networking 2 (Lec)',
+                'isLec' => 1,
                 'year_level' => 3,
                 'semester' => 1
             ],
@@ -286,6 +324,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'PC 315 L',
                 'descriptive_title' => 'Networking 2 (Lab)',
+                'isLec' => 2,
                 'year_level' => 3,
                 'semester' => 1
             ],
@@ -293,6 +332,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'PC 316',
                 'descriptive_title' => 'Systems Integration and Architecture 1',
+                'isLec' => 1,
                 'year_level' => 3,
                 'semester' => 1
             ],
@@ -300,6 +340,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'PC 317',
                 'descriptive_title' => 'Introduction to Human Computer Interaction',
+                'isLec' => 2,
                 'year_level' => 3,
                 'semester' => 1
             ],
@@ -307,6 +348,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'PC 318',
                 'descriptive_title' => 'Database Management Systems',
+                'isLec' => 2,
                 'year_level' => 3,
                 'semester' => 1
             ],
@@ -314,6 +356,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'PC 319',
                 'descriptive_title' => 'Applications Development and Emerging Technologies',
+                'isLec' => 1,
                 'year_level' => 3,
                 'semester' => 1
             ],//2nd sem
@@ -321,6 +364,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'GEC-AA',
                 'descriptive_title' => 'Art Appreciation',
+                'isLec' => 1,
                 'year_level' => 3,
                 'semester' => 2
             ],
@@ -328,6 +372,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'GEC-PPTP',
                 'descriptive_title' => 'Pagbasa at Pagsulat Tungo sa Pananaliksik',
+                'isLec' => 1,
                 'year_level' => 3,
                 'semester' => 2
             ],
@@ -335,6 +380,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'PC 329',
                 'descriptive_title' => 'Capstone Project and Research 1 (Technopreneurship 1)',
+                'isLec' => 1,
                 'year_level' => 3,
                 'semester' => 2
             ],
@@ -342,6 +388,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'PC 3210',
                 'descriptive_title' => 'Social and Professional Issues',
+                'isLec' => 1,
                 'year_level' => 3,
                 'semester' => 2
             ],
@@ -349,6 +396,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'PC 3211',
                 'descriptive_title' => 'Information Assurance and Security 1 (Lec)',
+                'isLec' => 1,
                 'year_level' => 3,
                 'semester' => 2
             ],
@@ -356,6 +404,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'PC 3211 L',
                 'descriptive_title' => 'Information Assurance and Security 1 (Lab)',
+                'isLec' => 2,
                 'year_level' => 3,
                 'semester' => 2
             ],
@@ -363,6 +412,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'AP 4',
                 'descriptive_title' => 'iOS Mobile Application Development Cross-Platform',
+                'isLec' => 3,
                 'year_level' => 3,
                 'semester' => 2
             ],
@@ -370,6 +420,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'AP 5',
                 'descriptive_title' => 'Technology and the Application of the Internet of Things',
+                'isLec' => 3,
                 'year_level' => 3,
                 'semester' => 2
             ],//4th year
@@ -377,6 +428,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'PC 4112',
                 'descriptive_title' => 'Information and Assurance Security 2 (Lec)',
+                'isLec' => 1,
                 'year_level' => 4,
                 'semester' => 1
             ],
@@ -384,6 +436,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'PC 4112 L',
                 'descriptive_title' => 'Information and Assurance Security 2 (Lab)',
+                'isLec' => 2,
                 'year_level' => 4,
                 'semester' => 1
             ],
@@ -391,6 +444,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'PC 4113',
                 'descriptive_title' => 'Systems Administration and Maintenance',
+                'isLec' => 3,
                 'year_level' => 4,
                 'semester' => 1
             ],
@@ -398,6 +452,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'P Elec 4',
                 'descriptive_title' => 'Professional Elective 4',
+                'isLec' => 1,
                 'year_level' => 4,
                 'semester' => 1
             ],
@@ -405,6 +460,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'PC 4114',
                 'descriptive_title' => 'Capstone Project and Research 2 (Technopreneurship 2)',
+                'isLec' => 3,
                 'year_level' => 4,
                 'semester' => 1
             ],
@@ -412,6 +468,7 @@ class SubjectSeeder extends Seeder
                 'course_id' => 1,
                 'code' => 'AP 5',
                 'descriptive_title' => 'Cross-Platform Script Development Technology',
+                'isLec' => 3,
                 'year_level' => 4,
                 'semester' => 1
             ]

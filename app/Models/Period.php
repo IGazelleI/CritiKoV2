@@ -23,33 +23,7 @@ class Period extends Model
 
     public function getDescription()
     {
-        if($this->semester == 1)
-        {
-            //beginning of academic year
-            $begin = $this->begin;
-            //end of academimc year
-            $next = Period::where('id', '>', $this->id)
-                        -> where('semester', '>', $this->semester)
-                        -> get()
-                        -> first();
-
-            $end = isset($next)? $next->end : $this->end;
-        }
-        else
-        {
-            //begin of academic year
-            $previous = Period::where('id', '<', $this->id)
-                        -> where('semester', '<', $this->semester)
-                        -> latest('id')
-                        -> get()
-                        -> first();
-
-            $begin = isset($previous)? $previous->begin : $this->begin;
-            //end of academic year
-            $end = $this->end;
-        }
-
-        return self::str_ordinal($this->semester) . " Semester SY " . date('Y', strtotime($begin)) . '-' . date('Y', strtotime($end));
+        return self::str_ordinal($this->semester) . " Semester SY " . $this->acadYear->getDescription();
     }
 
     public function str_ordinal($value)
@@ -65,5 +39,10 @@ class Period extends Model
         }
  
         return number_format($number) . $suffix;
+    }
+
+    public function acadYear()
+    {
+        return $this->belongsTo(AcademicYear::class, 'academic_year_id');
     }
 }

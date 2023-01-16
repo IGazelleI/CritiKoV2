@@ -89,7 +89,7 @@
             </div>
       </div>
       <div class="row pt-5">
-            <div class="col-3 fw-bold">
+            <div class="col-3 fw-bold text-secondary" style="font-size: 12px; font-family: Trebuchet">
                 ID
             </div>
             <div class="col id_number">
@@ -97,7 +97,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-3 fw-bold">
+            <div class="col-3 fw-bold text-secondary" style="font-size: 12px; font-family: Trebuchet">
                 Email
             </div>
             <div class="col email">
@@ -105,7 +105,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-3 fw-bold">
+            <div class="col-3 fw-bold text-secondary" style="font-size: 12px; font-family: Trebuchet">
                 Name
             </div>
             <div class="col name">
@@ -113,7 +113,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-3 fw-bold">
+            <div class="col-3 fw-bold text-secondary" style="font-size: 12px; font-family: Trebuchet">
                 Date of Birth
             </div>
             <div class="col dob">
@@ -121,7 +121,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-3 fw-bold">
+            <div class="col-3 fw-bold text-secondary" style="font-size: 12px; font-family: Trebuchet">
                 Contact Number
             </div>
             <div class="col cnumber">
@@ -129,7 +129,7 @@
             </div>
         </div>
         <div class="row mt-3">
-            <div class="col-3 fw-bold">
+            <div class="col-3 fw-bold text-secondary" style="font-size: 12px; font-family: Trebuchet">
                 Contact Person
             </div>
             <div class="col ecpName">
@@ -137,7 +137,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-3 fw-bold">
+            <div class="col-3 fw-bold text-secondary" style="font-size: 12px; font-family: Trebuchet">
                 Relationship
             </div>
             <div class="col ecpRel">
@@ -145,7 +145,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-3 fw-bold">
+            <div class="col-3 fw-bold text-secondary" style="font-size: 12px; font-family: Trebuchet">
                 Contact Number
             </div>
             <div class="col ecpNum">
@@ -153,7 +153,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-3 fw-bold">
+            <div class="col-3 fw-bold text-secondary" style="font-size: 12px; font-family: Trebuchet">
                 Address
             </div>
             <div class="col ecpAdd">

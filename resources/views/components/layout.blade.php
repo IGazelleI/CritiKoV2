@@ -73,8 +73,8 @@
                                             Dean
                                             @elseif(auth()->user()->faculties[0]->isAssDean)
                                             Associate Dean
-                                            @elseif(auth()->user()->faculties[0]->isChairman)
-                                            Chairman
+                                            @elseif(auth()->user()->faculties[0]->department->courses->where('chairman', auth()->user()->id)->first() != null)
+                                            {{auth()->user()->faculties[0]->department->courses->where('chairman', auth()->user()->id)->first()->name}} Chairman
                                             @else
                                             Faculty
                                             @endif

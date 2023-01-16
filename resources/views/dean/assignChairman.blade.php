@@ -2,27 +2,26 @@
     <x-general-card>
         <div class="row">
             <div class="col text-center p-5">
-                <h1 class="p-3 m-0 rounded-top {{randomBg()}}"> <span class="p-3"> {{$department->name}} </span> </h1>
-                <p class="border border-dark rounded-bottom text-secondary p-1"> {{$department->description}} </p>
+                <h1 class="p-3 m-0 rounded-top {{randomBg()}}"> <span class="p-3"> {{$course->department->name}} </span> </h1>
+                <p class="border border-dark rounded-bottom text-secondary p-1"> {{$course->department->description}} </p>
             </div>
         </div>
         <div class="row">
             <div class="col">
-                <form action="{{route('user.assignChairmanProcess')}}" method="POST">
+                <form action="{{route('user.assignChairmanProcess', $course->id)}}" method="POST">
                     @csrf
-                    <input type="hidden" name="department_id" value="{{$department->id}}"/>
                     <div class="row m-4 d-flex justify-content-center">
                         <div class="col-8">
                             <div class="form-outline mb-4">
                                 <h4 class="ms-3"> Faculty </h4> 
                                 <p class="text-secondary" style="font-size: 15px"> 
-                                    Select Faculty member to be assigned as the College Chairman 
+                                    Select Faculty member to be assigned as the <strong> {{$course->name}} </strong> Chairman 
                                 </p>
                                 <select class="select form-select rounded-pill" name="user_id" onchange="console.log(value)">
                                     <option selected disabled>-Select-</option>
                                     @unless ($faculty->isEmpty())
                                         @foreach($faculty as $det)
-                                            <option value="{{$det->id}}" {{$det->isChairman? 'selected' : ''}}> {{$det->fullName(true)}} </option>
+                                            <option value="{{$det->user_id}}" {{$det->user_id == $course->chairman? 'selected' : ''}}> {{$det->fullName(true)}} </option>
                                         @endforeach
                                     @else
                                         <option disabled> Current department has no faculty. </option>

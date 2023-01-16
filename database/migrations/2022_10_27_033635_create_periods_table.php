@@ -22,6 +22,7 @@ return new class extends Migration
             $table->date('endEnroll')->nullable();
             $table->date('beginEval')->nullable();
             $table->date('endEval')->nullable();
+            $table->foreignId('academic_year_id')->constrained()->onDelete('cascade');
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });

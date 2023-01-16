@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('department_id')->constrained()->onDelete('cascade');
             $table->string('name');
             $table->string('description');
+            $table->integer('chairman')->nullable();
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });

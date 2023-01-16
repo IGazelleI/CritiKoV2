@@ -66,8 +66,8 @@ Route::middleware(['auth'/* , 'verified' */])->group(function ()
             Route::post('/assignDeanProcess', 'assignDeanProcess')->name('user.assignDeanProcess');
             Route::get('/assign/associate/{department}', 'assignAssociate')->name('user.assignAssociate');
             Route::post('/assignAssociateProcess', 'assignAssociateProcess')->name('user.assignAssociateProcess');
-            Route::get('/assign/chairman/{department}', 'assignChairman')->name('user.assignChairman');
-            Route::post('/assignChairmanProcess', 'assignChairmanProcess')->name('user.assignChairmanProcess');
+            Route::get('/assign/chairman/{course}', 'assignChairman')->name('user.assignChairman');
+            Route::post('/assignChairmanProcess/{course}', 'assignChairmanProcess')->name('user.assignChairmanProcess');
         });
 
         Route::controller(App\Http\Controllers\PeriodController::class)->group(function ()

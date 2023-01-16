@@ -19,11 +19,6 @@ class Klase extends Model
         'instructor',
         'status'
     ];
-    
-    public function schedule()
-    {
-        return substr($this->day, 0, 3) . ' @ ' . date('g:i A', strtotime($this->begin)) . '-' . date('g:i A', strtotime($this->end));
-    }
     //subject relationshio
     public function subject()
     {

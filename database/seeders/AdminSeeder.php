@@ -2,11 +2,13 @@
 
 namespace Database\Seeders;
 
-use App\Models\Admin;
+use App\Models\Sast;
 use App\Models\User;
+use App\Models\Admin;
 use App\Models\Period;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\AcademicYear;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class AdminSeeder extends Seeder
 {
@@ -17,17 +19,33 @@ class AdminSeeder extends Seeder
      */
     public function run()
     {
-        $user = User::factory()->create([
+        $admin = User::factory()->create([
             'type' => 1,
             'email' => 'admin@ctu.edu.ph',
-            'password' => bcrypt('admin')
+            'password' => bcrypt('amores15')
         ]);
 
         Admin::create([
-            'user_id' => $user->id
+            'user_id' => $admin->id
+        ]);
+
+        $sast = User::factory()->create([
+            'type' => 2,
+            'email' => 'sast@ctu.edu.ph',
+            'password' => bcrypt('amores15')
+        ]);
+
+        Sast::create([
+            'user_id' => $sast->id
+        ]);
+
+        $acad = AcademicYear::create([
+            'begin' => '2022',
+            'end' => '2023'
         ]);
 
         Period::create([
+            'academic_year_id' => $acad->id,
             'semester' => 1,
             'begin' => NOW(),
             'end' => NOW()->addMonths(6)

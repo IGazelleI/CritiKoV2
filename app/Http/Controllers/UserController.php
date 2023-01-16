@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Course;
 use App\Models\Period;
 use App\Models\Faculty;
 use App\Models\Student;
@@ -218,7 +219,7 @@ class UserController extends Controller
             {
                 foreach($enrollment as $det)
                     $students = array_merge($students, [$det->user_id]);
-                    dump($students);
+                
                 $user = User::whereIn('id', $students)
                         -> latest('id')
                         -> get();
@@ -270,8 +271,7 @@ class UserController extends Controller
             -> where('id', $request->user_id)
             -> update([
             'isDean' => true,
-            'isAssDean' => false,
-            'isChairman' => false
+            'isAssDean' => false
         ]) == 0)
             return back()->with('message', 'Error in assigning dean. Please try again.');
 
@@ -296,37 +296,29 @@ class UserController extends Controller
         if(DB::table('faculties')
             -> where('id', $request->user_id)
             -> update(['isAssDean' => true, 
-                       'isDean' => false, 
-                       'isChairman' => false
+                       'isDean' => false
         ]) == 0)
             return back()->with('message', 'Error in assigning associate dean. Please try again.');
 
         return redirect(route('user.manage', 5))->with('message', 'New College Associate Dean assigned.');
     }
 
-    public function assignChairman(Department $department)
+    public function assignChairman(Course $course)
     {
-        $faculty = Faculty::where('department_id', $department->id)
+        $faculty = Faculty::where('department_id', $course->department_id)
                         -> latest('id')
                         -> get();
 
-        return view('dean.assignChairman', compact('faculty', 'department'));
+        return view('dean.assignChairman', compact('faculty', 'course'));
     }
 
-    public function assignChairmanProcess(Request $request)
+    public function assignChairmanProcess(Course $course, Request $request)
     {
-        DB::table('faculties')
-            -> where('department_id', $request->department_id)
-            -> update(['isChairman' => false]);
+        if(!$course->update([
+            'chairman' => $request->user_id
+        ]))
+            return back()->with('message', 'Error in assigning program chairman. Please try again.');
 
-        if(DB::table('faculties')
-            -> where('id', $request->user_id)
-            -> update(['isChairman' => true, 
-                       'isDean' => false, 
-                       'isAssDean' => false
-        ]) == 0)
-            return back()->with('message', 'Error in assigning college chairman. Please try again.');
-
-        return redirect(route('user.manage', 5))->with('message', 'New College Chairman assigned.');
+        return redirect(route('course.manage'))->with('message', 'New Program Chairman assigned.');
     }
 }

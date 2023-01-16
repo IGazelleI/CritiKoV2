@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CourseStoreRequest extends FormRequest
@@ -25,7 +26,7 @@ class CourseStoreRequest extends FormRequest
     {
         return [
             'department_id' => 'required',
-            'name' => 'required',
+            'name' => ['required', Rule::unique('courses', 'name')],
             'description' => 'required'
         ];
     }
@@ -40,6 +41,7 @@ class CourseStoreRequest extends FormRequest
         return [
             'department_id.required' => 'Department field is required',
             'name.required' => 'Name field is required.',
+            'name.unique' => 'Course already exits.',
             'description' => 'Description field is required.'
         ];
     }

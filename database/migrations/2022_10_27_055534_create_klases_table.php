@@ -15,9 +15,8 @@ return new class extends Migration
     {
         Schema::create('klases', function (Blueprint $table) {
             $table->id();
-            $table->string('day')->nullable();
-            $table->time('begin')->nullable();
             $table->time('end')->nullable();
+            $table->string('schedule')->nullable();
             $table->foreignId('subject_id')->constrained()->onDelete('cascade');
             $table->foreignId('block_id')->constrained()->onDelete('cascade');
             $table->unsignedBigInteger('instructor')->nullable();

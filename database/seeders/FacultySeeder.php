@@ -18,6 +18,26 @@ class FacultySeeder extends Seeder
     {
         $faculty = [
             [
+                'type' => 3,
+                'email' => 'joseph.barawidan@ctu.edu.ph',
+                'password' => bcrypt('amores15')
+            ],
+            [
+                'type' => 3,
+                'email' => 'narcisan.galamiton@ctu.edu.ph',
+                'password' => bcrypt('amores15')
+            ],
+            [
+                'type' => 3,
+                'email' => 'gibe.tirol@ctu.edu.ph',
+                'password' => bcrypt('amores15')
+            ],
+            [
+                'type' => 3,
+                'email' => 'gerryritz.densing@ctu.edu.ph',
+                'password' => bcrypt('amores15')
+            ],
+            [
                 'type' => 3,/* 
                 'name' => 'Jose Maria Garcia', */
                 'email' => 'josemaria.garcia@ctu.edu.ph',
@@ -58,10 +78,31 @@ class FacultySeeder extends Seeder
                 'name' => 'Joey Sayson', */
                 'email' => 'joey.sayson@ctu.edu.ph',
                 'password' => bcrypt('amores15')
+            ],
+            [
+                'type' => 3,
+                'email' => 'cherry.minguito@ctu.edu.ph',
+                'password' => bcrypt('amores15')
             ]
         ];
 
         $name = [
+            [
+                'fname' => 'Joseph',
+                'lname' => 'Barawidan'
+            ],
+            [
+                'fname' => 'Narcisan',
+                'lname' => 'Galamiton'
+            ],
+            [
+                'fname' => 'Gibe',
+                'lname' => 'Tirol'
+            ],
+            [
+                'fname' => 'Gerry Ritz',
+                'lname' => 'Densing'
+            ],
             [
                 'fname' => 'Jose Maria',
                 'lname' => 'Garcia'

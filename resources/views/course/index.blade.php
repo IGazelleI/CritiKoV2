@@ -3,7 +3,7 @@
     $period = $Period->latest('id')->get()->first();
 @endphp
 <x-layout>
-    <x-general-card>
+    <x-medium-card>
         <div class="table">
             <div class="table-wrapper">
                 <div class="table-title">
@@ -30,8 +30,9 @@
                 <table class="table table-striped table-hover">
                     <thead>
                         <tr>
-                            <th> <strong> Name </strong> </th>
-                            <th colspan="2"> <strong> Descriptive Title </strong> </th>
+                            <th class="col-2"> <strong> Name </strong> </th>
+                            <th class="col-5"> <strong> Descriptive Title </strong> </th>
+                            <th colspan="2"> <strong> Chairman </strong> </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -42,12 +43,29 @@
                                     {{$det->name}}
                                 </a>
                             </td>
-                            <td class="col-8">
+                            <td>
                                 <a href="{{route('block.show',  ['period' => $period->id, 'course' => $det->id])}}" class="link-dark">
                                     {{$det->description}}
                                 </a>
                             </td>
-                            <td class="col d-flex justify-self-center align-self-center">
+                            <td>
+                                @if(isset($det->chairman))
+                                {{$det->chairmann->fullName(true)}}&nbsp;
+                                <a href="{{route('user.assignChairman', $det->id)}}" class="text-decoration-underline text-capitalized"
+                                    data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Assign {{$det->name}} Chairman"    
+                                >
+                                    Change
+                                </a>
+                                @else
+                                Unassigned &nbsp;
+                                <a href="{{route('user.assignChairman', $det->id)}}" class="text-decoration-underline text-capitalized"
+                                    data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Assign {{$det->name}} Chairman"    
+                                >
+                                    Assign
+                                </a>
+                                @endif
+                            </td>
+                            <td class="d-flex align-self-center">
                                 <div class="dropdown">
                                     <button class="border border-0 bg-transparent" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 5%">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">
@@ -97,6 +115,6 @@
                 </div> --}}
             </div>
         </div>
-    </x-general-card>
+    </x-medium-card>
     <x-admin-canvas/>
 </x-layout>

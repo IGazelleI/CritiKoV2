@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('course_id')->constrained()->onDelete('cascade');
             $table->string('code');
             $table->string('descriptive_title');
+            $table->integer('isLec');
             $table->integer('year_level')->nullable();
             $table->integer('semester')->nullable();
             $table->timestamp('deleted_at')->nullable();
