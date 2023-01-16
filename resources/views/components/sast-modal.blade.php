@@ -300,6 +300,16 @@
                     @endif
                     <div class="row">
                         <div class="col">
+                            <label for="isLec" class="col-form-label ms-2"> Class Type </label>
+                            <select class="select form-select rounded-pill isLec" name="isLec" onchange="showDets()">
+                                <option selected disabled>-Select-</option>
+                                <option value="1"> Lecture </option>
+                                <option value="0">  Laboratory </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
                             <div class="mb-3">
                                 <label for="q_type_id" class="col-form-label ms-2"> Type </label>
                                 <select class="select form-select rounded-pill type" name="q_type_id" onchange="showDets()">
@@ -460,6 +470,16 @@
                         </ul>
                     </div>
                     @endif
+                    <div class="row">
+                        <div class="col">
+                            <label for="isLec" class="col-form-label ms-2"> Class Type </label>
+                            <select class="select form-select rounded-pill isLec" name="isLec">
+                                <option selected disabled>-Select-</option>
+                                <option value="1"> Lecture </option>
+                                <option value="0">  Laboratory </option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col">
                             <div class="mb-3">
@@ -704,21 +724,29 @@
         // Button that triggered the modal
         const button = event.relatedTarget;
         // Extract info from data-bs-* attributes
-        const type = button.getAttribute('data-bs-type');
         const cat = button.getAttribute('data-bs-category');
-        const answer = button.getAttribute('data-bs-answer');
+        const isLec = button.getAttribute('data-bs-isLec');
+        const type = button.getAttribute('data-bs-type');
         // If necessary, you could initiate an AJAX request here
         // and then do the updating in a callback.
         //
         // Update the modal's content.
-        if(type != null && cat != null)
+        if(type != null)
         {
             const typeInput = addFQModal.querySelector('.modal-body .type');
-            const catInput = addFQModal.querySelector('.modal-body .category');
-
             typeInput.value = type;
+        }
+        if(cat != null)
+        {
+            const catInput = addFQModal.querySelector('.modal-body .category');
             catInput.value = cat;
         }
+        if(isLec != null)
+        {
+            const isLecInput = addFQModal.querySelector('.modal-body .isLec');
+            isLecInput.value = isLec;
+        }
+
     });
 
     const addSQModal = document.getElementById('addSQModal')
@@ -751,6 +779,7 @@
         const button = event.relatedTarget;
         // Extract info from data-bs-* attributes
         const id = button.getAttribute('data-bs-id');
+        const isLec = button.getAttribute('data-bs-isLec');
         const type = button.getAttribute('data-bs-type');
         const cat = button.getAttribute('data-bs-category');
         const sentence = button.getAttribute('data-bs-sentence');
@@ -760,16 +789,19 @@
         //
         // Update the modal's content.
         const idInput = editFQModal.querySelector('.modal-body .id');
+        const isLecInput = editFQModal.querySelector('.modal-body .isLec');
         const typeInput = editFQModal.querySelector('.modal-body .type');
         const catInput = editFQModal.querySelector('.modal-body .category');
         const sentInput = editFQModal.querySelector('.modal-body .sentence');
         const keyInput = editFQModal.querySelector('.modal-body .keyword');
 
         idInput.value = id;
+        isLecInput.value = isLec;
         typeInput.value = type;
         catInput.value = cat;
         sentInput.value = sentence;
         keyInput.value = keyword;
+        console.log(isLec);
     });
 
     const editSQModal = document.getElementById('editSQModal')

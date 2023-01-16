@@ -163,6 +163,7 @@ Route::middleware(['auth'/* , 'verified' */])->group(function ()
             Route::post('/changePicf/{faculty}', 'changeProfilePicture')->name('faculty.changePic');
             Route::post('/changePeriodf', 'changePeriod')->name('faculty.changePeriod');
             Route::post('/changeSelectedf', 'changeSelected')->name('faculty.changeSelected');
+            Route::post('/changeSubSelectedf', 'changeSubSelected')->name('faculty.changeSubSelected');
             Route::get('/evaluatef', 'evaluate')->name('faculty.evaluate');
             Route::post('evaluate/processf', 'evaluateProcess')->name('faculty.evaluateProcess');
             Route::post('/f/prevLimit', 'changePrevLimit')->name('faculty.changePrevLimit');

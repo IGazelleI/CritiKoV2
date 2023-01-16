@@ -26,8 +26,7 @@ class QuestionStoreRequest extends FormRequest
         return [
             'q_type_id' => 'required',
             'q_category_id' => 'required',
-            'sentence' => 'required',
-            'keyword' => 'required'
+            'sentence' => 'required'
         ];
     }
 
@@ -41,8 +40,7 @@ class QuestionStoreRequest extends FormRequest
         return [
             'q_type_id.required' => 'Type field is required.',
             'q_category_id' => 'Category field is required.',
-            'sentence' => 'Sentence field is required.',
-            'keyword' => 'Keyword field is required.'
+            'sentence' => 'Sentence field is required.'
         ];
     }
 }

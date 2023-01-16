@@ -56,6 +56,112 @@ class QuestionSeeder extends Seeder
             QCategory::create($cat);
 
         //faculty
+        //lec questions
+        $facultyLecQuestions = [
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 1,
+                'isLec' => true,
+                'sentence' => 'preparedness',
+                'keyword' => 'prepared'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 1,
+                'isLec' => true,
+                'sentence' => 'mastery of subject matter',
+                'keyword' => 'mastery'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 1,
+                'isLec' => true,
+                'sentence' => 'evidence of the correct/appropriate choice and effective use of methods & techniques',
+                'keyword' => 'teaching strategy choice and use it well'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 1,
+                'isLec' => true,
+                'sentence' => 'awareness of current issues for lesson enrichment',
+                'keyword' => 'latest issue awareness'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 1,
+                'isLec' => true,
+                'sentence' => 'projection of dynamic personality traits (grooming, refinement of voice/action, creativeness, resourcefulness, democratic leadership, etc.)',
+                'keyword' => 'propels students/co-faculty towards positive change and improvement'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 1,
+                'isLec' => true,
+                'sentence' => 'promotion of desirable values',
+                'keyword' => 'promote desirable values'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 1,
+                'isLec' => true,
+                'sentence' => 'tasks on time (time management of activities, accomplishment of objectives, provision of further research)',
+                'keyword' => 'gives tasks on time'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 2,
+                'isLec' => true,
+                'sentence' => 'evidence of Apperceptive Learning (relatedness of the Previous assignment with the present lesson)',
+                'keyword' => 'relates previous lessons to the current providing even more context'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 2,
+                'isLec' => true,
+                'sentence' => 'manifestation of the student-teacher interaction (students\' active participation)',
+                'keyword' => 'manifests student-teacher interaction'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 2,
+                'isLec' => true,
+                'sentence' => 'tangible evidences/s of learning achievement (results of quizzes, students\' feedback, lession retention/application of basic truths studied/learned)',
+                'keyword' => 'show students\' even more evidence from lessons discussed'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 3,
+                'isLec' => true,
+                'sentence' => 'classroom management/setting (discipline; cleanliness; orderliness)',
+                'keyword' => 'great classroom management'
+            ],
+            [
+                'q_type_id' => 1,
+                'q_category_id' => 3,
+                'isLec' => true,
+                'sentence' => 'adequacy of Instructional facilities (prepared by the Instructors)',
+                'keyword' => 'relates previous lessons to the current providing even more context'
+            ],
+            [
+                'q_type_id' => 2,
+                'isLec' => true,
+                'sentence' => 'strong points',
+            ],
+            [
+                'q_type_id' => 2,
+                'isLec' => true,
+                'sentence' => 'for improvement/s',
+            ],
+            [
+                'q_type_id' => 2,
+                'isLec' => true,
+                'sentence' => 'suggestions',
+            ]
+        ];
+
+        foreach($facultyLecQuestions as $q)
+            Question::create($q);
+
         //lab questions
         $facultyLabQuestions = [
             [

@@ -15,8 +15,10 @@ class QuestionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($type = 4)
+    public function index(Request $request, $type = 4)
     {
+        $isLec = $request->isLec;
+        
         $cat = QCategory::with('questions')
                         -> where(function ($query) use ($type)
                             {
@@ -30,12 +32,29 @@ class QuestionController extends Controller
         
         foreach($cat as $det)
         {
-            foreach($det->questions as $q)
-                $question->push($q);
+            if($type == 3)
+            {
+                if(isset($isLec))
+                {
+                    foreach($det->questions->where('isLec', $isLec) as $q)
+                        $question->push($q);
+                }
+                else
+                {
+                    foreach($det->questions->where('isLec', false) as $q)
+                        $question->push($q);
+                }
+            }
+            else
+            {
+                foreach($det->questions as $q)
+                    $question->push($q);
+            }
+            
         }
         $question = $question->sortBy('q_type_id');
 
-        return view('question.index', compact('question', 'type'));
+        return view('question.index', compact('question', 'type', 'isLec'));
     }
 
     /**
@@ -61,6 +80,15 @@ class QuestionController extends Controller
      */
     public function update(QuestionStoreRequest $request)
     {
+        if($request->q_type_id == 1)
+        {
+            $formFields = $request->validate([
+                'keyword' => 'required'
+            ], [
+                'keyword.required' => 'Keyword field is required.'
+            ]);
+        }
+
         $question = Question::find($request->id);
 
         if(!$question->update([

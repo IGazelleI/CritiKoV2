@@ -63,9 +63,7 @@ class Klasecontroller extends Controller
     {
         if(!$klase->update([
             'instructor' => $request->instructor,
-            'day' => $request->day,
-            'begin' => $request->begin,
-            'end' => $request->end
+            'schedule' => $request->schedule
         ]))
             return back()->with('message', 'Error in assigning instructor. Please try again.');
 

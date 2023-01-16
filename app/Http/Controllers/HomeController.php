@@ -653,7 +653,6 @@ class HomeController extends Controller
                     $faculty = Faculty::where('department_id', auth()->user()->faculties->first()->department_id)
                                     -> where('user_id', '!=', auth()->user()->id)
                                     -> orderBy('isAssDean', 'desc')
-                                    -> orderBy('isChairman', 'desc')
                                     -> get();
                 }
                 else

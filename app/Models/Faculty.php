@@ -62,6 +62,7 @@ class Faculty extends Model
     {
         $eval = Evaluate::create([
             'period_id' => Session::get('period'),
+            'subject_id' => Session::get('subSelected'),
             'evaluator' => auth()->user()->id,
             'evaluatee' => Session::get('selected')
         ]);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Models\Period;
 use App\Models\Faculty;
+use App\Models\Subject;
 use App\Models\Evaluate;
 use App\Models\Question;
 use App\Models\QCategory;
@@ -12,8 +13,8 @@ use App\Models\Department;
 use App\Models\Enrollment;
 use App\Charts\FacultyChart;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\ChangePicRequest;
 use Illuminate\Support\Facades\Session;
@@ -132,14 +133,29 @@ class FacultyController extends Controller
                     -> latest('id')
                     -> get();
 
+        $subject = Subject::find(Session::get('subSelected'));
         $question = new Collection();
 
-        foreach($cat as $det)
+        if($subject != null)
         {
-            foreach($det->questions as $q)
-                $question->push($q);
+            foreach($cat as $det)
+            {
+                switch($subject->isLec)
+                {
+                    case 1: $questions = $det->questions->where('isLec', true);
+                            break;
+                    case 2: $questions = $det->questions->where('isLec', false);
+                            break;
+                    case 3: $questions = $det->questions;
+                            break;
+                }
+                foreach($questions as $q)
+                    $question->push($q);
+            }
+            $question = $question->sortBy('q_type_id');
         }
-        $question = $question->sortBy('q_type_id');
+        else
+            $question = $cat->first()->questions->where('id', 69420);
         
         //get faculties in same department
         if(auth()->user()->faculties->first()->isDean)
@@ -147,7 +163,6 @@ class FacultyController extends Controller
             $faculty = Faculty::where('department_id', auth()->user()->faculties->first()->department_id)
                             -> where('user_id', '!=', auth()->user()->id)
                             -> orderBy('isAssDean', 'desc')
-                            -> orderBy('isChairman', 'desc')
                             -> get();
         }
         else
@@ -167,11 +182,12 @@ class FacultyController extends Controller
         $evaluation = $currentSelected != null? Evaluate::where('evaluator', auth()->user()->id)
                                                     -> where('evaluatee', $currentSelected)
                                                     -> where('period_id', Session::get('period'))
+                                                    -> where('subject_id', Session::get('subSelected'))
                                                     -> latest('id')
                                                     -> get()
                                                     -> first() : null;
 
-        return view('faculty.evaluate', compact('period', 'question', 'faculty', 'evaluation'));
+        return view('faculty.evaluate', compact('period', 'question', 'faculty', 'evaluation', 'subject'));
     }
 
     public function evaluateProcess(Request $request)
@@ -185,8 +201,16 @@ class FacultyController extends Controller
     public function changeSelected(Request $request)
     {
         $request->session()->put('selected', (int) $request->user_id);
+        $request->session()->put('subSelected', null);
 
         return redirect(route('faculty.evaluate'))->with('message', 'Selected changed.');
+    }
+
+    public function changeSubSelected(Request $request)
+    {
+        $request->session()->put('subSelected', (int) $request->subject_id);
+
+        return redirect(route('faculty.evaluate'))->with('message', 'Subject selected changed.');
     }
 
     public function changePrevLimit(Request $request)
