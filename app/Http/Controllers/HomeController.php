@@ -216,8 +216,9 @@ class HomeController extends Controller
                                                 -> from('faculties')
                                                 -> whereColumn('faculties.user_id', 'evaluates.evaluator');
                                         })
+                                        -> where('period_id', $p->id)/* 
                                         -> whereDate('created_at', '>=', $p->beginEval)
-                                        -> whereDate('created_at', '<=', $p->endEval)
+                                        -> whereDate('created_at', '<=', $p->endEval) */
                                         -> get();
                     //student
                     //get enrollment query
@@ -274,59 +275,33 @@ class HomeController extends Controller
                         if(!$det->faculties->isEmpty())
                         {
                             $expectedf += $det->faculties->count();
-                            
+
                             foreach($det->faculties as $fac)
                             {
-                                if($fac->isDean || $fac->isAssDean)
+                                $finishedf += 1;
+
+                                foreach($det->faculties->where('id', '!=', $fac->id) as $facEval)
                                 {
-                                    $finishedf += 1;
-                                    foreach($det->faculties->where('id', '!=', $fac->id) as $facEval)
+                                    //get the classes of faculty
+                                    $block = Block::with('klases')->where('period_id', $p->id)->get();
+
+                                    if(!$block->isEmpty())
                                     {
-                                        if($evaluation->where('evaluator', $fac->user_id)->where('evaluatee', $facEval->user_id)->isEmpty())
+                                        foreach($block as $b)
                                         {
-                                            $finishedf -= 1;
-                                            break;
-                                        }                                                                    
-                                    }
-                                }
-                                else 
-                                {
-                                    $faculties = Faculty::where('department_id', $det->id)
-                                                    -> where(function($query){
-                                                        $query->where('isDean', true)
-                                                            -> orWhere('isAssDean', true);
-                                                    })
-                                                    -> get();
-                                                   
-                                    $finishedf += 1;
-                                    foreach($faculties as $facEval)
-                                    {
-                                        if($evaluation->where('evaluator', $fac->user_id)->where('evaluatee', $facEval->user_id)->isEmpty())
-                                        {
-                                            $finishedf -= 1;
-                                            break;
-                                        }    
-                                    }
+                                            foreach($b->klases->where('instructor', $facEval->user_id) as $klase)
+                                            {
+                                                if($evaluation->where('evaluator', $fac->user_id)->where('evaluatee', $facEval->user_id)->where('subject_id', $klase->subject_id)->isEmpty())
+                                                {
+                                                    $finishedf -= 1;
+                                                    break 3;
+                                                }      
+                                            }
+                                        }
+                                    }            
                                 }
                             }
                         }
-                        /* if($det->faculties->count() > 0)
-                        {
-                            $total = $det->faculties->count();
-                            $facExpected = 0;
-
-                            if($total > 3)
-                            {
-                                $fac = $total - 4; //without 3 heads and self
-                                $facExpected = $fac * 3; //each faculty can evaluate the 3 heads
-                                $headExpected = ($total - 1) * 3; //each head can evaluate all faculty except self
-                            }
-                            else
-                                $headExpected = ($total - 1) * $total;
-                            
-                            $expectedf += $headExpected + $facExpected;
-                            $expectedf += $det->faculties->count();
-                        } */
                     }
 
                     $pendingf = $expectedf - $finishedf;
@@ -381,59 +356,34 @@ class HomeController extends Controller
                     {
                         if(!$det->faculties->isEmpty())
                         {
-                            $expectedf += 2;
-                            
+                            $expectedf += $det->faculties->count();
+
                             foreach($det->faculties as $fac)
                             {
-                                if($fac->isDean)
+                                $finishedf += 1;
+
+                                foreach($det->faculties->where('id', '!=', $fac->id) as $facEval)
                                 {
-                                    $finishedf += 1;
-                                    foreach($det->faculties->where('id', '!=', $fac->id) as $facEval)
+                                    //get the classes of faculty
+                                    $block = Block::with('klases')->where('period_id', $period->id)->get();
+
+                                    if(!$block->isEmpty())
                                     {
-                                        if($evaluation->where('evaluator', $fac->user_id)->where('evaluatee', $facEval->user_id)->isEmpty())
+                                        foreach($block as $b)
                                         {
-                                            $finishedf -= 1;
-                                            break;
-                                        }                                                                    
-                                    }
-                                }
-                                else/* if($fac->isChairman) */
-                                {
-                                    $faculties = Faculty::where('department_id', $fac->department_id)
-                                                    -> where('user_id', '!=', auth()->user()->id)
-                                                    -> where('isDean', false)
-                                                    -> where('isAssDean', false)
-                                                    -> get();
-                                                   
-                                    $finishedf += 1;
-                                    foreach($faculties as $facEval)
-                                    {
-                                        if($evaluation->where('evaluator', $fac->user_id)->where('evaluatee', $facEval->user_id)->isEmpty())
-                                        {
-                                            $finishedf -= 1;
-                                            break;
-                                        }    
-                                    }
+                                            foreach($b->klases->where('instructor', $facEval->user_id) as $klase)
+                                            {
+                                                if($evaluation->where('evaluator', $fac->user_id)->where('evaluatee', $facEval->user_id)->where('subject_id', $klase->subject_id)->isEmpty())
+                                                {
+                                                    $finishedf -= 1;
+                                                    break 3;
+                                                }      
+                                            }
+                                        }
+                                    }            
                                 }
                             }
                         }
-                        /* if($det->faculties->count() > 0)
-                        {
-                            $total = $det->faculties->count();
-                            $facExpected = 0;
-
-                            if($total > 3)
-                            {
-                                $fac = $total - 4; //without 3 heads and self
-                                $facExpected = $fac * 3; //each faculty can evaluate the 3 heads
-                                $headExpected = ($total - 1) * 3; //each head can evaluate all faculty except self
-                            }
-                            else
-                                $headExpected = ($total - 1) * $total;
-                            
-                            $expectedf += $headExpected + $facExpected;
-                            $expectedf += $det->faculties->count();
-                        } */
                     }
 
                     $pendingf = $expectedf - $finishedf;
@@ -527,7 +477,7 @@ class HomeController extends Controller
 
                 $details = $this->getDetails($period, 4, null);
                 
-                $recommendation = isset($details)? Question::select('keyword')
+                $recommendation['studentEvaluation'] = isset($details)? Question::select('keyword')
                                         -> where('q_category_id', $details->lowestAttribute)
                                         -> where('q_type_id', 1)
                                         -> latest('id')
@@ -585,25 +535,11 @@ class HomeController extends Controller
 
                 $details = $this->getDetails($period, 3, null);
 
-                if(isset($recommendation))
-                {
-                    $additional = isset($details)? Question::select('keyword')
+                $recommendation['facultyEvaluation'] = isset($details)? Question::select('isLec', 'keyword')
                                         -> where('q_category_id', $details->lowestAttribute)
                                         -> where('q_type_id', 1)
                                         -> latest('id')
                                         -> get() : null;
-
-                    if($additional != null)
-                        $recommendation = $additional->concat($recommendation);
-                }
-                else
-                {
-                    $recommendation = isset($details)? Question::select('keyword')
-                                        -> where('q_category_id', $details->lowestAttribute)
-                                        -> where('q_type_id', 1)
-                                        -> latest('id')
-                                        -> get() : null;
-                }
                 //chart details
                 $cat = $this->getCategoriesAsArray(3);
                 $facultyChart->labels($cat)

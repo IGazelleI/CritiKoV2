@@ -197,7 +197,7 @@ class QuestionSeeder extends Seeder
                 'q_category_id' => 1,
                 'isLec' => false,
                 'sentence' => 'ability to motivate students participation',
-                'keyword' => 'organized'
+                'keyword' => 'motivates students to participate'
             ],
             [
                 'q_type_id' => 1,
@@ -210,8 +210,8 @@ class QuestionSeeder extends Seeder
                 'q_type_id' => 1,
                 'q_category_id' => 1,
                 'isLec' => false,
-                'sentence' => 'ability to motive students participation',
-                'keyword' => 'organized'
+                'sentence' => 'ability to evaluate laboratory work (i.e practical examination/laboratory exercises)',
+                'keyword' => 'evaluates laboratory works well'
             ],//2nd category
             [
                 'q_type_id' => 1,

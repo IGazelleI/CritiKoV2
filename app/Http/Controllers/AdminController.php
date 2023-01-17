@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Block;
 use App\Models\Period;
 use App\Models\Faculty;
+use App\Models\Subject;
 use App\Models\Evaluate;
 use App\Models\Question;
 use App\Models\QCategory;
@@ -425,9 +426,19 @@ class AdminController extends Controller
 
         $periods = Period::latest('id')->get();
         $perSelected = $request->period;
+        $subSelected = $request->subject;
+        $showBy = $request->showBy;
 
-        $summaryS = $this->getSummary(isset($request->period)? $periods->find($perSelected) : $periods->first(), 4, $faculty);
-        $summaryF = $this->getSummary(isset($request->period)? $periods->find($perSelected) : $periods->first(), 3, $faculty);
+        if($subSelected != null)
+        {
+            $summaryS = $this->getSummary(isset($request->period)? $periods->find($perSelected) : $periods->first(), 4, $faculty, $subSelected);
+            $summaryF = $this->getSummary(isset($request->period)? $periods->find($perSelected) : $periods->first(), 3, $faculty, $subSelected);
+        }
+        else
+        {
+            $summaryS = null;
+            $summaryF = null;
+        }
         //students
         $student = Enrollment::select('user_id')
                             -> where('period_id', isset($perSelected)? $perSelected : $periods->first()->id)
@@ -445,9 +456,9 @@ class AdminController extends Controller
         $cofac = array();
 
         foreach($coFac as $det)
-            $cofac = array_merge($cofac, [$det->user_id]);        
+            $cofac = array_merge($cofac, [$det->user_id]);       
 
-        return view('admin.summaryReport', compact('faculty', 'periods', 'perSelected', 'summaryS', 'summaryF', 'cofac', 'students'));
+        return view('admin.summaryReport', compact('faculty', 'periods', 'perSelected', 'subSelected', 'showBy', 'summaryS', 'summaryF', 'cofac', 'students'));
     }
     //local methods
     function colors($i)
@@ -627,7 +638,7 @@ class AdminController extends Controller
         
         return $details;
     }
-    function getSummary($period, $type, $faculty)
+    function getSummary($period, $type, $faculty, $subject)
     {
         if(!isset($period->beginEval))
             return null;
@@ -655,6 +666,7 @@ class AdminController extends Controller
 
             $evaluation = Evaluate::where('evaluatee', $faculty->user_id)
                             -> whereIn('evaluator', $head)
+                            -> where('subject_id', $subject)
                             -> whereDate('created_at', '>=', $period->beginEval)
                             -> whereDate('created_at', '<=', $period->endEval)
                             -> latest('id')
@@ -681,6 +693,7 @@ class AdminController extends Controller
             $evaluation = Evaluate::with('evalDetails')
                             -> where('evaluatee', $faculty->user_id)
                             -> whereIn('evaluator', $students)
+                            -> where('subject_id', $subject)
                             -> whereDate('created_at', '>=', $period->beginEval)
                             -> whereDate('created_at', '<=', $period->endEval)
                             -> latest('id')
@@ -695,7 +708,22 @@ class AdminController extends Controller
         {
             foreach($category as $det)
             {
-                foreach($det->questions as $q)
+                if($type == 3)
+                {
+                    switch(Subject::find($subject)->isLec)
+                    {
+                        case 1: $questions = $det->questions->where('isLec', true);
+                                break;
+                        case 2: $questions = $det->questions->where('isLec', false);
+                                break;
+                        case 3: $questions = $det->questions;
+                                break;
+                    }
+                }
+                else
+                    $questions = $det->questions;
+
+                foreach($questions as $q)
                     $summary->push($q);
             } 
 

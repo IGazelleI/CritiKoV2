@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\Period;
 use App\Models\Department;
 use Illuminate\Http\Request;
+use App\Imports\CoursesImport;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\CourseStoreRequest;
-use App\Models\Period;
 
 class CourseController extends Controller
 {
@@ -28,6 +30,13 @@ class CourseController extends Controller
         $department = ($department != 0)? Department::find($department) : null;
                     
         return view('course.index', compact('course', 'department'));
+    }
+
+    public function import()
+    {
+        Excel::import(new CoursesImport,request()->file('file'));
+
+        return back()->with('message', 'Courses imported successfully.');
     }
 
     /**

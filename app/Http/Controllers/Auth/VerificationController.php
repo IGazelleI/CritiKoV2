@@ -1,54 +1,41 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
-use Illuminate\Http\Request;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Illuminate\Foundation\Auth\RedirectsUsers;
+use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\VerifiesEmails;
 
 class VerificationController extends Controller
 {
-    use VerifiesEmails, RedirectsUsers;
+    /*
+    |--------------------------------------------------------------------------
+    | Email Verification Controller
+    |--------------------------------------------------------------------------
+    |
+    | This controller is responsible for handling email verification for any
+    | user that recently registered with the application. Emails may also
+    | be re-sent if the user didn't receive the original email message.
+    |
+    */
 
+    use VerifiesEmails;
+
+    /**
+     * Where to redirect users after verification.
+     *
+     * @var string
+     */
     protected $redirectTo = '/home';
-    /**
-     * The event listener mappings for the application.
-     *
-     * @var array
-     */
-    protected $listen = [
-        'Illuminate\Auth\Events\Verified' => [
-            'App\Listeners\LogVerifiedUser',
-        ],
-    ]; 
 
     /**
-     * Show the email verification notice.
+     * Create a new controller instance.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @return void
      */
-    public function show(Request $request)
+    public function __construct()
     {
-        return $request->user()->hasVerifiedEmail()
-                        ? redirect($this->redirectPath())
-                        : view('auth.verify-email', [
-                            'pageTitle' => __('Account Verification')
-                        ]);
-    }
-
-    public function handler(EmailVerificationRequest $request)
-    {
-        $request->fulfill();
- 
-        return redirect('/home');
-    }
-
-    public function resend(Request $request) 
-    {
-        $request->user()->sendEmailVerificationNotification();
-     
-        return back()->with('message', 'Verification link sent!');
+        $this->middleware('auth');
+        $this->middleware('signed')->only('verify');
+        $this->middleware('throttle:6,1')->only('verify', 'resend');
     }
 }

@@ -8,7 +8,7 @@
                 </p>
             </div>
         </div>
-        <form action="{{route('password.email')}}" method="POST">
+        <form action="{{route('password.forgotEmail')}}" method="POST">
             @csrf
             <div class="row my-2 justify-content-center">
                 <div class="col-5">

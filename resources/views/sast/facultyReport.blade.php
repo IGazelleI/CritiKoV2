@@ -30,34 +30,40 @@
                                     Faculties &nbsp; &nbsp; <span class="badge text-wrap bg-danger rounded-pill"> {{$dept->faculties->count()}} </span>
                                 </h5>
                                 <ul class="list-group list-group-flushed">
-                                    @php
-                                        $dean = $dept->faculties->where('isDean', true)->first();
-                                    @endphp
-                                    @if(isset($dean))
+                                    @foreach($dept->faculties as $fac)
                                     <li class="list-group-item">
                                         <div class="row">
                                             <div class="col-1">
-                                                <img src="{{isset($dean->imgPath)? '../../' . $dean->imgPath() : 'https://www.pngitem.com/pimgs/m/226-2267516_male-shadow-circle-default-profile-image-round-hd.png'}}" 
+                                                <img src="{{isset($faculty->imgPath)? '../../' . $faculty->imgPath() : 'https://www.pngitem.com/pimgs/m/226-2267516_male-shadow-circle-default-profile-image-round-hd.png'}}" 
                                                     class="img-fluid rounded-circle" alt="Faculty Photo"
                                                 />
                                             </div>
                                             <div class="col">
-                                                <strong> College Dean </strong> - {{$dean->fullName(true)}}
+                                                {{$fac->fullName(true)}}
                                             </div>
                                             <div class="col text-end">
                                                 @php
                                                     $facFinished = true;
-
-                                                    $faculties = App\Models\Faculty::where('department_id', $dean->department_id)
-                                                                        -> where('user_id', '!=', $dean->user_id)
-                                                                        -> get();
-                                                    foreach($faculties as $facEval)
+                                                    
+                                                    foreach($dept->faculties->where('user_id', '!=', $fac->user_id) as $facEval)
                                                     {
-                                                        if($evaluation->where('evaluator', $dean->user_id)->where('evaluatee', $facEval->user_id)->isEmpty())
+                                                        //get the classes of faculty
+                                                        $block = App\Models\Block::with('klases')->where('period_id', $period)->get();
+
+                                                        if(!$block->isEmpty())
                                                         {
-                                                            $facFinished = false;
-                                                            break;
-                                                        }                                                                    
+                                                            foreach($block as $b)
+                                                            {
+                                                                foreach($b->klases->where('instructor', $facEval->user_id) as $klase)
+                                                                {
+                                                                    if($evaluation->where('evaluator', $fac->user_id)->where('evaluatee', $facEval->user_id)->where('subject_id', $klase->subject_id)->isEmpty())
+                                                                    {
+                                                                        $facFinished = false;
+                                                                        break 3;
+                                                                    }      
+                                                                }
+                                                            }
+                                                        }                                                                 
                                                     }
                                                 @endphp
                                                 @if($facFinished)
@@ -77,58 +83,7 @@
                                             </div>
                                         </div>
                                     </li>
-                                    @endif
-                                    @php
-                                        $chairman = $dept->faculties->where('isChairman', true)->first();
-                                    @endphp
-                                    @if(isset($chairman))
-                                    <li class="list-group-item">
-                                        <div class="row">
-                                            <div class="col-1">
-                                                <img src="{{isset($chairman->imgPath)? '../../' . $chairman->imgPath() : 'https://www.pngitem.com/pimgs/m/226-2267516_male-shadow-circle-default-profile-image-round-hd.png'}}" 
-                                                    class="img-fluid rounded-circle" alt="Faculty Photo"
-                                                />
-                                            </div>
-                                            <div class="col">
-                                                <strong> Chairman </strong> - {{$chairman->fullName(true)}}
-                                            </div>
-                                            <div class="col text-end">
-                                                @php
-                                                    $facFinished = true;
-
-                                                    $faculties = App\Models\Faculty::where('department_id', $chairman->department_id)
-                                                                        -> where('user_id', '!=', $chairman->user_id)
-                                                                        -> where('isDean', false)
-                                                                        -> where('isAssDean', false)
-                                                                        -> get();
-                                                                
-                                                    foreach($faculties as $facEval)
-                                                    {
-                                                        if($evaluation->where('evaluator', $chairman->user_id)->where('evaluatee', $facEval->user_id)->isEmpty())
-                                                        {
-                                                            $facFinished = false;
-                                                            break;
-                                                        }    
-                                                    }
-                                                @endphp
-                                                @if($facFinished)
-                                                <span class="badge bg-success rounded-circle px-2 py-2" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Finished">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2" viewBox="0 0 16 16">
-                                                        <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
-                                                    </svg>
-                                                </span>
-                                                @else
-                                                <span class="badge bg-warning rounded-circle px-2 py-2" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Pending" >
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
-                                                        <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
-                                                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
-                                                    </svg>
-                                                </span>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </li>
-                                    @endif
+                                    @endforeach
                                 </ul>
                             </div>
                         </div>

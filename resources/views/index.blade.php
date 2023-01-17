@@ -71,7 +71,7 @@
                 
                         <div class="col-md-6 d-flex justify-content-center">
                             <!-- Simple link -->
-                            <a href="{{route('password.request')}}">Forgot password?</a>
+                            <a href="{{route('password.forgotRequest')}}">Forgot password?</a>
                         </div>
                     </div>
             
@@ -91,7 +91,7 @@
                     </div>
                     @endif
                 @endif
-                <form action="{{route('register')}}" method="POST">
+                <form action="{{route('store')}}" method="POST">
                     @csrf
                     <input type="hidden" name="type" value="4"/>
                     <div class="row">

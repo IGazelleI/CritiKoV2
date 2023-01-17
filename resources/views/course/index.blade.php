@@ -17,6 +17,13 @@
                                 @endif
                             </h2>
                         </div>
+                        <div class="col">
+                            <button type="button" class="btn btn-primary" data-bs-target="#importCourseModal" data-bs-toggle="modal">
+                                <span>
+                                    Import
+                                </span>
+                            </button>
+                        </div>
                         <div class="col text-end me-5">
                             <button type="button" class="btn btn-primary" data-bs-target="#addCourseModal" data-bs-toggle="modal">
                                 <span>

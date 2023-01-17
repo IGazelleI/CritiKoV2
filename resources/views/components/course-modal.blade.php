@@ -2,6 +2,31 @@
 @php
     $dept = $Department->latest('id')->get();
 @endphp
+<!-- Import Course -->
+<div class="modal fade" id="importCourseModal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Import Course</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{route('course.import')}}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body">
+                    <div class="mb-3 text-center">
+                        <label for="formFileSm" class="form-label">Select File</label>
+                        <input class="form-control form-control-sm" name="file" id="formFileSm" type="file">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary rounded-pill">Change</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Import Course -->
 <!-- Add Course -->
 <div class="modal fade" id="addCourseModal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">

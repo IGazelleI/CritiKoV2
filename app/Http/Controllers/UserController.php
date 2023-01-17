@@ -55,6 +55,15 @@ class UserController extends Controller
             'password.required' => 'Password field is required.'
         ]);
 
+        if($request->type == 4)
+        {
+            $formFields = $request->validate([
+                'id_number' => Rule::unique('students', 'id_number')
+            ],[
+                'id_number.unique' => 'ID number already exists.'
+            ]);
+        }
+
         $request['password'] = bcrypt($request->password);
         $user = User::create($request->all());
 
