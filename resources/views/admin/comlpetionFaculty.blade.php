@@ -58,130 +58,122 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <h5 class="card-title text-secondary">
-                                    Faculties &nbsp; &nbsp; <span class="badge text-wrap bg-danger rounded-pill"> {{$dept->faculties->count()}} </span>
-                                </h5>
-                                <ul class="list-group list-group-flushed">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDept{{$dept->id}}" aria-expanded="false" aria-controls="collapseTwo">
+                                    <h5 class="card-title text-secondary p-0 m-0">
+                                        Faculties &nbsp; &nbsp; <span class="badge text-wrap bg-danger rounded-pill"> {{$dept->faculties->count()}} </span>
+                                    </h5>
+                                </button>
+                                @foreach($dept->faculties->sortByDesc('isAssDean')->sortByDesc('isDean') as $fac)
+                               <div class="collapse" id="collapseDept{{$dept->id}}">
                                     @php
-                                        $dean = $dept->faculties->where('isDean', true)->first();
+                                        $finished = App\Models\Evaluate::where('period_id', isset($perSelected)? $perSelected : $periods->first()->id)
+                                                                -> where('evaluator', $fac->user_id)
+                                                                -> get()
+                                                                -> count();
+                                        $total = 0;
+                                        foreach($dept->faculties->where('user_id', '!=', $fac->user_id) as $facEval)
+                                        {
+                                            $block = App\Models\Block::with('klases')
+                                                    -> where('period_id', isset($perSelected)? $perSelected : $periods->first()->id)
+                                                    -> get();
+
+                                            foreach($block as $b)
+                                                $total += $b->klases->where('instructor', $facEval->user_id)->count();
+                                        }
+                                        $pending = $total - $finished;
                                     @endphp
-                                    @if(isset($dean))
-                                    <li class="list-group-item">
-                                        <div class="row">
-                                            <div class="col-1">
-                                                <img src="{{isset($dean->imgPath)? '../' . $dean->imgPath() : 'https://www.pngitem.com/pimgs/m/226-2267516_male-shadow-circle-default-profile-image-round-hd.png'}}" 
-                                                    class="img-fluid rounded-circle" alt="Faculty Photo"
-                                                />
-                                            </div>
-                                            <div class="col">
-                                                <strong> College Dean </strong> - {{$dean->fullName(true)}}
+                                    <div class="row accordion-item">
+                                        <div class="col-1 d-flex align-self-center">
+                                            <img src="{{isset($fac->imgPath)? '../' . $fac->imgPath() : 'https://www.pngitem.com/pimgs/m/226-2267516_male-shadow-circle-default-profile-image-round-hd.png'}}" 
+                                                class="img-fluid rounded-circle" alt="Faculty Photo"
+                                            />
+                                        </div>
+                                        <div class="col">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFac{{$fac->id}}" aria-expanded="false" aria-controls="collapseTwo">
+                                                        <strong> {{$fac->isDean? 'College Dean, ' : ''}} {{$fac->isAssDean? 'Associate Dean, ' : ''}} </strong> {{$fac->fullName(true)}} &nbsp;
+                                                        <span class="fw-bold badge bg-success text-wrap"> Finished: {{$finished}} </span> &nbsp;
+                                                        <span class="fw-bold badge bg-warning text-wrap"> Pending: {{$pending}} </span> &nbsp;
+                                                        <span class="fw-bold badge bg-secondary text-wrap"> Total : {{$total}} </span>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col">
-                                                @php
-                                                    $faculties = App\Models\Faculty::where('department_id', $dean->department_id)
-                                                                        -> where('user_id', '!=', $dean->user_id)
-                                                                        -> get();
-                                                @endphp
-                                                <ul class="list-group list-group-flushed">
-                                                @foreach($faculties as $facEval)
-                                                    <li class="list-group-item">
-                                                        <div class="row">
-                                                            <div class="col-1">
-                                                                <img src="{{isset($facEval->imgPath)? '../' . $facEval->imgPath() : 'https://www.pngitem.com/pimgs/m/226-2267516_male-shadow-circle-default-profile-image-round-hd.png'}}" 
-                                                                    class="img-fluid rounded-circle" alt="Faculty Photo"
-                                                                />
-                                                            </div>
-                                                            <div class="col">
-                                                                {{$facEval->fullName(true)}}
-                                                            </div>
-                                                            <div class="col text-end">
-                                                                @if (!$evaluation->where('evaluator', $dean->user_id)->where('evaluatee', $facEval->user_id)->where('period_id', $perSelected)->isEmpty())
-                                                                <span class="badge bg-success rounded-circle px-2 py-2" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Finished">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2" viewBox="0 0 16 16">
-                                                                        <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
-                                                                    </svg>
-                                                                </span>
-                                                                @else
-                                                                <span class="badge bg-warning rounded-circle px-2 py-2" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Pending" >
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
-                                                                        <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
-                                                                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
-                                                                    </svg>
-                                                                </span>
-                                                                @endif
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                @endforeach
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    @endif
-                                    @php
-                                        $chairman = $dept->faculties->where('isChairman', true)->first();
-                                    @endphp
-                                    @if(isset($chairman))
-                                    <li class="list-group-item">
-                                        <div class="row">
-                                            <div class="col-1">
-                                                <img src="{{isset($chairman->imgPath)? '../../' . $chairman->imgPath() : 'https://www.pngitem.com/pimgs/m/226-2267516_male-shadow-circle-default-profile-image-round-hd.png'}}" 
-                                                    class="img-fluid rounded-circle" alt="Faculty Photo"
-                                                />
-                                            </div>
-                                            <div class="col">
-                                                <strong> Chairman </strong> - {{$chairman->fullName(true)}}
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                                @php
-                                                    $faculties = App\Models\Faculty::where('department_id', $chairman->department_id)
-                                                                        -> where('user_id', '!=', $chairman->user_id)
-                                                                        -> where('isDean', false)
-                                                                        -> where('isAssDean', false)
-                                                                        -> get();
-                                                @endphp
-                                                <ul class="list-group list-group-flushed">
-                                                @foreach($faculties as $facEval)
-                                                    <li class="list-group-item">
-                                                        <div class="row">
-                                                            <div class="col-1">
-                                                                <img src="{{isset($facEval->imgPath)? '../' . $facEval->imgPath() : 'https://www.pngitem.com/pimgs/m/226-2267516_male-shadow-circle-default-profile-image-round-hd.png'}}" 
-                                                                    class="img-fluid rounded-circle" alt="Faculty Photo"
-                                                                />
-                                                            </div>
-                                                            <div class="col">
-                                                                {{$facEval->fullName(true)}}
-                                                            </div>
-                                                            <div class="col text-end">
-                                                                @if (!$evaluation->where('evaluator', $chairman->user_id)->where('evaluatee', $facEval->user_id)->where('period_id', $perSelected)->isEmpty())
-                                                                <span class="badge bg-success rounded-circle px-2 py-2" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Finished">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2" viewBox="0 0 16 16">
-                                                                        <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
-                                                                    </svg>
-                                                                </span>
-                                                                @else
-                                                                <span class="badge bg-warning rounded-circle px-2 py-2" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Pending" >
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
-                                                                        <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
-                                                                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
-                                                                    </svg>
-                                                                </span>
-                                                                @endif
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                @endforeach
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        </div>
-                                    </li>
-                                    @endif
-                                </ul>
+                                    </div>
+                                    <div id="collapseFac{{$fac->id}}" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                        <ul class="list-group">
+                                        @foreach($dept->faculties->where('user_id', '!=', $fac->user_id) as $facEval)
+                                            <li class="list-group-item">
+                                                <div class="row">
+                                                    <div class="col-1">
+                                                        <img src="{{isset($facEval->imgPath)? '../' . $facEval->imgPath() : 'https://www.pngitem.com/pimgs/m/226-2267516_male-shadow-circle-default-profile-image-round-hd.png'}}" 
+                                                            class="img-fluid rounded-circle" alt="Faculty Photo"
+                                                        />
+                                                    </div>
+                                                    <div class="col">
+                                                        {{$facEval->fullName(true)}}
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    @php
+                                                        $block = App\Models\Block::with('klases')
+                                                                            -> where('period_id', isset($perSelected)? $perSelected : $periods->first()->id)
+                                                                            -> latest('id')
+                                                                            -> get();
+                                                        $klases = 0;
+                    
+                                                        foreach($block as $b)
+                                                            $klases += $b->klases->where('instructor', $facEval->user_id)->count();
+                                                    @endphp
+                                                    <div class="col">
+                                                        <button class="btn btn-transparent text-secondary shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFacSubs{{$fac->id . $facEval->id}}" aria-expanded="false" aria-controls="collapseExample">
+                                                            Classes
+                                                        </button>
+                                                    </div>
+                                                    <div class="col text-end">
+                                                        <span class="fw-bold badge bg-primary text-wrap"> 
+                                                            {{$klases}} 
+                                                        </span>
+                                                    </div>
+                                                    <div class="collapse" id="collapseFacSubs{{$fac->id . $facEval->id}}">
+                                                        <ul class="list-group list-group-flushed">
+                                                        @foreach($block as $b)
+                                                            @foreach($b->klases->where('instructor', $facEval->user_id) as $klase)
+                                                            <li class="list-group-item">
+                                                                <div class="row">
+                                                                    <div class="col">
+                                                                        {{$klase->subject->descriptive_title}} 
+                                                                    </div>
+                                                                    <div class="col-1 text-end">
+                                                                        @if($facEval->evaluated->where('period_id', isset($perSelected)? $perSelected : $periods->first()->id)->where('evaluatee', $facEval->user_id)->where('evaluator', $fac->user_id)->where('subject_id', $klase->subject_id)->isEmpty())
+                                                                        <span class="badge bg-warning rounded-circle px-2 py-2" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Pending" >
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
+                                                                                <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
+                                                                                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
+                                                                            </svg>
+                                                                        </span>
+                                                                        @else
+                                                                        <span class="badge bg-success rounded-circle px-2 py-2" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{date('D, F d, Y @ g:i A', strToTime($facEval->evaluated->where('period_id', isset($perSelected)? $perSelected : $periods->first()->id)->where('evaluatee', $facEval->user_id)->where('evaluator', $fac->user_id)->where('subject_id', $klase->subject_id)->first()->created_at))}}">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2" viewBox="0 0 16 16">
+                                                                                <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+                                                                            </svg>
+                                                                        </span>
+                                                                        @endif
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                            @endforeach
+                                                        @endforeach
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        @endforeach
+                                        </ul>
+                                    </div>
+                               </div>
+                                @endforeach
                             </div>
                         </div>
                     </div>

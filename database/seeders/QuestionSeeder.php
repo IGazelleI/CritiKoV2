@@ -125,7 +125,7 @@ class QuestionSeeder extends Seeder
                 'q_type_id' => 1,
                 'q_category_id' => 2,
                 'isLec' => true,
-                'sentence' => 'tangible evidences/s of learning achievement (results of quizzes, students\' feedback, lession retention/application of basic truths studied/learned)',
+                'sentence' => 'tangible evidences/s of learning achievement (results of quizzes, students\' feedback, lesson retention/application of basic truths studied/learned)',
                 'keyword' => 'show students\' even more evidence from lessons discussed'
             ],
             [

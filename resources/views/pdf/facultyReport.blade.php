@@ -25,6 +25,10 @@
                 border-width: 0px;
                 padding: 5px 10px;
             }
+            div.page-break
+            {
+                page-break-before: always;
+            }
         </style>
     </head>
     <body>
@@ -36,13 +40,23 @@
             M.J. Cuenco Avenue Cor. R. Palma Street, Cebu City, Philippines <br/>
             Website: http://www.ctu.edu.ph E-mail: <span class="text-lowercase">{{$faculty->department->name}}</span>dean@ctu.edu.ph <br/>
             Phone: +6332-402-4060 loc. 1104 <br/> <br/>
-            <span class="fw-bold text-uppercase"> {{$type == 3? 'Faculty' : 'Student'}} Evaluation Report </span> <br/>
+            <span class="fw-bold text-uppercase"> Faculty Evaluation Report </span> <br/>
+            <span style="text-decoration: italic"> 
+                (For
+                @if($subject->isLec == 1 || $subject->isLec == 3)
+                Lecture
+                @elseif($subject->isLec == 2)
+                Laboratory
+                @endif
+                Classes) 
+            </span> <br/>
             {{$period->getDescription()}}
         </header> <br/>
         <div style="margin-left: 69px">
             <strong> Instructor/Professor: </strong> {{$faculty->fullName(true)}} &nbsp;
+            <strong> Subject: </strong> {{$subject->descriptive_title}} <br/>
             <span style="text-align: end"> <strong> Date: </strong> {{date('M. d, Y @ g:i A',  strtotime(NOW()))}} </span> <br/>
-        </div> <br/> <br/>
+        </div> <br/>
         <div>
             <table class="center no-border">
                 <thead>
@@ -74,8 +88,9 @@
                     $catCount = 0;
                     $totalPts = 0;
                     $cat = 0;
+                    $loop = ($subject->isLec == 1 || $subject->isLec == 3)? $data->where('q_type_id', 1)->where('isLec', true) : $data->where('q_type_id', 1)->where('isLec', false);
                 @endphp
-                @foreach($data->where('q_type_id', 1) as $det)
+                @foreach($loop as $det)
                     @if($prevCat != $det->q_category_id && $prevCat != 0)
                     <tr>
                         <td class="text-end"> <strong> Mean  </strong> </td>
@@ -134,7 +149,10 @@
         </table>
         <br/>
         <div style="margin-left: 55px">
-            @foreach($data->where('q_type_id', 2) as $det)
+            @php
+                $loop1 = ($subject->isLec == 1 || $subject->isLec == 3)? $data->where('q_type_id', 2)->where('isLec', true) : $data->where('q_type_id', 2)->where('isLec', false);
+            @endphp
+            @foreach($loop1 as $det)
                 <span style="font-weight: bold" class="text-capitalize"> {{ucfirst($det->sentence)}}{{Str::contains($det->sentence, '?')? '' : ':'}} </span>
                 @php
                     $mesCount = 1;
@@ -161,6 +179,145 @@
                 </tr>
             </tbody>
         </table>
+        @if($subject->isLec == 3)
+        <div class="page-break">
+            <header style="margin-top:-30px; text-align:center">
+                {{-- <img src="{{asset('images/logo.png')}}" alt="CTU Logo"/> --}}
+                Republic of the Philippines <br/>
+                <span style="font-weight: bold"> CEBU TECHNOLOGICAL UNIVERSITY </span> <br/>
+                MAIN CAMPUS <br/>
+                M.J. Cuenco Avenue Cor. R. Palma Street, Cebu City, Philippines <br/>
+                Website: http://www.ctu.edu.ph E-mail: <span class="text-lowercase">{{$faculty->department->name}}</span>dean@ctu.edu.ph <br/>
+                Phone: +6332-402-4060 loc. 1104 <br/> <br/>
+                <span class="fw-bold text-uppercase"> Faculty Evaluation Report </span> <br/>
+                <span style="text-decoration: italic"> (For Laboratory Classes) </span> <br/>
+                {{$period->getDescription()}}
+            </header> <br/>
+            <div style="margin-left: 69px">
+                <strong> Instructor/Professor: </strong> {{$faculty->fullName(true)}} &nbsp;
+                <strong> Subject: </strong> {{$subject->descriptive_title}} <br/>
+                <span style="text-align: end"> <strong> Date: </strong> {{date('M. d, Y @ g:i A',  strtotime(NOW()))}} </span> <br/>
+            </div> <br/>
+            <div>
+                <table class="center no-border">
+                    <thead>
+                        <tr class="no-border" style="text-align: center">
+                            <th class="no-border" colspan="2"> Rating Scale </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="no-border">
+                            <td class="no-border"> 5 - Outstanding </td>
+                            <td class="no-border"> 2 - Fair </td>
+                        </tr>
+                        <tr class="no-border">
+                            <td class="no-border"> 4 - Very Good </td>
+                            <td class="no-border"> 1 - Poor </td>
+                        </tr>
+                        <tr class="no-border">
+                            <td class="no-border" colspan="2"> 3 - Good </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <table class="center">
+                <tbody>
+                    @php
+                        $count = 1;
+                        $prevCat = 0;
+                        $catPts = 0;
+                        $catCount = 0;
+                        $totalPts = 0;
+                        $cat = 0;
+                    @endphp
+                    @foreach($data->where('q_type_id', 1)->where('isLec', false) as $det)
+                        @if($prevCat != $det->q_category_id && $prevCat != 0)
+                        <tr>
+                            <td class="text-end"> <strong> Mean  </strong> </td>
+                            <td class="text-center"> <strong> {{number_format($catPts / $catCount, 2)}} </strong> </td>
+                        </tr>
+                        @php
+                            $catPts = 0;
+                            $catCount = 0;
+                        @endphp
+                        @endif
+                        @if($prevCat != $det->q_category_id)
+                            @php
+                                $cat += 1;
+                            @endphp
+                           <tr>
+                                <th colspan="2"> Area of Concern {{numberToRoman($cat)}}: {{$det->qCat->name}} </th>
+                           </tr>
+                        @endif
+                        @php
+                            $catPts += $det->mean;
+                        @endphp
+                        <tr>
+                            <td> <strong> {{$catCount + 1}}. </strong> {{ucfirst($det->sentence)}} </td>
+                            <td class="text-center"> {{number_format($det->mean, 2)}}</td>
+                        </tr>
+                        @if($count == $data->where('q_type_id', 1)->count())
+                        @php
+                            $catCount += 1;
+                        @endphp
+                        {{-- Last Row Will be shown as it is not counted in loop --}}
+                        <tr>
+                            <td class="text-end"> <strong> Mean  </strong> </td>
+                            <td class="text-center"> <strong> {{number_format($catPts / $catCount, 2)}} </strong> </td>
+                        </tr>
+                        @php
+                            $catPts = 0;
+                            $catCount = 0;
+                        @endphp
+                        @endif
+                        @php
+                            $totalPts += $det->mean;
+                            $count += 1;
+                            $catCount += 1;
+                            $prevCat = $det->q_category_id;
+                        @endphp
+                    @endforeach
+                    <tr>
+                        <td class="text-end"> <strong> Grand Mean </strong> </td>
+                        <td class="text-center"> <strong> {{number_format($totalPts / ($count - 1), 2)}} </strong> </td>  
+                    </tr>
+                    <tr>
+                        <td class="text-end"> <strong> Descriptive Rating </strong> </td>
+                        <td class="text-center"> <strong> {{rating($totalPts / ($count - 2))}} </strong> </td>  
+                    </tr>
+                </tbody>
+            </table>
+            <br/>
+            <div style="margin-left: 55px">
+                @foreach($data->where('q_type_id', 2)->where('isLec', false) as $det)
+                    <span style="font-weight: bold" class="text-capitalize"> {{ucfirst($det->sentence)}}{{Str::contains($det->sentence, '?')? '' : ':'}} </span>
+                    @php
+                        $mesCount = 1;
+                    @endphp
+                    @foreach($det->message as $message)
+                        @if($mesCount < count($det->message))
+                            {{ucfirst($message)}}, 
+                        @else
+                            {{ucfirst($message)}}
+                        @endif
+                        @php
+                            $mesCount += 1;
+                        @endphp
+                    @endforeach
+                    <br/> <br/>
+                @endforeach
+            </div>
+            <table class="text-center center" style="margin-top: 69px; width: 80%; border-left: 0px; border-right: 0px; border-bottom: 0px">
+                <tbody>
+                    <tr>
+                        <td style="border-left: 0px; border-right: 0px; border-bottom: 0px"> Signature of Instructor/Professor Observed </td>
+                        <td style="border: 0px; color: white"> TTB Pangag Agtang </td>
+                        <td style="border-left: 0px; border-right: 0px; border-bottom: 0px"> Signature of Supervisor/Observer </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        @endif
     </body>
 </html>
 @php

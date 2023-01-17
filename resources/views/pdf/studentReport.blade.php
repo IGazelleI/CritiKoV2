@@ -61,14 +61,14 @@
                 </tr>
                 <tr>
                     <td class="no-border" style="padding: 1px 5px"> Course Taught </td>
-                    <td class="no-border" style="padding: 1px 5px"> : &nbsp; {{$faculty->klases->where('subject_id', $subject)->first()->subject->descriptive_title}} </td>
+                    <td class="no-border" style="padding: 1px 5px"> : &nbsp; {{$faculty->klases->where('subject_id', $subject->id)->first()->subject->descriptive_title}} </td>
                     <td class="no-border" style="padding: 1px 5px"> </td>
                     <td class="no-border" style="padding: 1px 5px"> 3.40 - 4.19 Very Satisfactory (VS) </td>
                     <td class="no-border" style="padding: 1px 5px"> 1.80 - 2.59 Fair (F) </td>
                 </tr>
                 <tr>
                     <td class="no-border" style="padding: 1px 5px"> No. of Student Evaluators </td>
-                    <td class="no-border" style="padding: 1px 5px"> : &nbsp; {{$faculty->evaluated->where('evaluatee', $faculty->user_id)->where('period_id', $period->id)->where('subject_id', $subject)->count()}} </td>
+                    <td class="no-border" style="padding: 1px 5px"> : &nbsp; {{$faculty->evaluated->where('evaluatee', $faculty->user_id)->whereIn('evaluator', $students)->where('period_id', $period->id)->where('subject_id', $subject->id)->count()}} </td>
                     <td class="no-border" style="padding: 1px 5px"> </td>
                     <td colspan="2" class="no-border" style="text-align: center; padding: 1px 5px"> 1.00 - 1.79 Unsatisfactory (US) </td>
                 </tr>
@@ -201,7 +201,7 @@
         </table>
         <div class="page-break" style="margin: 10%">
             <strong> Name of Instructor/Professor: </strong> {{$faculty->fullName(true)}} <br/> <br/>
-            <strong> Course/Subject Taught: </strong> {{$faculty->klases->where('subject_id', $subject)->first()->subject->descriptive_title}} <br/> <br/>
+            <strong> Course/Subject Taught: </strong> {{$faculty->klases->where('subject_id', $subject->id)->first()->subject->descriptive_title}} <br/> <br/>
             @foreach($data->where('q_type_id', 2) as $det)
                 <strong> {{ucfirst($det->sentence)}}{{Str::contains($det->sentence, '?')? '' : ':'}} </strong> <br/> <br/>
                 <ul type="circle" style="margin-left: 10%">
@@ -308,7 +308,20 @@
                     </tr>
                     <tr class="text-center fw-bold text-uppercase">
                         <td> <br/> <br/> {{$faculty->fullName(true)}} </td> 
-                        <td> <br/> <br/> {{$faculty->department->faculties->where('isChairman', true)->first()->fullName(true)}} </td>
+                        @php
+                            $blocks = App\Models\Block::where('period_id', $period->id)
+                                                -> get();
+
+                            foreach($blocks as $b)
+                            {
+                                if($b->klases->where('subject_id', $subject->id)->where('instructor', $faculty->user_id)->first() != null)
+                                {
+                                    $chairman = $b->course;
+                                    break;
+                                }
+                            }   
+                        @endphp 
+                        <td> <br/> <br/> {{isset($chairman)? $chairman->chairmann->fullName(true):  'Unassigned'}} </td>
                         <td> <br/> <br/> {{$faculty->department->faculties->where('isDean', true)->first()->fullName(true)}} </td>
                     </tr>
                     <tr class="text-center">

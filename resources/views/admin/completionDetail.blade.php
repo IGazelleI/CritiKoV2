@@ -90,7 +90,7 @@
                                     @foreach($block as $b)
                                         @foreach($b->klases->where('instructor', $det->user_id) as $klase)
                                         @php
-                                            $finished = $det->evaluated->where('period_id', isset($perSelected)? $perSelected : $periods->first()->id)->where('evaluatee', $det->user_id)->where('subject_id', $klase->subject_id)->count();
+                                            $finished = $det->evaluated->where('period_id', isset($perSelected)? $perSelected : $periods->first()->id)->where('evaluatee', $det->user_id)->whereIn('evaluator', $student)->where('subject_id', $klase->subject_id)->count();
                                             $total = $klase->klaseStudents->count();
                                             $pending = $total - $finished;
                                         @endphp

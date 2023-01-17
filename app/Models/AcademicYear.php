@@ -15,4 +15,9 @@ class AcademicYear extends Model
     {
         return $this->begin . '-' . $this->end;
     }
+    //period relationship
+    public function periods()
+    {
+        return $this->hasMany(Period::class, 'academic_year_id');
+    }
 }

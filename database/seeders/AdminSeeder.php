@@ -40,12 +40,24 @@ class AdminSeeder extends Seeder
         ]);
 
         $acad = AcademicYear::create([
+            'begin' => '2021',
+            'end' => '2022'
+        ]);
+
+        Period::create([
+            'academic_year_id' => $acad->id,
+            'semester' => 2,
+            'begin' => NOW(),
+            'end' => NOW()->addMonths(6)
+        ]);
+
+        $acad2 = AcademicYear::create([
             'begin' => '2022',
             'end' => '2023'
         ]);
 
         Period::create([
-            'academic_year_id' => $acad->id,
+            'academic_year_id' => $acad2->id,
             'semester' => 1,
             'begin' => NOW(),
             'end' => NOW()->addMonths(6)

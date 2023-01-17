@@ -159,8 +159,15 @@ class AdminController extends Controller
         $faculty = $department->faculties;
         $periods = Period::latest('id')
                         -> get();
+        $students = Enrollment::where('period_id', $perSelected != null? $perSelected : $periods->first()->id)
+                            -> get();
 
-        $variables = array_merge($variables, ['perSelected', 'department', 'faculty', 'periods']);
+        $student = array();
+
+        foreach($students as $det)
+            $student = array_merge($student, [$det->user_id]);
+
+        $variables = array_merge($variables, ['perSelected', 'department', 'faculty', 'periods', 'student']);
 
         return view('admin.completionDetail', compact($variables));
     }
@@ -168,7 +175,7 @@ class AdminController extends Controller
     public function completionFaculty(Request $request)
     {
         $period = Period::latest('id')->get();
-        $perSelected = $request->period != null? $request->period : $period->first();
+        $perSelected = $request->period != null? $request->period : $period->first()->id;
         $department = Department::with('faculties')
                             -> latest('id')
                             -> get();
@@ -245,7 +252,7 @@ class AdminController extends Controller
                 //chart details
                 $cat = $this->getCategoriesAsArray(3);
                 $facultyChart[$det->id]->labels($cat)
-                    -> dataset($period->getDescription(), count($cat) > 2? 'radar' : 'bar', $details == null? $this->randomAttributes(count($cat)) : $details->attributes);
+                    -> dataset($period->getDescription(), 'bar', $details == null? $this->randomAttributes(count($cat)) : $details->attributes);
 
                 //Select all previous evaluations
                 $periods = $periodAll->where('id', '<', $period->id);
@@ -265,12 +272,12 @@ class AdminController extends Controller
                             if($prevDetails == null)
                             {
                                 $random = $this->randomAttributes(count($cat));
-                                $facultyChart[$det->id]->dataset($p->getDescription(), count($cat) > 2? 'radar' : 'bar', $random)->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
+                                $facultyChart[$det->id]->dataset($p->getDescription(), 'bar', $random)->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
                                 $prevAvgFac[$det->id] = $prevAvgFac[$det->id] == 0? collect($random)->avg() : ($prevAvgFac[$det->id] + collect($random)->avg()) / 2;
                             }
                             else
                             {
-                                $facultyChart[$det->id]->dataset($p->getDescription(), count($cat) > 2? 'radar' : 'bar', $prevDetails->attributes)->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
+                                $facultyChart[$det->id]->dataset($p->getDescription(), 'bar', $prevDetails->attributes)->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
                                 $prevAvgFac[$det->id] = $prevAvgFac[$det->id] == 0? collect($prevDetails->attributes)->avg() : ($prevAvgFac[$det->id] + collect($prevDetails->attributes)->avg()) / 2;
                             }
                         }
@@ -329,7 +336,7 @@ class AdminController extends Controller
                 //chart details
                 $cat = $this->getCategoriesAsArray(4);
                 $studentChart[$det->id]->labels($cat)
-                    -> dataset($period->getDescription(), count($cat) > 2? 'radar' : 'bar', $details == null? $this->randomAttributes(count($cat)) : $details->attributes);
+                    -> dataset($period->getDescription(), 'bar', $details == null? $this->randomAttributes(count($cat)) : $details->attributes);
 
                 //Select all previous evaluations
                 $periods = $periodAll->where('id', '<', $period->id);
@@ -348,12 +355,12 @@ class AdminController extends Controller
                             if($prevDetails == null)
                             {
                                 $random = $this->randomAttributes(count($cat));
-                                $studentChart[$det->id]->dataset($p->getDescription(), count($cat) > 2? 'radar' : 'bar', $this->randomAttributes(count($cat)))->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
+                                $studentChart[$det->id]->dataset($p->getDescription(), 'bar', $this->randomAttributes(count($cat)))->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
                                 $prevAvgSt[$det->id] = $prevAvgSt[$det->id] == 0? collect($random)->avg() : ($prevAvgSt[$det->id] + collect($random)->avg()) / 2;
                             }
                             else
                             {
-                                $studentChart[$det->id]->dataset($p->getDescription(), count($cat) > 2? 'radar' : 'bar', $prevDetails->attributes)->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
+                                $studentChart[$det->id]->dataset($p->getDescription(), 'bar', $prevDetails->attributes)->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
                                 $prevAvgSt[$det->id] = $prevAvgSt[$det->id] == 0? collect($prevDetails->attributes)->avg() : ($prevAvgSt[$det->id] + collect($prevDetails->attributes)->avg()) / 2;
                             }
                         }
@@ -421,8 +428,26 @@ class AdminController extends Controller
 
         $summaryS = $this->getSummary(isset($request->period)? $periods->find($perSelected) : $periods->first(), 4, $faculty);
         $summaryF = $this->getSummary(isset($request->period)? $periods->find($perSelected) : $periods->first(), 3, $faculty);
+        //students
+        $student = Enrollment::select('user_id')
+                            -> where('period_id', isset($perSelected)? $perSelected : $periods->first()->id)
+                            -> get();
 
-        return view('admin.summaryReport', compact('faculty', 'periods', 'perSelected', 'summaryS', 'summaryF'));
+        $students = array();
+
+        foreach($student as $det)
+            $students = array_merge($students, [$det->user_id]);
+
+        //faculties
+        $coFac = Faculty::select('user_id')
+                    -> where('department_id', $faculty->department_id)
+                    -> get();
+        $cofac = array();
+
+        foreach($coFac as $det)
+            $cofac = array_merge($cofac, [$det->user_id]);        
+
+        return view('admin.summaryReport', compact('faculty', 'periods', 'perSelected', 'summaryS', 'summaryF', 'cofac', 'students'));
     }
     //local methods
     function colors($i)
@@ -552,9 +577,9 @@ class AdminController extends Controller
                     {
                         if($prevCat != $detail->question->qcat->id && $prevCat != 0)
                         {
-                            $final = ($catPts / ($catCount * 5)) * 100;
+                            $final = $catPts / $catCount;
 
-                            $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? round($final, 0) : round(($rawAtt[$prevCat] + $final) / 2, 0);
+                            $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? round($final, 2) : round(($rawAtt[$prevCat] + $final) / 2, 2);
                         
                             if($lowestAttribute == 0)
                                 $lowestAttribute = $prevCat;
@@ -578,8 +603,8 @@ class AdminController extends Controller
                 //continue reads the last uncounted pts
                 if($catPts != 0)
                 {
-                    $final = ($catPts / ($catCount * 5)) * 100;
-                    $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? round($final, 0) : round(($rawAtt[$prevCat] + $final) / 2, 0);
+                    $final = $catPts / $catCount;
+                    $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? round($final, 2) : round(($rawAtt[$prevCat] + $final) / 2, 2);
                         
                     if($lowestAttribute == 0)
                         $lowestAttribute = $prevCat;

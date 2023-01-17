@@ -11,6 +11,7 @@ use App\Models\QCategory;
 use App\Models\Department;
 use App\Models\Enrollment;
 use App\Charts\FacultyChart;
+use App\Models\AcademicYear;
 use App\Models\KlaseStudent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -39,103 +40,90 @@ class HomeController extends Controller
                 //get improvement by period
                 if($sortByAcad)
                 {
-                    /* $acadYears = new Collection;
-                    $dets = array();
-
-                    foreach($period as $per)
-                    {
-                        if($period->first()->id == $per->id || $per->semmester == 1)
-                            $begin = $per->begin;
-                        else
-                        {
-                            $end = $per->end;
-
-                            dd(date('Y', strtotime($begin) . '-' . date('Y', strtotime($end))));
-                        }
-                    } */
-
-                    if(!$period->isEmpty())
-                    {
-                        $department = Department::with('faculties')
+                    $acadYears = AcademicYear::with('periods')
                                             -> latest('id')
                                             -> get();
-                        //get average by department
-                        if(!$department->isEmpty())
+
+                    if(!$acadYears->isEmpty())
+                    {
+                        if(!$period->isEmpty())
                         {
-                            //color variable
-                            $i = 0;
-
-                            foreach($department as $dept)
+                            $department = Department::with('faculties')
+                                                -> latest('id')
+                                                -> get();
+                            //get average by department
+                            if(!$department->isEmpty())
                             {
-                                $avgRaw = [];
-                                //get average of department by period
-                                foreach($period as $per)
+                                //color variable
+                                $i = 0;
+
+                                foreach($department as $dept)
                                 {
-                                    $avgPeriod[$per->id] = 0;
-                                    //checks if currnet department's faculty is empty
-                                    if(!$dept->faculties->isEmpty())
+                                    $avgRaw = [];
+                                    //get average of department by acadmic year
+                                    foreach($acadYears->sortBy('begin') as $acad)
                                     {
-                                        $facAvg = 0; 
-                                        $stAvg = 0;
-                                        ///loop through all faculties
-                                        foreach($dept->faculties as $fac)
-                                        {
-                                            //get details for current faculty
-                                            //faculty evaluations
-                                            $facEvalDetails = $this->getDetails($per, 3, $fac);
-                                            //get average of faculties evaluation
-                                            if($facEvalDetails !=  null)
-                                                $facAvg = $facAvg == 0? collect($facEvalDetails->attributes)->avg() : ($facAvg + collect($facEvalDetails->attributes)->avg()) / 2;
-                                            else
-                                                $facAvg = $facAvg == 0? collect($this->randomAttributes($cat->where('type', 3)->count()))->avg() : ($facAvg + collect($this->randomAttributes($cat->where('type', 3)->count()))->avg())/*  / 2 */;
-                                            //student evaluations
-                                            $stEvalDetails = $this->getDetails($per, 4, $fac);
-                                            //get average of students evaluation
-                                            if($stEvalDetails != null)
-                                                $stAvg = $stAvg == 0? collect($stEvalDetails->attributes)->avg() : ($stAvg + collect($stEvalDetails->attributes)->avg()) / 2;
-                                            else
-                                                $stAvg = $stAvg == 0? collect($this->randomAttributes($cat->where('type', 4)->count()))->avg() : ($stAvg + collect($this->randomAttributes($cat->where('type', 4)->count()))->avg())/*  / 2 */;
-                                        }
-                                        //get the average of the two but only put one if there is no evaluations on other
-                                        $avgRaw[$per->id] = ($facAvg > 0 && $stAvg == 0 || $facAvg == 0 && $stAvg > 0)? ($facAvg == 0? number_format($stAvg, 0) : number_format($facAvg, 0))  : number_format(($facAvg + $stAvg) / 2, 0);
-                                    }
-                                    else //randomize if empty lang sa
-                                        $avgRaw[$per->id] = random_int(0, 0);
-                                    //merge array so it will start to 1
-                                    $average = array();
-                                    $average = array_merge($average, $avgRaw); 
-                                    //getting chart label purposes
-                                    if($i == 0)
-                                    {
-                                        if($per->semester == 2)
-                                        {
-                                            $end = date('Y', strtotime($per->end));
+                                        $period = $acad->periods;
 
-                                            $previous = $periods->where('id', '<', $per->id)->where('semester');
+                                        foreach($period as $per)
+                                        {
+                                            //checks if currnet department's faculty is empty
+                                            if(!$dept->faculties->isEmpty())
+                                            {
+                                                $facAvg = 0; 
+                                                $stAvg = 0;
+                                                ///loop through all faculties
+                                                foreach($dept->faculties as $fac)
+                                                {
+                                                    //get details for current faculty
+                                                    //faculty evaluations
+                                                    $facEvalDetails = $this->getDetails($per, 3, $fac);
+                                                    //get average of faculties evaluation
+                                                    if($facEvalDetails !=  null)
+                                                        $facAvg = $facAvg == 0? collect($facEvalDetails->attributes)->avg() : ($facAvg + collect($facEvalDetails->attributes)->avg()) / 2;
+                                                    else
+                                                        $facAvg = $facAvg == 0? collect($this->randomAttributes($cat->where('type', 3)->count()))->avg() : ($facAvg + collect($this->randomAttributes($cat->where('type', 3)->count()))->avg())/*  / 2 */;
+                                                    //student evaluations
+                                                    $stEvalDetails = $this->getDetails($per, 4, $fac);
+                                                    //get average of students evaluation
+                                                    if($stEvalDetails != null)
+                                                        $stAvg = $stAvg == 0? collect($stEvalDetails->attributes)->avg() : ($stAvg + collect($stEvalDetails->attributes)->avg()) / 2;
+                                                    else
+                                                        $stAvg = $stAvg == 0? collect($this->randomAttributes($cat->where('type', 4)->count()))->avg() : ($stAvg + collect($this->randomAttributes($cat->where('type', 4)->count()))->avg())/*  / 2 */;
+                                                }
+                                                //get the average of the two but only put one if there is no evaluations on other
+                                                $avgRaw[$acad->id] = ($facAvg > 0 && $stAvg == 0 || $facAvg == 0 && $stAvg > 0)? ($facAvg == 0? round($stAvg, 2) : round($facAvg, 2))  : round(($facAvg + $stAvg) / 2, 2);
+                                            }
+                                            else //randomize if empty lang sa
+                                                $avgRaw[$acad->id] = random_int(0, 0);
                                         }
-
-                                        $periodArr = array_merge($periodArr, [$per->getDescription()]);
+                                        //merge array so it will start to 1
+                                        $average = array();
+                                        $average = array_merge($average, $avgRaw); 
+                                        //getting chart label purposes
+                                        if($i == 0)
+                                            $periodArr = array_merge($periodArr, [$acad->getDescription()]);
                                     }
-                                }
-                                //chart details
-                                $overAllChart->dataset($dept->name, 'line', $average)
-                                        -> options([
-                                            'backgroundColor' => $this->colors($i)->bg,
-                                            'pointBorderColor' => $this->colors($i)->pointer,
-                                            'borderColor' => $this->colors($i)->bg,
-                                            'scales' => [
-                                                'r' => [
-                                                    'min' => 0,
-                                                    'max' => 100
+                                    //chart details
+                                    $overAllChart->dataset($dept->name, 'line', $average)
+                                            -> options([
+                                                'backgroundColor' => $this->colors($i)->bg,
+                                                'pointBorderColor' => $this->colors($i)->pointer,
+                                                'borderColor' => $this->colors($i)->bg,
+                                                'scales' => [
+                                                    'r' => [
+                                                        'min' => 0,
+                                                        'max' => 100
+                                                    ]
                                                 ]
-                                            ]
-                                        ]);
+                                            ]);
 
-                                $i += 1;
+                                    $i += 1;
+                                }
                             }
+                            //initialize the chart labels
+                            $overAllChart-> labels($periodArr);
                         }
-                        //initialize the chart labels
-                        $overAllChart-> labels($periodArr);
                     }
                 }
                 else
@@ -289,7 +277,7 @@ class HomeController extends Controller
                             
                             foreach($det->faculties as $fac)
                             {
-                                if($fac->isDean || $fac->isAssDean || $fac->isChairman)
+                                if($fac->isDean || $fac->isAssDean)
                                 {
                                     $finishedf += 1;
                                     foreach($det->faculties->where('id', '!=', $fac->id) as $facEval)
@@ -306,8 +294,7 @@ class HomeController extends Controller
                                     $faculties = Faculty::where('department_id', $det->id)
                                                     -> where(function($query){
                                                         $query->where('isDean', true)
-                                                            -> orWhere('isAssDean', true)
-                                                            -> orWhere('isChairman', true);
+                                                            -> orWhere('isAssDean', true);
                                                     })
                                                     -> get();
                                                    
@@ -410,7 +397,7 @@ class HomeController extends Controller
                                         }                                                                    
                                     }
                                 }
-                                elseif($fac->isChairman)
+                                else/* if($fac->isChairman) */
                                 {
                                     $faculties = Faculty::where('department_id', $fac->department_id)
                                                     -> where('user_id', '!=', auth()->user()->id)
@@ -529,7 +516,7 @@ class HomeController extends Controller
                     'scales' => [
                         'r' => [
                             'min' => 0,
-                            'max' => 100,
+                            'max' => 5,
                             'ticks' => [
                                 'stepSize' => 20,
                                 'display' => false
@@ -548,7 +535,7 @@ class HomeController extends Controller
                 //chart details
                 $cat = $this->getCategoriesAsArray(4);
                 $studentChart->labels($cat)
-                    -> dataset($period->getDescription(), count($cat) > 2? 'radar' : 'bar', $details == null? $this->randomAttributes(count($cat)) : $details->attributes);
+                    -> dataset($period->getDescription(), 'bar', $details == null? $this->randomAttributes(count($cat)) : $details->attributes);
 
                 //Select all previous evaluations
                 $periods = Period::where('id', '<', $period->id)
@@ -565,9 +552,9 @@ class HomeController extends Controller
                             $prevDetails = $this->getDetails($det, 4, null);
 
                             if($prevDetails == null)
-                                $studentChart->dataset($det->getDescription(), count($cat) > 2? 'radar' : 'bar', $this->randomAttributes(count($cat)))->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
+                                $studentChart->dataset($det->getDescription(), 'bar', $this->randomAttributes(count($cat)))->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
                             else
-                                $studentChart->dataset($det->getDescription(), count($cat) > 2? 'radar' : 'bar', $prevDetails->attributes)->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
+                                $studentChart->dataset($det->getDescription(), 'bar', $prevDetails->attributes)->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
                         }
                         else
                             break;
@@ -587,7 +574,7 @@ class HomeController extends Controller
                     'scales' => [
                         'r' => [
                             'min' => 0,
-                            'max' => 100,
+                            'max' => 5,
                             'ticks' => [
                                 'stepSize' => 20,
                                 'display' => false
@@ -620,7 +607,7 @@ class HomeController extends Controller
                 //chart details
                 $cat = $this->getCategoriesAsArray(3);
                 $facultyChart->labels($cat)
-                    -> dataset($period->getDescription(), count($cat) > 2? 'radar' : 'bar', $details == null? $this->randomAttributes(count($cat)) : $details->attributes);
+                    -> dataset($period->getDescription(), 'bar', $details == null? $this->randomAttributes(count($cat)) : $details->attributes);
 
                 //Select all previous evaluations
                 $periods = Period::where('id', '<', $period->id)
@@ -637,9 +624,9 @@ class HomeController extends Controller
                                 $prevDetails = $this->getDetails($det, 3, null);
 
                                 if($prevDetails == null)
-                                    $facultyChart->dataset($det->getDescription(), count($cat) > 2? 'radar' : 'bar', $this->randomAttributes(count($cat)))->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
+                                    $facultyChart->dataset($det->getDescription(), 'bar', $this->randomAttributes(count($cat)))->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
                                 else
-                                    $facultyChart->dataset($det->getDescription(), count($cat) > 2? 'radar' : 'bar', $prevDetails->attributes)->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
+                                    $facultyChart->dataset($det->getDescription(), 'bar', $prevDetails->attributes)->options(['backgroundColor' => $this->colors($i)->bg, 'pointBorderColor' => $this->colors($i)->pointer]);
                         }
                         else
                             continue;
@@ -664,7 +651,7 @@ class HomeController extends Controller
                                     -> get();
                 }
 
-                $sumFac = $this->getSummary($period, 3);           
+                $sumFac = $this->getSummary($period, 3);
                 
                 return view('faculty.index', compact('period', 'faculty', 'studentChart', 'facultyChart', 'recommendation', 'sumFac', 'sumSt'));
                 break;
@@ -822,9 +809,9 @@ class HomeController extends Controller
                     {
                         if($prevCat != $detail->question->qcat->id && $prevCat != 0)
                         {
-                            $final = ($catPts / ($catCount * 5)) * 100;
+                            $final = $catPts / $catCount;
 
-                            $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? round($final, 0) : round(($rawAtt[$prevCat] + $final) / 2, 0);
+                            $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? round($final, 2) : round(($rawAtt[$prevCat] + $final) / 2, 2);
                         
                             if($lowestAttribute == 0)
                                 $lowestAttribute = $prevCat;
@@ -848,8 +835,8 @@ class HomeController extends Controller
                 //continue reads the last uncounted pts
                 if($catPts != 0)
                 {
-                    $final = ($catPts / ($catCount * 5)) * 100;
-                    $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? round($final, 0) : round(($rawAtt[$prevCat] + $final) / 2, 0);
+                    $final = $catPts / $catCount;
+                    $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? round($final, 2) : round(($rawAtt[$prevCat] + $final) / 2, 2);
                         
                     if($lowestAttribute == 0)
                         $lowestAttribute = $prevCat;

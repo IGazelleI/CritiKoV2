@@ -29,11 +29,13 @@ Route::middleware('guest')->group(function ()
 });
 Route::middleware(['auth'/* , 'verified' */])->group(function ()
 {
-    Route::controller(App\Controllers\Auth\VerificationController::class)->group(function ()
-    {
-        Route::get('/email/verify', 'show')->name('verification.notice');
-        Route::get('/email/verify/{id}/{hash}', 'handler')->middleware('signed')->name('verification.verify');
-        Route::post('/email/verification-notification', 'resend')->middleware('throttle:6,1')->name('verification.send');
+    Route::middleware(['signed'])->group(function (){
+        Route::controller(App\Controllers\Auth\VerificationController::class)->group(function ()
+        {
+            Route::get('/email/verify', 'show')->name('verification.notice');
+            Route::get('/email/verify/{id}/{hash}', 'handler')->middleware('signed')->name('verification.verify');
+            Route::post('/email/verification-notification', 'resend')->middleware('throttle:6,1')->name('verification.send');
+        });
     });
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::post('/changePassword', [App\Http\Controllers\UserController::class, 'changePassword'])->name('changePassword');
@@ -43,7 +45,7 @@ Route::middleware(['auth'/* , 'verified' */])->group(function ()
 
     Route::controller(App\Http\Controllers\PDFController::class)->group(function ()
     {
-        Route::get('/pdf/report/{period}/{type}/{faculty}/{subject?}', 'view')->name('pdf.view');
+        Route::get('/pdf/report/{period}/{type}/{faculty}/{subject}', 'view')->name('pdf.view');
     });
 
     Route::middleware('user-access:admin')->group(function ()
