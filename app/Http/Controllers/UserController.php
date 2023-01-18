@@ -55,6 +55,17 @@ class UserController extends Controller
             'password.required' => 'Password field is required.'
         ]);
 
+        if($request->type != 1)
+        {
+            $formFields = $request->validate([
+                'fname' => 'required',
+                'lname' => 'required'
+            ], [
+                'fname.required' => 'Pangag',
+                'lname.required' => 'TTB'
+            ]);
+        }
+
         if($request->type == 4)
         {
             $formFields = $request->validate([

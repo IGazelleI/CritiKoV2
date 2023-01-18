@@ -466,7 +466,7 @@ class SubjectSeeder extends Seeder
             ],
             [
                 'course_id' => 1,
-                'code' => 'AP 5',
+                'code' => 'AP 6',
                 'descriptive_title' => 'Cross-Platform Script Development Technology',
                 'isLec' => 3,
                 'year_level' => 4,

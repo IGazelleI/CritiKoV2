@@ -21,14 +21,14 @@ class SASTController extends Controller
 
     public function facultyReport()
     {
-        $period = Session::get('period') != null? Session::get('period') : Period::latest('id')->get()->first()->id;
+        $period = Session::get('period') != null? Period::find(Session::get('period')) : Period::latest('id')->get()->first()->id;
         $department = Department::with('faculties')
                             -> latest('id')
                             -> get();
         
-        $evaluation = Evaluate::where('period_id', $period)
+        $evaluation = Evaluate::where('period_id', $period->id)
                             -> latest('id')
-                            -> get();
+                            -> get(); 
 
         return view('sast.facultyReport', compact('period', 'department', 'evaluation'));
     }

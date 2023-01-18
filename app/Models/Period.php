@@ -11,6 +11,7 @@ class Period extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'academic_year_id',
         'semester',
         'begin',
         'end',

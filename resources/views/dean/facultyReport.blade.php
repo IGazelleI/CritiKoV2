@@ -48,22 +48,56 @@
                                     Details
                                 </a>
                                 &nbsp; &nbsp;
-                                <a href="{{route('admin.summaryReport', $det->id)}}" class="text-decoration-underline" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Click To Show Detailed Report on {{$det->fullName(true)}}">
+                                <a href="{{route('admin.summaryReport', ['faculty' => $det->id, 'period' => $period->id])}}" class="text-decoration-underline" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Click To Show Detailed Report on {{$det->fullName(true)}}">
                                     Summary
                                 </a>
                             </div>
                         </div>
                     </div>                    
-                    @if(isset($recommendation[$det->id]))
+                    @if(isset($recommendation[$det->id]['studentEvaluation']) || isset($recommendation[$det->id]['facultyEvaluation']))
                     <div class="col">
                         <div style="min-height: 120px;">
                             <div class="collapse collapse-horizontal" id="recCollapse{{$det->id}}">
                                 <div class="card card-body" style="width: 300px;">
                                     <h5> Improvement Guide </h5>
-                                    <ul class="list-group list-group-numbered fw-bold">
-                                        @foreach($recommendation[$det->id] as $rec)
-                                            <li class="list-group-item text-danger"> {{$rec->keyword}} </li>
-                                        @endforeach
+                                    <ul class="list-group">
+                                        @if($recommendation[$det->id]['studentEvaluation'] != null)
+                                        <li class="list-group-item  fw-bold">
+                                            Student Evaluation
+                                            <ul class="text-danger">
+                                            @foreach($recommendation[$det->id]['studentEvaluation'] as $rec)
+                                                <li class="fs-6"> {{$rec->keyword}} </li>
+                                            @endforeach
+                                            </ul>
+                                        </li>
+                                        @endif
+                                        @if($recommendation[$det->id]['facultyEvaluation'] != null)
+                                        <li class="list-group-item  fw-bold">
+                                            Faculty Evaluation
+                                            <ul class="text-danger">
+                                                @if($recommendation[$det->id]['facultyEvaluation']->where('isLec', true) != null)
+                                                <li class="fs-6 text-alert"> 
+                                                    Lecture
+                                                    <ul>
+                                                        @foreach($recommendation[$det->id]['facultyEvaluation']->where('isLec', true) as $rec)
+                                                        <li> {{$rec->keyword}} </li>
+                                                        @endforeach
+                                                    </ul>
+                                                </li>
+                                                @endif
+                                                @if($recommendation[$det->id]['facultyEvaluation']->where('isLec', false) != null)
+                                                <li class="fs-6 text-alert"> 
+                                                    Laboratory
+                                                    <ul>
+                                                        @foreach($recommendation[$det->id]['facultyEvaluation']->where('isLec', false) as $rec)
+                                                        <li> {{$rec->keyword}} </li>
+                                                        @endforeach
+                                                    </ul>
+                                                </li>
+                                                @endif
+                                            </ul>
+                                        </li>
+                                        @endif
                                     </ul>
                                 </div>
                             </div>

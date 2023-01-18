@@ -1,6 +1,8 @@
 @inject('Period', 'App\Models\Period')
+@inject('Acad', 'App\Models\AcademicYear')
 @php
     $per = $Period->latest('id')->get();
+    $acads = $Acad->orderBy('begin')->get();
 @endphp
 <!-- Period Modals -->
 <div class="modal fade" id="periodModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -34,6 +36,7 @@
                                         <li>
                                             <button type="button" class="dropdown-item" data-bs-target="#editPerModal" data-bs-toggle="modal"
                                                 data-bs-id="{{$det->id}}"
+                                                data-bs-acad="{{$det->academic_year_id}}"
                                                 data-bs-semester="{{$det->semester}}"
                                                 data-bs-begin="{{$det->begin}}"
                                                 data-bs-end="{{$det->end}}"
@@ -92,6 +95,16 @@
                     </div>
                     @endif
                     <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <select class="select form-select rounded-pill" name="acadYear">
+                                    <option selected disabled>Academic Year</option>
+                                    @foreach($acads as $det)
+                                        <option value="{{$det->id}}" >{{$det->getDescription()}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                         <div class="col">
                             <div class="mb-3">
                                 <select class="select form-select rounded-pill" name="semester">
@@ -181,6 +194,16 @@
                     @endif
                     <input type="hidden" class="id" name="id"/>
                     <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <select class="select form-select rounded-pill acadYear" name="acadYear">
+                                    <option selected disabled>Academic Year</option>
+                                    @foreach($acads as $det)
+                                        <option value="{{$det->id}}" >{{$det->getDescription()}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                         <div class="col">
                             <div class="mb-3">
                                 <select class="select form-select rounded-pill semester" name="semester">
@@ -281,6 +304,7 @@
         const button = event.relatedTarget;
         // Extract info from data-bs-* attributes
         const id = button.getAttribute('data-bs-id');
+        const acad = button.getAttribute('data-bs-acad');
         const semester = button.getAttribute('data-bs-semester');
         const begin = button.getAttribute('data-bs-begin');
         const end = button.getAttribute('data-bs-end');
@@ -293,6 +317,7 @@
         //
         // Update the modal's content.
         const idInput = editPerModal.querySelector('.modal-body .id');
+        const acadInput = editPerModal.querySelector('.modal-body .acadYear');
         const semesterInput = editPerModal.querySelector('.modal-body .semester');
         const beginInput = editPerModal.querySelector('.modal-body .begin');
         const endInput = editPerModal.querySelector('.modal-body .end');
@@ -302,6 +327,7 @@
         const endEvalInput = editPerModal.querySelector('.modal-body .endEval');
 
         idInput.value = id;
+        acadInput.value = acad;
         semesterInput.value = semester;
         beginInput.value = begin;
         endInput.value = end;

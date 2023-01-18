@@ -4,7 +4,7 @@
             <div class="row {{randomBg()}} mx-n4 text-light">
                 <div class="col p-3">
                     <header>
-                        <h3 style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif"> Student Evaluation Progress Report </h3>
+                        <h3 style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif"> Faculty Evaluation Progress Report </h3>
                     </header>
                 </div>
             </div>
@@ -44,27 +44,27 @@
                                             <div class="col text-end">
                                                 @php
                                                     $facFinished = true;
-                                                    
-                                                    foreach($dept->faculties->where('user_id', '!=', $fac->user_id) as $facEval)
-                                                    {
-                                                        //get the classes of faculty
-                                                        $block = App\Models\Block::with('klases')->where('period_id', $period)->get();
 
-                                                        if(!$block->isEmpty())
-                                                        {
-                                                            foreach($block as $b)
-                                                            {
-                                                                foreach($b->klases->where('instructor', $facEval->user_id) as $klase)
-                                                                {
-                                                                    if($evaluation->where('evaluator', $fac->user_id)->where('evaluatee', $facEval->user_id)->where('subject_id', $klase->subject_id)->isEmpty())
-                                                                    {
-                                                                        $facFinished = false;
-                                                                        break 3;
-                                                                    }      
-                                                                }
-                                                            }
-                                                        }                                                                 
-                                                    }
+foreach($dept->faculties->where('id', '!=', $fac->id) as $facEval)
+{
+    //get the classes of faculty
+    $block = App\Models\Block::with('klases')->where('period_id', $period->id)->get();
+
+    if(!$block->isEmpty())
+    {
+        foreach($block as $b)
+        {
+            foreach($b->klases->where('instructor', $facEval->user_id) as $klase)
+            {
+                if($evaluation->where('evaluator', $fac->user_id)->where('evaluatee', $facEval->user_id)->where('subject_id', $klase->subject_id)->isEmpty())
+                {
+                    $facFinished = false;
+                    break 3;
+                }      
+            }
+        }
+    }            
+}
                                                 @endphp
                                                 @if($facFinished)
                                                 <span class="badge bg-success rounded-circle px-2 py-2" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Finished">

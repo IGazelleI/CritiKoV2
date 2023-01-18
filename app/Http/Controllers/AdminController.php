@@ -245,11 +245,11 @@ class AdminController extends Controller
                 //get current attributes
                 $details = $this->getDetails($period, 3, $det);
                 //get the recommendations
-                $recommendation[$det->id] = isset($details)? Question::select('keyword')
-                                                -> where('q_category_id', $details->lowestAttribute)
-                                                -> where('q_type_id', 1)
-                                                -> latest('id')
-                                                -> get() : null;
+                $recommendation[$det->id]['facultyEvaluation'] = isset($details)? Question::select('isLec', 'keyword')
+                                    -> where('q_category_id', $details->lowestAttribute)
+                                    -> where('q_type_id', 1)
+                                    -> latest('id')
+                                    -> get() : null;
                 //chart details
                 $cat = $this->getCategoriesAsArray(3);
                 $facultyChart[$det->id]->labels($cat)
@@ -315,24 +315,12 @@ class AdminController extends Controller
                 
                 $details = $this->getDetails($period, 4, $det);
 
-                if(isset($recommendation[$det->id]))
-                {
-                    $additional = isset($details)? Question::select('keyword')
-                                        -> where('q_category_id', $details->lowestAttribute)
-                                        -> where('q_type_id', 1)
-                                        -> latest('id')
-                                        -> get() : null;
-                    if($additional != null)
-                        $recommendation[$det->id] = $additional->concat($recommendation[$det->id]);
-                }
-                else
-                {
-                    $recommendation[$det->id] = isset($details)? Question::select('keyword')
-                                        -> where('q_category_id', $details->lowestAttribute)
-                                        -> where('q_type_id', 1)
-                                        -> latest('id')
-                                        -> get() : null;
-                }
+                //get the recommendations
+                $recommendation[$det->id]['studentEvaluation'] = isset($details)? Question::select('keyword')
+                                -> where('q_category_id', $details->lowestAttribute)
+                                -> where('q_type_id', 1)
+                                -> latest('id')
+                                -> get() : null;
 
                 //chart details
                 $cat = $this->getCategoriesAsArray(4);
@@ -428,7 +416,7 @@ class AdminController extends Controller
         $perSelected = $request->period;
         $subSelected = $request->subject;
         $showBy = $request->showBy;
-
+        
         if($subSelected != null)
         {
             $summaryS = $this->getSummary(isset($request->period)? $periods->find($perSelected) : $periods->first(), 4, $faculty, $subSelected);
@@ -443,7 +431,7 @@ class AdminController extends Controller
         $student = Enrollment::select('user_id')
                             -> where('period_id', isset($perSelected)? $perSelected : $periods->first()->id)
                             -> get();
-
+        
         $students = array();
 
         foreach($student as $det)
@@ -456,7 +444,8 @@ class AdminController extends Controller
         $cofac = array();
 
         foreach($coFac as $det)
-            $cofac = array_merge($cofac, [$det->user_id]);       
+            $cofac = array_merge($cofac, [$det->user_id]);     
+    
 
         return view('admin.summaryReport', compact('faculty', 'periods', 'perSelected', 'subSelected', 'showBy', 'summaryS', 'summaryF', 'cofac', 'students'));
     }
@@ -652,6 +641,7 @@ class AdminController extends Controller
         if($type == 3)
         {
             $heads = Faculty::where('department_id', $faculty->department_id)
+                        -> where('user_id', '!=', $faculty->user_id)
                         -> latest('id')
                         -> get();
             $head = [];
@@ -667,8 +657,7 @@ class AdminController extends Controller
             $evaluation = Evaluate::where('evaluatee', $faculty->user_id)
                             -> whereIn('evaluator', $head)
                             -> where('subject_id', $subject)
-                            -> whereDate('created_at', '>=', $period->beginEval)
-                            -> whereDate('created_at', '<=', $period->endEval)
+                            -> where('period_id', $period->id)
                             -> latest('id')
                             -> get();
         }
@@ -694,8 +683,7 @@ class AdminController extends Controller
                             -> where('evaluatee', $faculty->user_id)
                             -> whereIn('evaluator', $students)
                             -> where('subject_id', $subject)
-                            -> whereDate('created_at', '>=', $period->beginEval)
-                            -> whereDate('created_at', '<=', $period->endEval)
+                            -> where('period_id', $period->id)
                             -> latest('id')
                             -> get();
         }
@@ -732,10 +720,11 @@ class AdminController extends Controller
                 foreach($det->evalDetails as $detail)
                 {
                     if($detail->question->q_type_id == 1)
-                        $summary->where('id', $detail->question_id)->first()->mean = isset($summary->where('id', $detail->question_id)->first()->mean)? ($summary->where('id', $detail->question_id)->first()->mean + $detail->answer) / 2 : $detail->answer;
+                        $summary->where('id', $detail->question_id)->first()->mean = isset($summary->where('id', $detail->question_id)->first()->mean)?  ((float) $summary->where('id', $detail->question_id)->first()->mean +(float) $detail->answer) :(float) $detail->answer;
                     else
                         $summary->where('id', $detail->question_id)->first()->message = isset($summary->where('id', $detail->question_id)->first()->message)?  $summary->where('id', $detail->question_id)->first()->message = array_merge( $summary->where('id', $detail->question_id)->first()->message, [$detail->answer]) : [$detail->answer];
-                }
+                    
+                    }
             }
         }
 

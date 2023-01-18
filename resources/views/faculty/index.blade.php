@@ -1,7 +1,7 @@
 <x-layout>
     <div class="container mt-3">
         <div class="row">
-          <div class="col">
+          <div class="col-6">
             <div class="card mask-custom">
                 <div class="card-body p-4 text-dark">
                 @if(isset($period->beginEval))
@@ -35,17 +35,13 @@
                                   <span class="text-secondary">
                                     @if($det->isDean)
                                     College Dean
-                                    @elseif($det->isAssDean)
-                                    Associate Dean
-                                    @elseif($det->isChairman)
-                                    Chairman
                                     @endif
                                   </span>
                               </th>
                               <td class="align-middle">
                                   <h6 class="mb-0">
                                       @php
-                                        $facFinished = false;
+                                        $facFinished = true;
                                         //get blocks
                                         $block = App\Models\Block::where('period_id', $period->id)->get();
 
@@ -55,15 +51,16 @@
                                           {
                                             if($b->klases->where('instructor', $det->user_id)->isEmpty())
                                             {
-                                              $facFinished = true;
-                                              
-                                              foreach($b->klases->where('instructor', $det->user_id) as $klase)
+                                              $facFinished = false;
+                                                break;
+                                            }
+                                            
+                                            foreach($b->klases->where('instructor', $det->user_id) as $klase)
+                                            {
+                                              if($det->evaluated->where('evaluator', auth()->user()->id)->where('evaluatee', $det->user_id)->where('subject_id', $klase->subject_id)->isEmpty())
                                               {
-                                                if($det->evaluated->where('evaluator', auth()->user()->id)->where('evaluatee', $det->user_id)->where('subject_id', $klase->subject_id)->isEmpty())
-                                                {
-                                                  $facFinished = false;
-                                                  break 2;
-                                                }
+                                                $facFinished = false;
+                                                break 2;
                                               }
                                             }
                                           }
@@ -114,126 +111,93 @@
                   @endif
                 </div>
             </div>
-        </div>
-        <div class="row mt-3">
-            <div class="col">
-                <div class="card mask-custom">
-                    <div class="card-body p-0 text-dark">
-                        <div class="row px-2">
-                            <div class="col">
-                              <div class="row">
-                                <div class="col ms-2 mt-2 text-secondary">
-                                  <h5 style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif"> Student Result </h5>
-                                </div>
-                              </div>
-                              <div class="row">
-                                  <div class="col pb-0">
-                                      {!! $studentChart->container() !!}
-                                      {!! $studentChart->script() !!}
+          </div>
+          <div class="col">
+            <div class="row mx-1">
+              <div class="card mask-custom">
+                <div class="card-body p-0 text-dark">
+                  <div class="ps-3">
+                    <h5 class="mt-4" style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif">
+                        Subjects Handled
+                    </h5>
+                    <p class="text-secondary" style="font-size: 12px">
+                        {{$period->getDescription()}}
+                    </p>
+                    <hr/>
+                  </div>
+                  <div class="ps-2 pb-2">
+                    @php
+                      $block = App\Models\Block::where('period_id', $period->id)
+                                  -> latest('id')
+                                  -> get();
+                    @endphp
+                    @unless($block->isEmpty() || $block->first()->klases->where('instructor', auth()->user()->id)->first() == null && $block->last()->klases->where('instructor', auth()->user()->id)->first() == null)
+                     <ul class="list-group pe-2">
+                      <li class="list-group-item fw-bold">
+                        <div class="row">
+                          <div class="col-3">
+                            Subject
+                          </div>
+                          <div class="col-3">
+                            Schedule
+                          </div>
+                          <div class="col">
+                            Progress
+                          </div>
+                        </div>
+                      </li>
+                      @foreach($block as $b)
+                          @unless ($b->klases->where('instructor', auth()->user()->id)->first() == null)
+                            @foreach($b->klases->where('instructor', auth()->user()->id) as $klase)
+                              <li class="list-group-item">
+                                <div class="row">
+                                  <div class="col-3" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{$klase->subject->descriptive_title}}">
+                                    {{$klase->subject->code}}
                                   </div>
-                              </div>
-                              <div class="row mt-2">
-                                <div class="col ms-2 mt-2 text-secondary">
-                                  <h5 style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif"> Faculty Result </h5>
+                                  <div class="col-3">
+                                    {{isset($klase->schedule)? $klase->schedule : 'TBA'}}
+                                  </div>
+                                  <div class="col">
+                                    @php
+                                         $students = App\Models\Enrollment::where('period_id', $period->id)
+                                                            -> get();
+  
+                                        $student = array();
+  
+                                        foreach($students as $det)
+                                              $student = array_merge($student, [$det->user_id]);
+  
+                                        $finished = auth()->user()->faculties->first()->evaluated->where('period_id', $period->id)->where('evaluatee', auth()->user()->id)->whereIn('evaluator', $student)->where('subject_id', $klase->subject_id)->count();
+                                        $total = $klase->klaseStudents->count();
+                                        $pending = $total - $finished;
+                                    @endphp
+                                    <span class="fw-bold badge bg-success text-wrap"> Finished: {{$finished}} </span> &nbsp;
+                                    <span class="fw-bold badge bg-warning text-wrap"> Pending: {{$pending}} </span> &nbsp;
+                                    <span class="fw-bold badge bg-secondary text-wrap"> Total : {{$total}} </span> 
+                                    @if((isset($period->beginEval) && $period->endEval <= NOW()->format('Y-m-d')) && auth()->user()->faculties->first()->evaluated->where('period_id', $period->id)->where('evaluatee', auth()->user()->id)->whereIn('evaluator', $student)->where('subject_id', $klase->subject_id)->first() != null)
+                                      &nbsp;
+                                      <a href="{{route('admin.summaryReport', ['faculty' => auth()->user()->faculties->first()->id, 'period' => $period->id, 'subject' => $klase->subject_id])}}"
+                                        target="_blank"
+                                      >
+                                        View Details
+                                      </a>
+                                    @endif
+                                  </div>
                                 </div>
-                              </div>
-                              <div class="row">
-                                <div class="col pb-0">
-                                  {!! $facultyChart->container() !!}
-                                  {!! $facultyChart->script() !!}
-                                </div>
-                              </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="row">
-                  <div class="col">
-                    <div class="card mask-custom">
-                      <div class="card-body p-0 text-dark">
-                        <div class="ps-3">
-                          <h5 class="mt-4" style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif">
-                              Subjects Handled
-                          </h5>
-                          <p class="text-secondary" style="font-size: 12px">
-                              {{$period->getDescription()}}
-                          </p>
-                          <hr/>
-                        </div>
-                        <div class="ps-2 pb-2">
-                          @php
-                            $block = App\Models\Block::where('period_id', $period->id)
-                                        -> latest('id')
-                                        -> get();
-                          @endphp
-                          @unless($block->isEmpty() || $block->first()->klases->where('instructor', auth()->user()->id)->first() == null && $block->last()->klases->where('instructor', auth()->user()->id)->first() == null)
-                           <ul class="list-group pe-2">
-                            <li class="list-group-item fw-bold">
-                              <div class="row">
-                                <div class="col-3">
-                                  Subject
-                                </div>
-                                <div class="col-3">
-                                  Schedule
-                                </div>
-                                <div class="col">
-                                  Progress
-                                </div>
-                              </div>
-                            </li>
-                            @foreach($block as $b)
-                                @unless ($b->klases->where('instructor', auth()->user()->id)->first() == null)
-                                  @foreach($b->klases->where('instructor', auth()->user()->id) as $klase)
-                                    <li class="list-group-item">
-                                      <div class="row">
-                                        <div class="col-3" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{$klase->subject->descriptive_title}}">
-                                          {{$klase->subject->code}}
-                                        </div>
-                                        <div class="col-3">
-                                          {{isset($klase->schedule)? $klase->schedule : 'TBA'}}
-                                        </div>
-                                        <div class="col">
-                                          @php
-                                               $students = App\Models\Enrollment::where('period_id', $period->id)
-                                                                  -> get();
-
-                                              $student = array();
-
-                                              foreach($students as $det)
-                                                    $student = array_merge($student, [$det->user_id]);
-
-                                              $finished = auth()->user()->faculties->first()->evaluated->where('period_id', $period->id)->where('evaluatee', auth()->user()->id)->whereIn('evaluator', $student)->where('subject_id', $klase->subject_id)->count();
-                                              $total = $klase->klaseStudents->count();
-                                              $pending = $total - $finished;
-                                          @endphp
-                                          <span class="fw-bold badge bg-success text-wrap"> Finished: {{$finished}} </span> &nbsp;
-                                          <span class="fw-bold badge bg-warning text-wrap"> Pending: {{$pending}} </span> &nbsp;
-                                          <span class="fw-bold badge bg-secondary text-wrap"> Total : {{$total}} </span> 
-                                          @if((isset($period->beginEval) && $period->endEval <= NOW()->format('Y-m-d')) && auth()->user()->faculties->first()->evaluated->where('period_id', $period->id)->where('evaluatee', auth()->user()->id)->whereIn('evaluator', $student)->where('subject_id', $klase->subject_id)->first() != null)
-                                            &nbsp;
-                                            <a href="{{route('admin.summaryReport', ['faculty' => auth()->user()->faculties->first()->id, 'period' => $period->id, 'subject' => $klase->subject_id])}}"
-                                              target="_blank"
-                                            >
-                                              View Details
-                                            </a>
-                                          @endif
-                                        </div>
-                                      </div>
-                                    </li>
-                                  @endforeach
-                                @endunless
+                              </li>
                             @endforeach
-                          </ul>
-                          @else
-                          <h3 class="text-center m-1 bg-light p-1 rounded text-secondary text-uppercase">No subjects handled</h3>
                           @endunless
-                        </div>
-                      </div>
-                    </div>
+                      @endforeach
+                    </ul>
+                    @else
+                    <h3 class="text-center m-1 bg-light p-1 rounded text-secondary text-uppercase">No subjects handled</h3>
+                    @endunless
                   </div>
                 </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
                 <div class="row mt-4">
                   <div class="col">
                     <div class="card mask-custom">
@@ -249,7 +213,7 @@
                           </div>
                           <div class="ps-2 pb-2">
                               @if(isset($period->beginEval) && $period->endEval <= NOW()->format('Y-m-d'))
-                               <!-- Pills navs -->
+                              <!-- Pills navs -->
                               <ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
                                 <li class="nav-item" role="presentation">
                                     <a
@@ -280,11 +244,11 @@
                             </ul>
                             <!-- Pills navs -->
                             <!-- Pills content -->
-                            <div class="tab-content">
-                                @if(isset($sumSt))    
-                                <div class="tab-pane fade show active" id="pills-student" role="tabpanel" aria-labelledby="tab-student">
+                            <div class="tab-content"> 
+                                <div class="tab-pane fade show active" id="pills-student" role="tabpanel" aria-labelledby="tab-student"> 
+                                  @if(isset($sumSt))  
                                   <div class="row d-flex justify-content-between p-2 px-4">
-                                    <div class="col">
+                                      <div class="col">
                                         <div class="row">
                                           <div class="col">
                                             <strong> Grand Mean: </strong> {{round($sumSt->avg('mean'), 2)}}
@@ -309,7 +273,7 @@
                                     <div class="row">
                                       <div class="col">
                                         <h3 class="text-center m-4 bg-light p-4 rounded text-uppercase"> Evaluation by student in selected semester is empty </h3>
-                                    </div>
+                                      </div>
                                     </div>
                                     @endif
                                   </div>
@@ -340,8 +304,8 @@
                                     </div>
                                 </div>
                                 @endif
-                                @if(isset($sumFac))
                                 <div class="tab-pane fade show" id="pills-faculty" role="tabpanel" aria-labelledby="tab-faculty">
+                                @if(isset($sumFac))
                                   <div class="row d-flex justify-content-between p-2 px-4">
                                     <div class="col">
                                         <div class="row">
@@ -376,7 +340,7 @@
                                   <div class="row">
                                       <div class="col">
                                           <div class="collapse" id="collapseFacDetails">
-                                              <div class="card card-body">
+                                            <div class="card card-body">
                                                 <div class="row">
                                                   <div class="col">
                                                     <span class="fw-bold" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Based on the results of the Faculty Evaluation"> 
@@ -385,7 +349,7 @@
                                                   </div>
                                                 </div>
                                                   @unless($recommendation['facultyEvaluation']->where('isLec', true) == null)
-                                                <div class="row">
+                                                  <div class="row">
                                                     <div class="col">
                                                       <div class="row">
                                                         <div class="col text-secondary">
@@ -424,10 +388,9 @@
                                                     </div>
                                                   </div>
                                                   @endunless
-                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
+                                          </div>
+                                      </div>
                                   </div>
                                   @endif
                                 </div>
@@ -442,11 +405,49 @@
                                   Standby for evaluation summary
                               </p>
                               @endif
-                      </div>
-                          </div>
                         </div>
                       </div>
+                    </div>
                   </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3 mx-5">
+            <div class="col">
+                <div class="card mask-custom">
+                    <div class="card-body p-0 text-dark">
+                        <div class="row">
+                          <div class="col pt-3 ms-5">
+                            <h3 style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif">  Data Visualization </h3>
+                          </div>
+                        </div>
+                        <div class="row p-5">
+                            <div class="col">
+                              <div class="row">
+                                <div class="col ms-2 mt-2 text-secondary">
+                                  <h5 style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif"> Student Result </h5>
+                                </div>
+                              </div>
+                              <div class="row">
+                                  <div class="col pb-0">
+                                      {!! $studentChart->container() !!}
+                                      {!! $studentChart->script() !!}
+                                  </div>
+                              </div>
+                              <div class="row mt-2">
+                                <div class="col ms-2 mt-2 text-secondary">
+                                  <h5 style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif"> Faculty Result </h5>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col pb-0">
+                                  {!! $facultyChart->container() !!}
+                                  {!! $facultyChart->script() !!}
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

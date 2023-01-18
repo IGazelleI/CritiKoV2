@@ -26,8 +26,8 @@ class CourseStoreRequest extends FormRequest
     {
         return [
             'department_id' => 'required',
-            'name' => ['required', Rule::unique('courses', 'name')],
-            'description' => 'required'
+            'name' => ['required', Rule::unique('courses', 'name'), 'alpha'],
+            'description' => ['required', 'alpha'],
         ];
     }
 
@@ -42,6 +42,8 @@ class CourseStoreRequest extends FormRequest
             'department_id.required' => 'Department field is required',
             'name.required' => 'Name field is required.',
             'name.unique' => 'Course already exits.',
+            'name.alpha' => 'Course name must only have letters.',
+            'description.alpha' => 'Course description must only have letters.',
             'description' => 'Description field is required.'
         ];
     }

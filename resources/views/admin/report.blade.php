@@ -53,7 +53,6 @@
                                 Period
                             @endif
                         </button>
-                      
                         <ul class="dropdown-menu">
                             @unless($periodAll->isEmpty())
                                 <li>
@@ -119,16 +118,50 @@
                             </div>
                         </div>
                     </div>                    
-                    @if(isset($recommendation[$det->id]))
+                    @if(isset($recommendation[$det->id]['studentEvaluation']) || isset($recommendation[$det->id]['facultyEvaluation']))
                     <div class="col">
                         <div style="min-height: 120px;">
                             <div class="collapse collapse-horizontal" id="recCollapse{{$det->id}}">
                                 <div class="card card-body" style="width: 300px;">
                                     <h5> Improvement Guide </h5>
-                                    <ul class="list-group list-group-numbered fw-bold">
-                                        @foreach($recommendation[$det->id] as $rec)
-                                            <li class="list-group-item text-danger"> {{$rec->keyword}} </li>
-                                        @endforeach
+                                    <ul class="list-group">
+                                        @if($recommendation[$det->id]['studentEvaluation'] != null)
+                                        <li class="list-group-item  fw-bold">
+                                            Student Evaluation
+                                            <ul>
+                                            @foreach($recommendation[$det->id]['studentEvaluation'] as $rec)
+                                                <li class="fs-6 text-danger"> {{$rec->keyword}} </li>
+                                            @endforeach
+                                            </ul>
+                                        </li>
+                                        @endif
+                                        @if($recommendation[$det->id]['facultyEvaluation'] != null)
+                                        <li class="list-group-item  fw-bold">
+                                            Faculty Evaluation
+                                            <ul>
+                                                @if($recommendation[$det->id]['facultyEvaluation']->where('isLec', true) != null)
+                                                <li class="fs-6 text-warning"> 
+                                                    Lecture
+                                                    <ul>
+                                                        @foreach($recommendation[$det->id]['facultyEvaluation']->where('isLec', true) as $rec)
+                                                        <li class="text-danger"> {{$rec->keyword}} </li>
+                                                        @endforeach
+                                                    </ul>
+                                                </li>
+                                                @endif
+                                                @if($recommendation[$det->id]['facultyEvaluation']->where('isLec', false) != null)
+                                                <li class="fs-6 text-warning"> 
+                                                    Laboratory
+                                                    <ul>
+                                                        @foreach($recommendation[$det->id]['facultyEvaluation']->where('isLec', false) as $rec)
+                                                        <li class="text-danger"> {{$rec->keyword}} </li>
+                                                        @endforeach
+                                                    </ul>
+                                                </li>
+                                                @endif
+                                            </ul>
+                                        </li>
+                                        @endif
                                     </ul>
                                 </div>
                             </div>

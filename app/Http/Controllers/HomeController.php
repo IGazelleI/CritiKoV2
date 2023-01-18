@@ -476,6 +476,12 @@ class HomeController extends Controller
                 ]);
 
                 $details = $this->getDetails($period, 4, null);
+                $students = Enrollment::where('period_id', $period->id)
+                                    -> get();
+                                    $student = array();
+
+                                    foreach($students as $det)
+                                        $student = array_merge($student, [$det->user_id]);
                 
                 $recommendation['studentEvaluation'] = isset($details)? Question::select('keyword')
                                         -> where('q_category_id', $details->lowestAttribute)
@@ -589,7 +595,7 @@ class HomeController extends Controller
 
                 $sumFac = $this->getSummary($period, 3);
                 
-                return view('faculty.index', compact('period', 'faculty', 'studentChart', 'facultyChart', 'recommendation', 'sumFac', 'sumSt'));
+                return view('faculty.index', compact('period', 'faculty', 'studentChart', 'facultyChart', 'recommendation', 'sumFac', 'sumSt', 'student'));
                 break;
             case 4: //Student Home
                 //get period selected
@@ -871,7 +877,7 @@ class HomeController extends Controller
                 foreach($det->evalDetails as $detail)
                 {
                     if($detail->question->q_type_id == 1)
-                        $summary->where('id', $detail->question_id) ->first()->mean = isset($summary->where('id', $detail->question_id)->first()->mean)? ($summary->where('id', $detail->question_id)->first()->mean + $detail->answer) / 2 : $detail->answer;
+                        $summary->where('id', $detail->question_id) ->first()->mean = isset($summary->where('id', $detail->question_id)->first()->mean)? ($summary->where('id', $detail->question_id)->first()->mean + (float)$detail->answer) : (float)$detail->answer;
                     else
                         $summary->where('id', $detail->question_id)->first()->message = isset($summary->where('id', $detail->question_id)->first()->message)?  $summary->where('id', $detail->question_id)->first()->message = array_merge( $summary->where('id', $detail->question_id)->first()->message, [$detail->answer]) : [$detail->answer];
                 }

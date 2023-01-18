@@ -7,7 +7,7 @@
                 </div>
                 <div class="col p-2 align-self-center">
                     <header>
-                        <h3 style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif"> Completion Report </h3>
+                        <h3 style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif"> Student Completion Report </h3>
                         {{$department->description}}
                     </header>
                 </div>

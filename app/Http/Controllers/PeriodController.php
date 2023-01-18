@@ -43,6 +43,7 @@ class PeriodController extends Controller
             return back()->with('message', 'It is recommended set both dates instead of just only one.');
 
         if(!Period::create([
+            'academic_year_id' => $request->acadYear,
             'semester' => $request->semester,
             'begin' => $request->begin,
             'end' => $request->end,

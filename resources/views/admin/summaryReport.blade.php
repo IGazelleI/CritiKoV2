@@ -190,7 +190,7 @@
                                               @if($prevCat != $det->q_category_id && $prevCat != 0)
                                                 <tr>
                                                     <td class="text-end"> <strong> Mean  </strong> </td>
-                                                    <td> <strong> {{number_format($catPts / $catCount, 2)}} </strong> </td>
+                                                    <td> <strong> {{number_format(($catPts / $catCount) / count($students), 2)}} </strong> </td>
                                                 </tr>
                                                 @php
                                                   $catPts = 0;
@@ -202,7 +202,7 @@
                                               @endphp
                                               <tr>
                                                   <td> <strong> {{$count}}. </strong> {{$det->sentence}} </td>
-                                                  <td class="text-center"> {{number_format($det->mean, 2)}}</td>
+                                                  <td class="text-center"> {{number_format((float) $det->mean / count($students), 2)}}</td>
                                               </tr>
                                               @if($count == $summaryS->where('q_type_id', 1)->count())
                                                 @php
@@ -211,7 +211,7 @@
                                                 {{-- Last Row Will be shown as it is not counted in loop --}}
                                                 <tr>
                                                   <td class="text-end"> <strong> Mean  </strong> </td>
-                                                  <td> <strong> {{number_format($catPts / $catCount, 2)}} </strong> </td>
+                                                  <td> <strong> {{number_format(($catPts / $catCount) / count($students), 2)}} </strong> </td>
                                                 </tr>
                                                 @php
                                                   $catPts = 0;
@@ -219,7 +219,7 @@
                                                 @endphp
                                               @endif
                                               @php
-                                                  $totalPts += $det->mean;
+                                                  $totalPts += (float) $det->mean;
                                                   $count += 1;
                                                   $catCount += 1;
                                                   $prevCat = $det->q_category_id;
@@ -227,7 +227,7 @@
                                             @endforeach
                                             <tr>
                                               <td class="text-end"> <strong> Grand Mean </strong> </td>
-                                              <td> <strong> {{number_format($totalPts / ($count - 1), 2)}} </strong> </td>  
+                                              <td> <strong> {{number_format(($totalPts / ($count - ($summaryS->where('q_type_id', 2)->count())) / count($students)), 2)}} </strong> </td>  
                                             </tr>
                                         </tbody>
                                     </table>
