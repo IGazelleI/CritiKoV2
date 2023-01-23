@@ -22,24 +22,24 @@ Route::middleware('guest')->group(function ()
         Route::post('/users/auth', 'auth')->name('auth');
         Route::get('/forgot-password', 'forgotPassword')->name('password.forgotRequest');
         Route::post('/forgot-password', 'process')->name('password.forgotEmail');
-        Route::get('/reset-password/{token}', 'reset')->name('password.reset');
+        Route::get('/password/reset/{token}', 'reset')->name('password.reset');
         Route::post('/reset-password', 'updatePassword')->name('password.update');
     });
 });
-Auth::routes(['verify' => true]);
+
 Route::middleware('auth')->group(function ()
-{/* 
-    Route::middleware(['signed'])->group(function ()
+{
+    /* Route::middleware(['signed'])->group(function ()
     { */
-        /* Route::controller(VerificationController::class)->group(function ()
+        Route::controller(App\Http\Controllers\Auth\VerificationController::class)->group(function ()
         {
-            Route::get('/email/verify', 'show')->name('verification.notice');
-            Route::get('/email/verify/{id}/{hash}', 'handler')->middleware('signed')->name('verification.verify');
-            Route::post('/email/verification-notification', 'resend')->middleware('throttle:6,1')->name('verification.send');
-        }); *//* 
-    }); */
-    /* Route::middleware('verified')->group(function ()
-    { */
+            Route::get('/email/verify', 'show')->name('verification.notice');   
+            Route::get('/email/verify/{id}/{hash}', 'handler')->name('verification.verify');
+            Route::post('/email/verification-notification', 'resend')->middleware('throttle:6,1')->name('verification.resend');
+        });
+    /* }); */
+    Route::middleware('verified')->group(function ()
+    {
         Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
         Route::post('/changePassword', [App\Http\Controllers\UserController::class, 'changePassword'])->name('changePassword');
         Route::post('/resetPassword', [App\Http\Controllers\UserController::class, 'resetPassword'])->name('resetPassword');
@@ -194,5 +194,5 @@ Route::middleware('auth')->group(function ()
                 Route::post('/enroll', 'enroll')->name('student.submitEnroll');
             });
         });
-    /* }); */
+    });
 });
