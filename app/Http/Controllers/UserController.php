@@ -28,6 +28,15 @@ class UserController extends Controller
 
     public function store(UserStoreRequest $request)
     {
+        //check email if exist
+        $emails = User::select('email')->get();
+
+        if(!$emails->isEmpty())
+        {
+            if($emails->where('email', $request->email)->count() > 0)
+                return back()->with('message', 'Email address entered already exists. Please try another.');
+        }
+        
         $request->validate(['email' => 'email_domain:' . $request->email], ['email.email_domain' => 'Only CTU-provided emails allowed.']);
         $request['password'] = Hash::make($request->password);
 
@@ -45,12 +54,20 @@ class UserController extends Controller
 
     public function create(Request $request)
     {
+        //check email if exist
+        $emails = User::select('email')->get();
+
+        if(!$emails->isEmpty())
+        {
+            if($emails->where('email', $request->email)->count() > 0)
+                return back()->with('message', 'Email address entered already exists. Please try another.');
+        }
+
         $formFields = $request->validate([
-            'email' => ['required', 'email', Rule::unique('users', 'email'), 'email_domain:' . $request->email],
+            'email' => ['required', 'email', 'email_domain:' . $request->email],
             'password' => 'required'
         ],[
             'email.required' => 'Email field is required.',
-            'email.unique' => 'Email already exist.',
             'email.email_domain' => 'Only CTU-provided emails allowed.',
             'password.required' => 'Password field is required.'
         ]);

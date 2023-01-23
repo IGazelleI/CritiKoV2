@@ -10,7 +10,7 @@
                 $period = periods();
 
                 if(getSelected() == null && !$period->isEmpty())
-                    setSelected($period[0]->id);
+                    setSelected($period->first()->id);
             @endphp            
             <form action="{{route('faculty.changePeriod')}}" method="POST">
                 @csrf
@@ -147,7 +147,6 @@
         // Extract info from data-bs-* attributes
         var subjects = button.getAttribute('data-bs-subjects');
         subjects = JSON.parse(subjects);
-        console.log(subjects);
         // const description = button.getAttribute('data-bs-description');
         // If necessary, you could initiate an AJAX request here
         // and then do the updating in a callback.

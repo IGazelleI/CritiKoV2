@@ -81,7 +81,7 @@
                 @if(subSelected() != null)
                 <form action="{{route('faculty.evaluateProcess')}}" method="POST">
                     @csrf
-                    <input type="hidden" name="totalQuestion" value="{{$question->count()}}"/>
+                    <input type="hidden" name="totalQuestion" id="totalQuestion" value="{{$question->count()}}"/>
                     <div class="row rounded border border-dark bg-info d-flex justify-content-center align-items-center my-3">
                         <div class="col-3 text-center p-2">
                             <img src="{{selected() != null? ($faculty->where('user_id', selected())->first()->imgPath != null? $faculty->where('user_id', selected())->first()->imgPath()
@@ -184,7 +184,7 @@
                                         <input type="hidden" name="{{'qCatID'  . $qnum}}" value="{{$q->q_category_id}}"/>
                                     </div>
                                     <div class="col-md-auto p-2">
-                                        <input type="radio" name="{{'qAns' . $qnum}}" value="1" 
+                                        <input type="radio" class="{{'qAns' . $qnum}}" name="{{'qAns' . $qnum}}" id="{{'qAns' . $qnum}}a1" value="1" 
                                             @if(isset($evaluation))
                                                 @if(isset($evaluation->evalDetails[$i]))
                                                     {{checkQuestion($q->id, $evaluation, 1)}}
@@ -193,7 +193,7 @@
                                         />
                                     </div>
                                     <div class="col-md-auto p-2">
-                                        <input type="radio" name="{{'qAns' . $qnum}}" value="2"
+                                        <input type="radio" class="{{'qAns' . $qnum}}" name="{{'qAns' . $qnum}}" id="{{'qAns' . $qnum}}a2" value="2"
                                             @if(isset($evaluation))
                                                 @if(isset($evaluation->evalDetails[$i]))
                                                     {{checkQuestion($q->id, $evaluation, 2)}}
@@ -202,7 +202,7 @@
                                         />
                                     </div>
                                     <div class="col-md-auto p-2">
-                                        <input type="radio" name="{{'qAns' . $qnum}}" value="3" 
+                                        <input type="radio" class="{{'qAns' . $qnum}}" name="{{'qAns' . $qnum}}" id="{{'qAns' . $qnum}}a3" value="3" 
                                             @if(isset($evaluation))
                                                 @if(isset($evaluation->evalDetails[$i]))
                                                     {{checkQuestion($q->id, $evaluation, 3)}}
@@ -211,7 +211,7 @@
                                         />
                                     </div>
                                     <div class="col-md-auto p-2">
-                                        <input type="radio" name="{{'qAns' . $qnum}}" value="4" 
+                                        <input type="radio" class="{{'qAns' . $qnum}}" name="{{'qAns' . $qnum}}" id="{{'qAns' . $qnum}}a4" value="4" 
                                             @if(isset($evaluation))
                                                 @if(isset($evaluation->evalDetails[$i]))
                                                     {{checkQuestion($q->id, $evaluation, 4)}}
@@ -220,7 +220,7 @@
                                         />
                                     </div>
                                     <div class="col-md-auto p-2">
-                                        <input type="radio" name="{{'qAns' . $qnum}}" value="5" 
+                                        <input type="radio" class="{{'qAns' . $qnum}}" name="{{'qAns' . $qnum}}" id="{{'qAns' . $qnum}}a5" value="5" 
                                             @if(isset($evaluation))
                                                 @if(isset($evaluation->evalDetails[$i]))
                                                     {{checkQuestion($q->id, $evaluation, 5)}}
@@ -241,7 +241,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col d-flex align-items-center">
-                                        <input type="text" class="form-control w-100" name="{{'qAns' . $qnum}}"
+                                        <input type="text" class="form-control w-100 {{'qAns' . $qnum}}" name="{{'qAns' . $qnum}}" id="{{'qAns' . $qnum}}"
                                             @if(isset($evaluation))
                                                 @if(isset($evaluation->evalDetails[$i]))
                                                     value="{{$evaluation->evalDetails[$i]->answer}}"    
@@ -282,7 +282,7 @@
                                         <input type="hidden" name="{{'qCatID'  . $qnum}}" value="{{$q->q_category_id}}"/>
                                     </div>
                                     <div class="col-md-auto p-2">
-                                        <input type="radio" name="{{'qAns' . $qnum}}" value="1" 
+                                        <input type="radio" class="{{'qAns' . $qnum}}" name="{{'qAns' . $qnum}}" id="{{'qAns' . $qnum}}a1" value="1" 
                                             @if(isset($evaluation))
                                                 @if(isset($evaluation->evalDetails[$i]))
                                                     {{checkQuestion($q->id, $evaluation, 1)}}
@@ -292,7 +292,7 @@
                                         />
                                     </div>
                                     <div class="col-md-auto p-2">
-                                        <input type="radio" name="{{'qAns' . $qnum}}" value="2"
+                                        <input type="radio" class="{{'qAns' . $qnum}}" name="{{'qAns' . $qnum}}" id="{{'qAns' . $qnum}}a2" value="2"
                                             @if(isset($evaluation))
                                                 @if(isset($evaluation->evalDetails[$i]))
                                                     {{checkQuestion($q->id, $evaluation, 2)}}
@@ -301,7 +301,7 @@
                                         />
                                     </div>
                                     <div class="col-md-auto p-2">
-                                        <input type="radio" name="{{'qAns' . $qnum}}" value="3" 
+                                        <input type="radio" class="{{'qAns' . $qnum}}" name="{{'qAns' . $qnum}}" id="{{'qAns' . $qnum}}a3" value="3" 
                                             @if(isset($evaluation))
                                                 @if(isset($evaluation->evalDetails[$i]))
                                                     {{checkQuestion($q->id, $evaluation, 3)}}
@@ -310,7 +310,7 @@
                                         />
                                     </div>
                                     <div class="col-md-auto p-2">
-                                        <input type="radio" name="{{'qAns' . $qnum}}" value="4" 
+                                        <input type="radio" class="{{'qAns' . $qnum}}" name="{{'qAns' . $qnum}}" id="{{'qAns' . $qnum}}a4" value="4" 
                                             @if(isset($evaluation))
                                                 @if(isset($evaluation->evalDetails[$i]))
                                                     {{checkQuestion($q->id, $evaluation, 4)}}
@@ -319,7 +319,7 @@
                                         />
                                     </div>
                                     <div class="col-md-auto p-2">
-                                        <input type="radio" name="{{'qAns' . $qnum}}" value="5" 
+                                        <input type="radio" class="{{'qAns' . $qnum}}" name="{{'qAns' . $qnum}}" id="{{'qAns' . $qnum}}a5" value="5" 
                                             @if(isset($evaluation))
                                                 @if(isset($evaluation->evalDetails[$i]))
                                                     {{checkQuestion($q->id, $evaluation, 5)}}
@@ -340,7 +340,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col d-flex align-items-center">
-                                        <input type="text" class="form-control w-100" name="{{'qAns' . $qnum}}"
+                                        <input type="text" class="form-control w-100 {{'qAns' . $qnum}}" name="{{'qAns' . $qnum}}" id="{{'qAns' . $qnum}}"
                                             @if(isset($evaluation))
                                                 @if(isset($evaluation->evalDetails[$i]))
                                                     value="{{$evaluation->evalDetails[$i]->answer}}"    
@@ -403,7 +403,7 @@
                                         <input type="hidden" name="{{'qCatID'  . $qnum}}" value="{{$q->q_category_id}}"/>
                                     </div>
                                     <div class="col-md-auto p-2">
-                                        <input type="radio" name="{{'qAns' . $qnum}}" value="1" 
+                                        <input type="radio" class="{{'qAns' . $qnum}}" name="{{'qAns' . $qnum}}" id="{{'qAns' . $qnum}}a1" value="1" 
                                             @if(isset($evaluation))
                                                 @if(isset($evaluation->evalDetails[$i]))
                                                     {{checkQuestion($q->id, $evaluation, 1)}}
@@ -413,7 +413,7 @@
                                         />
                                     </div>
                                     <div class="col-md-auto p-2">
-                                        <input type="radio" name="{{'qAns' . $qnum}}" value="2"
+                                        <input type="radio" class="{{'qAns' . $qnum}}" name="{{'qAns' . $qnum}}" id="{{'qAns' . $qnum}}a2" value="2"
                                             @if(isset($evaluation))
                                                 @if(isset($evaluation->evalDetails[$i]))
                                                     {{checkQuestion($q->id, $evaluation, 2)}}
@@ -422,7 +422,7 @@
                                         />
                                     </div>
                                     <div class="col-md-auto p-2">
-                                        <input type="radio" name="{{'qAns' . $qnum}}" value="3" 
+                                        <input type="radio" class="{{'qAns' . $qnum}}" name="{{'qAns' . $qnum}}" id="{{'qAns' . $qnum}}a3" value="3" 
                                             @if(isset($evaluation))
                                                 @if(isset($evaluation->evalDetails[$i]))
                                                     {{checkQuestion($q->id, $evaluation, 3)}}
@@ -431,7 +431,7 @@
                                         />
                                     </div>
                                     <div class="col-md-auto p-2">
-                                        <input type="radio" name="{{'qAns' . $qnum}}" value="4" 
+                                        <input type="radio" class="{{'qAns' . $qnum}}" name="{{'qAns' . $qnum}}" id="{{'qAns' . $qnum}}a4" value="4" 
                                             @if(isset($evaluation))
                                                 @if(isset($evaluation->evalDetails[$i]))
                                                     {{checkQuestion($q->id, $evaluation, 4)}}
@@ -440,7 +440,7 @@
                                         />
                                     </div>
                                     <div class="col-md-auto p-2">
-                                        <input type="radio" name="{{'qAns' . $qnum}}" value="5" 
+                                        <input type="radio" class="{{'qAns' . $qnum}}" name="{{'qAns' . $qnum}}" id="{{'qAns' . $qnum}}a5" value="5" 
                                             @if(isset($evaluation))
                                                 @if(isset($evaluation->evalDetails[$i]))
                                                     {{checkQuestion($q->id, $evaluation, 5)}}
@@ -461,7 +461,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col d-flex align-items-center">
-                                        <input type="text" class="form-control w-100" name="{{'qAns' . $qnum}}"
+                                        <input type="text" class="form-control w-100 {{'qAns' . $qnum}}" name="{{'qAns' . $qnum}}"
                                             @if(isset($evaluation))
                                                 @if($evaluation->evalDetails->where('question_id', $q->id)->first() != null)
                                                     value="{{$evaluation->evalDetails->where('question_id', $q->id)->first()->answer}}"
@@ -484,6 +484,10 @@
                         @endforeach
                         @endif
                         <div class="row d-flex justify-content-end me-5">
+                            <div class="col-1 me-5 mt-5">
+                                <!-- Reset button -->
+                                <button type="button" id="btnReset" class="btn btn-secondary rounded-pill {{(selected() == null || isset($evaluation)) || ($period->endEval < NOW()->format('Y-m-d'))? 'disabled' : null}}">Reset</button>
+                            </div>
                             <div class="col-1 mt-5">
                                 <!-- Submit button -->
                                 <button type="submit" class="btn btn-primary rounded-pill {{(selected() == null || isset($evaluation)) || ($period->endEval < NOW()->format('Y-m-d'))? 'disabled' : null}}">Submit</button>
@@ -558,4 +562,25 @@
             event.target.setCustomValidity('');
         });
     }
+    const resetBtnEl = document.getElementById('btnReset');
+
+    resetBtnEl.addEventListener('click', function (){
+
+        //get all question inputs
+        for(var i = 1; i <= totalInput.value; i++)
+        {
+            var inputElC = document.querySelector('.qAns' + i); 
+
+            if(inputElC.value != null)
+            {
+                if(inputElC.type == 'radio')
+                {
+                    for(var j = 1; j <= 5; j++)
+                        document.getElementById('qAns' + i + 'a' + j).checked = false;
+                }
+                else
+                    inputElC.value = null;
+            }
+        }
+    });
 </script>

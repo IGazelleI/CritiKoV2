@@ -98,16 +98,16 @@
                         <tbody>
                             <tr>
                                 <td> <strong> {{$catCount + 1}}. </strong> {{ucfirst($det->sentence)}} </td>
-                                <td class="text-center"> {{isset($det->mean)? number_format($det->mean, 2) : 'N/A'}}</td>
-                                <td class="text-center"> {{isset($det->mean)? rating($det->mean)['vd'] : 'N/A'}} </td>
+                                <td class="text-center"> {{isset($det->mean)? number_format($det->mean / $data->evalCount, 2) : 'N/A'}}</td>
+                                <td class="text-center"> {{isset($det->mean)? rating($det->mean / $data->evalCount)['vd'] : 'N/A'}} </td>
                             </tr>
                         </tbody>
                 @else
                 <tbody>
                     <tr>
                         <td> <strong> {{$catCount + 1}}. </strong> {{ucfirst($det->sentence)}} </td>
-                        <td class="text-center"> {{isset($det->mean)? number_format($det->mean, 2) : 'N/A'}}</td>
-                        <td class="text-center"> {{isset($det->mean)? rating($det->mean)['vd'] : 'N/A'}} </td>
+                        <td class="text-center"> {{isset($det->mean)? number_format($det->mean / $data->evalCount, 2) : 'N/A'}}</td>
+                        <td class="text-center"> {{isset($det->mean)? rating($det->mean / $data->evalCount)['vd'] : 'N/A'}} </td>
                     </tr>
                 </tbody>
                 @endif
@@ -134,7 +134,7 @@
                             @if($prevCat != $det->q_category_id)
                             <tr class="no-border" style="padding: 2px">
                                 <td class="no-border" style="padding: 2px"> {{$det->qCat->name}} Mean ({{$det->qCat->name[0]}}M) </td>
-                                <td class="no-border" style="padding: 2px"> &nbsp; : &nbsp; <span style="font-weight: bold; font-size: 12"> {{number_format($data->where('q_category_id', $det->q_category_id)->avg('mean'), 2)}} </span> </td>
+                                <td class="no-border" style="padding: 2px"> &nbsp; : &nbsp; <span style="font-weight: bold; font-size: 12"> {{number_format($data->where('q_category_id', $det->q_category_id)->avg('mean') / $data->evalCount, 2)}} </span> </td>
                             </tr>
                             @endif
                             @php
@@ -151,10 +151,10 @@
                                 <td class="fw-bold no-border" style="padding: 2px"> You are a/an </td>
                             </tr>
                             <tr>
-                                <td class="text-uppercase fw-bold no-border" style="font-size: 16; padding: 2px"> {{rating($data->avg('mean'))['message']}} </td>
+                                <td class="text-uppercase fw-bold no-border" style="font-size: 16; padding: 2px"> {{rating($data->avg('mean') / $data->evalCount)['message']}} </td>
                             </tr>
                             <tr>
-                                <td class="no-border" style="padding: 2px"> General Average &nbsp; {{number_format($data->avg('mean'), 2)}} </td>
+                                <td class="no-border" style="padding: 2px"> General Average &nbsp; {{number_format($data->avg('mean') / $data->evalCount, 2)}} </td>
                             </tr>
                             <tr>
                                 <td class="fw-bold no-border" style="padding: 2px"> Instructor/Professor </td>
@@ -237,8 +237,8 @@
                     <tr>
                         <td class="text-uppercase" rowspan="{{$cat + 1}}"> {{$faculty->fullName(true)}} </td>
                         <td class="fw-bold text-uppercase" width="15%"> Overall </td>
-                        <td width="10%"> {{number_format($data->avg('mean'), 2)}} </td>
-                        <td width="10%"> {{rating($data->avg('mean'))['vd']}} </td>
+                        <td width="10%"> {{number_format($data->avg('mean') / $data->evalCount, 2)}} </td>
+                        <td width="10%"> {{rating($data->avg('mean') / $data->evalCount)['vd']}} </td>
                     </tr>
                     @php
                         $prevCat = 0;
@@ -251,8 +251,8 @@
                         @if($prevCat != $det->q_category_id)
                             <tr>
                                 <td class="fw-bold text-uppercase" width="15%"> {{$det->qCat->name}} </td>
-                                <td width="10%"> {{number_format($data->where('q_category_id', $det->q_category_id)->avg('mean'), 2)}} </td>
-                                <td width="10%"> {{rating($data->where('q_category_id', $det->q_category_id)->avg('mean'))['vd']}} </td>
+                                <td width="10%"> {{number_format($data->where('q_category_id', $det->q_category_id)->avg('mean') / $data->evalCount, 2)}} </td>
+                                <td width="10%"> {{rating($data->where('q_category_id', $det->q_category_id)->avg('mean') / $data->evalCount)['vd']}} </td>
                             </tr>
                         @endif
                         @php

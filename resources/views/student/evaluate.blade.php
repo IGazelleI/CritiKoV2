@@ -146,7 +146,7 @@
                                     </div>
                                     <div class="col-md-auto p-2">
                                         <label for="{{'qAns' . $qnum}}">
-                                            <input type="radio" name="{{'qAns' . $qnum}}" value="1" 
+                                            <input type="radio" class="{{'qAns' . $qnum}}" name="{{'qAns' . $qnum}}" id="{{'qAns' . $qnum}}a1" value="1"
                                                 @if(isset($evaluation))
                                                     @if($evaluation->evalDetails->where('question_id', $q->id)->first() != null)
                                                         {{checkQuestion($q->id, $evaluation, 1)}}
@@ -158,7 +158,7 @@
                                     </div>
                                     <div class="col-md-auto p-2">
                                         <label for="{{'qAns' . $qnum}}">
-                                            <input type="radio" name="{{'qAns' . $qnum}}" value="2" 
+                                            <input type="radio" class="{{'qAns' . $qnum}}" name="{{'qAns' . $qnum}}" id="{{'qAns' . $qnum}}a2" value="2" 
                                                 @if(isset($evaluation))
                                                     @if($evaluation->evalDetails->where('question_id', $q->id)->first() != null)
                                                         {{checkQuestion($q->id, $evaluation, 2)}}
@@ -169,7 +169,7 @@
                                     </div>
                                     <div class="col-md-auto p-2">
                                         <label for="{{'qAns' . $qnum}}">
-                                            <input type="radio" name="{{'qAns' . $qnum}}" value="3" 
+                                            <input type="radio" class="{{'qAns' . $qnum}}" name="{{'qAns' . $qnum}}" id="{{'qAns' . $qnum}}a3" value="3" 
                                                 @if(isset($evaluation))
                                                     @if($evaluation->evalDetails->where('question_id', $q->id)->first() != null)
                                                         {{checkQuestion($q->id, $evaluation, 3)}}
@@ -180,7 +180,7 @@
                                     </div>
                                     <div class="col-md-auto p-2">
                                         <label for="{{'qAns' . $qnum}}">   
-                                            <input type="radio" name="{{'qAns' . $qnum}}" value="4" 
+                                            <input type="radio" class="{{'qAns' . $qnum}}" name="{{'qAns' . $qnum}}" id="{{'qAns' . $qnum}}a4" value="4" 
                                                 @if(isset($evaluation))
                                                     @if($evaluation->evalDetails->where('question_id', $q->id)->first() != null)
                                                         {{checkQuestion($q->id, $evaluation, 4)}}
@@ -191,7 +191,7 @@
                                     </div>
                                     <div class="col-md-auto p-2">
                                         <label for="{{'qAns' . $qnum}}">
-                                            <input type="radio" name="{{'qAns' . $qnum}}" value="5" 
+                                            <input type="radio" class="{{'qAns' . $qnum}}" name="{{'qAns' . $qnum}}" id="{{'qAns' . $qnum}}a5" value="5" 
                                                 @if(isset($evaluation))
                                                     @if($evaluation->evalDetails->where('question_id', $q->id)->first() != null)
                                                         {{checkQuestion($q->id, $evaluation, 5)}}
@@ -213,7 +213,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col d-flex align-items-center">
-                                        <input type="text" class="form-control w-100" name="{{'qAns' . $qnum}}"
+                                        <input type="text" class="form-control w-100 {{'qAns' . $qnum}}" name="{{'qAns' . $qnum}}" id="{{'qAns' . $qnum}}"
                                             @if(isset($evaluation))
                                                 @if($evaluation->evalDetails->where('question_id', $q->id)->first() != null)
                                                     value="{{$evaluation->evalDetails->where('question_id', $q->id)->first()->answer}}"
@@ -235,6 +235,10 @@
                             @endphp
                         @endforeach
                         <div class="row d-flex justify-content-end me-5">
+                            <div class="col-1 me-5 mt-5">
+                                <!-- Reset button -->
+                                <button type="button" id="btnReset" class="btn btn-secondary rounded-pill {{(selected() == null || !isset($subjects->where('id', selected())->first()->klase->instructor) || isset($evaluation)) || ($period->endEval < NOW()->format('Y-m-d'))? 'disabled' : null}}">Reset</button>
+                            </div>
                             <div class="col-1 mt-5">
                                 <!-- Submit button -->
                                 <button type="submit" class="btn btn-primary rounded-pill {{(selected() == null || !isset($subjects->where('id', selected())->first()->klase->instructor) || isset($evaluation)) || ($period->endEval < NOW()->format('Y-m-d'))? 'disabled' : null}}">Submit</button>
@@ -304,4 +308,26 @@
             event.target.setCustomValidity('');
         });
     }
+
+    const resetBtnEl = document.getElementById('btnReset');
+
+    resetBtnEl.addEventListener('click', function (){
+
+        //get all question inputs
+        for(var i = 1; i <= totalInput.value; i++)
+        {
+            var inputElC = document.querySelector('.qAns' + i); ;
+
+            if(inputElC.value != null)
+            {
+                if(inputElC.type == 'radio')
+                {
+                    for(var j = 1; j <= 5; j++)
+                        document.getElementById('qAns' + i + 'a' + j).checked = false;
+                }
+                else
+                    inputElC.value = null;
+            }
+        }
+    });
 </script>

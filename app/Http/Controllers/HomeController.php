@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Block;
 use App\Models\Period;
 use App\Models\Faculty;
@@ -390,7 +391,7 @@ class HomeController extends Controller
                                         
                     //chart details
                     $chartFaculty-> labels(['Pending', 'Finished'])
-                        -> dataset('Faculty', 'doughnut', [$pendingf, $finishedf])
+                        -> dataset('Faculty', 'bar', [$pendingf, $finishedf])
                         -> backgroundColor(['Yellow', 'Green'])/* 
                         -> options([
                             'maintainAspectRatio' => true,
@@ -443,7 +444,6 @@ class HomeController extends Controller
                                 ]
                             ]
                         ]) */;
-                    
                     $variables = ['period', 'chartFaculty', 'finishedf', 'pendingf', 'expectedf', 'chartStudent', 'totalEnrollees', 'finisheds', 'pendings'];
                 }
                 else
@@ -464,14 +464,13 @@ class HomeController extends Controller
                     'backgroundColor' => $this->colors(0)->bg, 
                     'pointBorderColor' => $this->colors(0)->pointer,
                     'scales' => [
-                        'r' => [
-                            'min' => 0,
-                            'max' => 5,
+                        'y' => [
+                            'suggestedMax' => 5,
                             'ticks' => [
-                                'stepSize' => 20,
-                                'display' => false
+                                'stepSize' => 1
                             ]
-                    ]],
+                        ]
+                    ],
                     'responsive' => true
                 ]);
 
@@ -528,14 +527,13 @@ class HomeController extends Controller
                     'backgroundColor' => $this->colors(0)->bg,
                     'pointBorderColor' => $this->colors(0)->pointer,
                     'scales' => [
-                        'r' => [
-                            'min' => 0,
-                            'max' => 5,
+                        'y' => [
+                            'suggestedMax' => 5,
                             'ticks' => [
-                                'stepSize' => 20,
-                                'display' => false
+                                'stepSize' => 1
                             ]
-                    ]],
+                        ]
+                    ],
                     'responsive' => true
                 ]);
 
@@ -576,22 +574,10 @@ class HomeController extends Controller
                         $i += 1;
                     }
                 }
-                //get faculties in same department
-                if(auth()->user()->faculties->first()->isDean)
-                {
-                    $faculty = Faculty::where('department_id', auth()->user()->faculties->first()->department_id)
-                                    -> where('user_id', '!=', auth()->user()->id)
-                                    -> orderBy('isAssDean', 'desc')
-                                    -> get();
-                }
-                else
-                { 
-                    $faculty = Faculty::where('department_id', auth()->user()->faculties->first()->department_id)
-                                    -> where('user_id', '!=', auth()->user()->id)
-                                    -> where('isDean', false)
-                                    -> where('isAssDean', false)
-                                    -> get();
-                }
+                $faculty = Faculty::where('department_id', auth()->user()->faculties->first()->department_id)
+                                -> where('user_id', '!=', auth()->user()->id)
+                                -> orderBy('isAssDean', 'desc')
+                                -> get();
 
                 $sumFac = $this->getSummary($period, 3);
                 
@@ -672,7 +658,8 @@ class HomeController extends Controller
     {
         if(!isset($period->beginEval))
             return null;
-            
+
+        $details = new Collection();
         $rawAtt = [];
         $lowestAttribute = 0;
         //get all categories
@@ -753,14 +740,17 @@ class HomeController extends Controller
                         {
                             $final = $catPts / $catCount;
 
-                            $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? round($final, 2) : round(($rawAtt[$prevCat] + $final) / 2, 2);
+                            if($type == 3 && $det->subject->isLec == 3)
+                                $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? $final : ($rawAtt[$prevCat] + $final);
+                            else
+                                $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? $final : $rawAtt[$prevCat] + $final;
                         
                             if($lowestAttribute == 0)
                                 $lowestAttribute = $prevCat;
                             
                             if($rawAtt[$prevCat] < $rawAtt[$lowestAttribute])
                                 $lowestAttribute = $prevCat;
-
+                            
                             $catCount = 0;
                             $catPts = 0;
                         }
@@ -778,23 +768,30 @@ class HomeController extends Controller
                 if($catPts != 0)
                 {
                     $final = $catPts / $catCount;
-                    $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? round($final, 2) : round(($rawAtt[$prevCat] + $final) / 2, 2);
+
+                    if($type == 3 && $det->subject->isLec == 3)
+                        $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? $final : ($rawAtt[$prevCat] + $final);
+                    else
+                        $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? $final : $rawAtt[$prevCat] + $final;
                         
                     if($lowestAttribute == 0)
                         $lowestAttribute = $prevCat;
                     
                     if($rawAtt[$prevCat] < $rawAtt[$lowestAttribute])
                         $lowestAttribute = $prevCat;
-
+                    
                     $catCount = 0;
                     $catPts = 0;
                 }
             }
         }
+        
         $attributes = array();
         $attributes = array_merge($attributes, $rawAtt);
-
-        $details = new Collection();
+        
+        $i = 0;
+        for($i = 0; $i < count($attributes); $i++)
+            $attributes[$i] = $type == 3? number_format($attributes[$i] / $evaluation->count() / 2, 2) : number_format($attributes[$i] / $evaluation->count(), 2);
 
         $details->attributes = $attributes;
         $details->lowestAttribute = $lowestAttribute;
@@ -866,6 +863,7 @@ class HomeController extends Controller
             return null;
         else
         {
+            $summary->evalCount = $evaluation->count();
             foreach($category as $det)
             {
                 foreach($det->questions as $q)
@@ -877,7 +875,14 @@ class HomeController extends Controller
                 foreach($det->evalDetails as $detail)
                 {
                     if($detail->question->q_type_id == 1)
-                        $summary->where('id', $detail->question_id) ->first()->mean = isset($summary->where('id', $detail->question_id)->first()->mean)? ($summary->where('id', $detail->question_id)->first()->mean + (float)$detail->answer) : (float)$detail->answer;
+                    {
+                        if($type == 3 && $det->subject->isLec == 3)
+                        {
+                            $summary->where('id', $detail->question_id) ->first()->mean = isset($summary->where('id', $detail->question_id)->first()->mean)? ($summary->where('id', $detail->question_id)->first()->mean + (float)$detail->answer): (float)$detail->answer;
+                        }
+                        else
+                            $summary->where('id', $detail->question_id) ->first()->mean = isset($summary->where('id', $detail->question_id)->first()->mean)? ($summary->where('id', $detail->question_id)->first()->mean + (float)$detail->answer) : (float)$detail->answer;
+                    }
                     else
                         $summary->where('id', $detail->question_id)->first()->message = isset($summary->where('id', $detail->question_id)->first()->message)?  $summary->where('id', $detail->question_id)->first()->message = array_merge( $summary->where('id', $detail->question_id)->first()->message, [$detail->answer]) : [$detail->answer];
                 }

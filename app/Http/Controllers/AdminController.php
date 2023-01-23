@@ -232,14 +232,13 @@ class AdminController extends Controller
                     'backgroundColor' => $this->colors(0)->bg, 
                     'pointBorderColor' => $this->colors(0)->pointer,
                     'scales' => [
-                        'r' => [
-                            'min' => 0,
-                            'max' => 100,
+                        'y' => [
+                            'suggestedMax' => 5,
                             'ticks' => [
-                                'stepSize' => 20,
-                                'display' => false
+                                'stepSize' => 1
                             ]
-                    ]],
+                        ]
+                    ],
                     'responsive' => true
                 ]);
                 //get current attributes
@@ -302,14 +301,13 @@ class AdminController extends Controller
                     'backgroundColor' => $this->colors(0)->bg, 
                     'pointBorderColor' => $this->colors(0)->pointer,
                     'scales' => [
-                        'r' => [
-                            'min' => 0,
-                            'max' => 100,
+                        'y' => [
+                            'suggestedMax' => 5,
                             'ticks' => [
-                                'stepSize' => 20,
-                                'display' => false
+                                'stepSize' => 1
                             ]
-                    ]],
+                        ]
+                    ],
                     'responsive' => true
                 ]);
                 
@@ -444,8 +442,7 @@ class AdminController extends Controller
         $cofac = array();
 
         foreach($coFac as $det)
-            $cofac = array_merge($cofac, [$det->user_id]);     
-    
+            $cofac = array_merge($cofac, [$det->user_id]);  
 
         return view('admin.summaryReport', compact('faculty', 'periods', 'perSelected', 'subSelected', 'showBy', 'summaryS', 'summaryF', 'cofac', 'students'));
     }
@@ -500,7 +497,8 @@ class AdminController extends Controller
     {
         if(!isset($period->beginEval))
             return null;
-            
+        
+        $details = new Collection();
         $rawAtt = [];
         $lowestAttribute = 0;
         //get all categories
@@ -579,7 +577,10 @@ class AdminController extends Controller
                         {
                             $final = $catPts / $catCount;
 
-                            $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? round($final, 2) : round(($rawAtt[$prevCat] + $final) / 2, 2);
+                            if($type == 3 && $det->subject->isLec == 3)
+                                $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? $final : ($rawAtt[$prevCat] + $final) / 2;
+                            else
+                                $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? $final : $rawAtt[$prevCat] + $final;
                         
                             if($lowestAttribute == 0)
                                 $lowestAttribute = $prevCat;
@@ -604,7 +605,11 @@ class AdminController extends Controller
                 if($catPts != 0)
                 {
                     $final = $catPts / $catCount;
-                    $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? round($final, 2) : round(($rawAtt[$prevCat] + $final) / 2, 2);
+
+                    if($type == 3 && $det->subject->isLec == 3)
+                        $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? $final : ($rawAtt[$prevCat] + $final) / 2;
+                    else
+                        $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? $final : $rawAtt[$prevCat] + $final;
                         
                     if($lowestAttribute == 0)
                         $lowestAttribute = $prevCat;
@@ -617,10 +622,13 @@ class AdminController extends Controller
                 }
             }
         }
+        
         $attributes = array();
         $attributes = array_merge($attributes, $rawAtt);
-
-        $details = new Collection();
+        
+        $i = 0;
+        for($i = 0; $i < count($attributes); $i++)
+            $attributes[$i] = number_format($attributes[$i] / $evaluation->count(), 2);
 
         $details->attributes = $attributes;
         $details->lowestAttribute = $lowestAttribute;
@@ -694,6 +702,7 @@ class AdminController extends Controller
             return null;
         else
         {
+            $summary->evalCount = $evaluation->count();
             foreach($category as $det)
             {
                 if($type == 3)
@@ -720,11 +729,17 @@ class AdminController extends Controller
                 foreach($det->evalDetails as $detail)
                 {
                     if($detail->question->q_type_id == 1)
-                        $summary->where('id', $detail->question_id)->first()->mean = isset($summary->where('id', $detail->question_id)->first()->mean)?  ((float) $summary->where('id', $detail->question_id)->first()->mean +(float) $detail->answer) :(float) $detail->answer;
+                    {
+                        if($type == 3 && $det->subject->isLec == 3)
+                        {
+                            $summary->where('id', $detail->question_id) ->first()->mean = isset($summary->where('id', $detail->question_id)->first()->mean)? ($summary->where('id', $detail->question_id)->first()->mean + (float)$detail->answer) / 2 : (float)$detail->answer;
+                        }
+                        else
+                            $summary->where('id', $detail->question_id) ->first()->mean = isset($summary->where('id', $detail->question_id)->first()->mean)? ($summary->where('id', $detail->question_id)->first()->mean + (float)$detail->answer) : (float)$detail->answer;
+                    }
                     else
                         $summary->where('id', $detail->question_id)->first()->message = isset($summary->where('id', $detail->question_id)->first()->message)?  $summary->where('id', $detail->question_id)->first()->message = array_merge( $summary->where('id', $detail->question_id)->first()->message, [$detail->answer]) : [$detail->answer];
-                    
-                    }
+                }
             }
         }
 

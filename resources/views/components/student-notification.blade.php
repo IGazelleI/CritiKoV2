@@ -11,7 +11,6 @@
             auth()->user()->students->first()->dob == null ||
             auth()->user()->students->first()->address == null ||
             auth()->user()->students->first()->cnumber == null ||
-            auth()->user()->students->first()->lname == null ||
             auth()->user()->students->first()->emergency_cPName == null ||
             auth()->user()->students->first()->emergency_cPNumber == null ||
             auth()->user()->students->first()->emergency_cPRelationship == null ||
@@ -20,6 +19,11 @@
             <li class="dropdown-item"> Please don't forget to update your profile. Thank you. </li>
             @php
                 $notifCount += 1;
+                Session::put('allowed', false);
+            @endphp
+        @else
+            @php
+                Session::put('allowed', true);
             @endphp
         @endif
         @if($notifCount == 0)

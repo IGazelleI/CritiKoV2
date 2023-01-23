@@ -18,7 +18,6 @@
                       <thead class="bg-light">
                         <tr>
                           <th scope="col">Faculty</th>
-                          <th scope="col">Status</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -28,16 +27,107 @@
                           @foreach($faculty as $det)
                           <tr class="fw-normal">
                               <th>
-                                  <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-                                    alt="avatar 1" style="width: 45px; height: auto"/>
-      
-                                  <span class="ms-2"> {{$det->fullName(1)}} </span> <br/> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                                  <span class="text-secondary">
-                                    @if($det->isDean)
-                                    College Dean
+                                  <div class="row">
+                                    <div class="col">
+                                      <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
+                                        alt="avatar 1" style="width: 45px; height: auto"/>
+          
+                                      <span class="ms-2"> {{$det->fullName(1)}} </span> <br/> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                                      <span class="text-secondary">
+                                        @if($det->isDean)
+                                        College Dean
+                                        @endif
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                    @php
+                                        $block = App\Models\Block::where('period_id', $period->id)
+                                                            -> latest('id')
+                                                            -> get();
+                                        $klases = 0;
+  
+                                        foreach($block as $b)
+                                            $klases += $b->klases->where('instructor', $det->user_id)->count();
+                                    @endphp
+                                    <div class="col">
+                                        <button class="btn btn-transparent text-secondary shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{$det->id}}" aria-expanded="false" aria-controls="collapseExample">
+                                            Subjects Handled
+                                        </button>
+                                    </div>
+                                    <div class="col text-end">
+                                        <span class="fw-bold badge bg-primary text-wrap"> 
+                                            {{$klases}} 
+                                        </span>
+                                    </div>
+                                    @if(!$block->isEmpty())
+                                    <div class="collapse" id="collapse{{$det->id}}">
+                                        @foreach($block as $b)
+                                            @foreach($b->klases->where('instructor', $det->user_id) as $klase)
+                                            @php
+                                                $finished = $det->evaluated->where('period_id', $period->id)->where('evaluatee', $det->user_id)->whereIn('evaluator', $student)->where('subject_id', $klase->subject_id)->count();
+                                                $total = $klase->klaseStudents->count();
+                                                $pending = $total - $finished;
+                                            @endphp
+                                            <div class="row my-1">
+                                              <div class="col">
+                                                {{$klase->subject->descriptive_title}}
+                                              </div>
+                                              <div class="col-1 text-end">
+                                                  @if($det->evaluated->where('period_id', $period->id)->where('evaluatee', $det->user_id)->where('evaluator', auth()->user()->id)->where('subject_id', $klase->subject_id)->isEmpty())
+                                                  <span class="badge bg-warning rounded-circle px-2 py-2" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Pending" >
+                                                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
+                                                          <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
+                                                          <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
+                                                      </svg>
+                                                  </span>
+                                                  @else
+                                                  <span class="badge bg-success rounded-circle px-2 py-2" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{date('D, F d, Y @ g:i A', strToTime($det->evaluated->where('period_id', $period->id)->where('evaluatee', $det->user_id)->where('evaluator', auth()->user()->id)->where('subject_id', $klase->subject_id)->first()->created_at))}}">
+                                                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2" viewBox="0 0 16 16">
+                                                          <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+                                                      </svg>
+                                                  </span>
+                                                  @endif
+                                              </div>
+                                            </div>{{-- 
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSub{{$klase->id}}" aria-expanded="false" aria-controls="collapseTwo">
+                                                
+                                            </button> --}}{{-- 
+                                            <div id="collapseSub{{$klase->id}}" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                                <ul class="list-group">
+                                                @foreach($klase->klaseStudents as $student)
+                                                    <li class="list-group-item">
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                {{$student->user->students->first()->fullName(true)}}
+                                                            </div>
+                                                            <div class="col text-end">
+                                                                @if($det->evaluated->where('period_id', $period->id)->where('evaluatee', $det->user_id)->where('evaluator', $student->user_id)->where('subject_id', $klase->subject_id)->isEmpty())
+                                                                <span class="badge bg-warning rounded-circle px-2 py-2" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Pending" >
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
+                                                                        <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
+                                                                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
+                                                                    </svg>
+                                                                </span>
+                                                                @else
+                                                                <span class="badge bg-success rounded-circle px-2 py-2" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="{{date('D, F d, Y @ g:i A', strToTime($det->evaluated->where('period_id', $period->id)->where('evaluatee', $det->user_id)->where('evaluator', $student->user_id)->where('subject_id', $klase->subject_id)->first()->created_at))}}">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2" viewBox="0 0 16 16">
+                                                                        <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+                                                                    </svg>
+                                                                </span>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                @endforeach
+                                                </ul>
+                                            </div> --}}
+                                            @endforeach
+                                        @endforeach
+                                    </div>
                                     @endif
-                                  </span>
-                              </th>
+                                </div>
+                              </th>{{-- 
                               <td class="align-middle">
                                   <h6 class="mb-0">
                                       @php
@@ -89,7 +179,7 @@
                                         </a>
                                       @endif
                                 </h6>
-                              </td>
+                              </td> --}}
                           </tr>
                           @endforeach
                       </tbody>
@@ -251,14 +341,14 @@
                                       <div class="col">
                                         <div class="row">
                                           <div class="col">
-                                            <strong> Grand Mean: </strong> {{round($sumSt->avg('mean'), 2)}}
+                                            <strong> Grand Mean: </strong> {{number_format($sumSt->avg('mean') / $sumSt->evalCount, 2)}}
                                           </div>
                                         </div>
                                         <div class="row">
                                           <div class="col">
                                             <span data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="1.00 - 1.79 Unsatisfactory, 1.80 - 2.59 Fair, 2.60 - 3.39 Satisfactory, 3.40 - 4.19 Very Satisfactory, 4.20 - 5.00 Outstanding">
-                                              <p class="badge {{status(round($sumSt->avg('mean'), 2))->background}} fs-6 text-wrap">
-                                                {{status(round($sumSt->avg('mean'), 2))->message}}
+                                              <p class="badge {{status(round($sumSt->avg('mean') / $sumSt->evalCount, 2))->background}} fs-6 text-wrap">
+                                                {{status(round($sumSt->avg('mean') / $sumSt->evalCount, 2))->message}}
                                               </p>
                                             </span>
                                           </div>
@@ -310,14 +400,14 @@
                                     <div class="col">
                                         <div class="row">
                                           <div class="col">
-                                            <strong> Grand Mean: </strong> {{round($sumFac->avg('mean'), 0)}}
+                                            <strong> Grand Mean: </strong> {{number_format($sumFac->avg('mean') / $sumFac->evalCount, 0)}}
                                           </div>
                                         </div>
                                         <div class="row">
                                           <div class="col">
                                             <span data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="1 - Poor, 2 - Fair, 3 - Good, 4 - Very Good, 5 - Outstanding">
-                                              <p class="badge {{status(round($sumFac->avg('mean'), 0))->background}} fs-6 text-wrap">
-                                                {{status(round($sumFac->avg('mean'), 0))->messageF}}
+                                              <p class="badge {{status(round($sumFac->avg('mean') / $sumFac->evalCount, 0))->background}} fs-6 text-wrap">
+                                                {{status(round($sumFac->avg('mean') / $sumFac->evalCount, 0))->messageF}}
                                               </p>
                                             </span>
                                           </div>

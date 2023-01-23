@@ -88,9 +88,10 @@
                     $catCount = 0;
                     $totalPts = 0;
                     $cat = 0;
-                    $loop = ($subject->isLec == 1 || $subject->isLec == 3)? $data->where('q_type_id', 1)->where('isLec', true) : $data->where('q_type_id', 1)->where('isLec', false);
+                    $loop = ($subject->isLec == 1 || $subject->isLec == 3)? $data->where('isLec', true) : $data;
+                    $all = $loop->where('q_type_id', 1)->count();
                 @endphp
-                @foreach($loop as $det)
+                @foreach($loop->where('q_type_id', 1) as $det)
                     @if($prevCat != $det->q_category_id && $prevCat != 0)
                     <tr>
                         <td class="text-end"> <strong> Mean  </strong> </td>
@@ -116,7 +117,7 @@
                         <td> <strong> {{$catCount + 1}}. </strong> {{ucfirst($det->sentence)}} </td>
                         <td class="text-center"> {{number_format($det->mean, 2)}}</td>
                     </tr>
-                    @if($count == $data->where('q_type_id', 1)->count())
+                    @if($count == $all)
                     @php
                         $catCount += 1;
                     @endphp
@@ -139,11 +140,11 @@
                 @endforeach
                 <tr>
                     <td class="text-end"> <strong> Grand Mean </strong> </td>
-                    <td class="text-center"> <strong> {{number_format($totalPts / ($count - 1), 2)}} </strong> </td>  
+                    <td class="text-center"> <strong> {{number_format($totalPts / $all, 2)}} </strong> </td>  
                 </tr>
                 <tr>
                     <td class="text-end"> <strong> Descriptive Rating </strong> </td>
-                    <td class="text-center"> <strong> {{rating($totalPts / ($count - 2))}} </strong> </td>  
+                    <td class="text-center"> <strong> {{rating($totalPts / $all)}} </strong> </td>  
                 </tr>
             </tbody>
         </table>
@@ -197,7 +198,7 @@
                 <strong> Instructor/Professor: </strong> {{$faculty->fullName(true)}} &nbsp;
                 <strong> Subject: </strong> {{$subject->descriptive_title}} <br/>
                 <span style="text-align: end"> <strong> Date: </strong> {{date('M. d, Y @ g:i A',  strtotime(NOW()))}} </span> <br/>
-            </div> <br/>
+            </div>
             <div>
                 <table class="center no-border">
                     <thead>
@@ -233,7 +234,7 @@
                     @foreach($data->where('q_type_id', 1)->where('isLec', false) as $det)
                         @if($prevCat != $det->q_category_id && $prevCat != 0)
                         <tr>
-                            <td class="text-end"> <strong> Mean  </strong> </td>
+                            <td class="text-end"> <strong>  Mean  </strong> </td>
                             <td class="text-center"> <strong> {{number_format($catPts / $catCount, 2)}} </strong> </td>
                         </tr>
                         @php
@@ -254,15 +255,15 @@
                         @endphp
                         <tr>
                             <td> <strong> {{$catCount + 1}}. </strong> {{ucfirst($det->sentence)}} </td>
-                            <td class="text-center"> {{number_format($det->mean, 2)}}</td>
+                            <td class="text-center"> {{number_format($det->mean, 2)}} </td>
                         </tr>
-                        @if($count == $data->where('q_type_id', 1)->count())
+                        @if($count == $data->where('q_type_id', 1)->where('isLec', false) ->count())
                         @php
                             $catCount += 1;
                         @endphp
                         {{-- Last Row Will be shown as it is not counted in loop --}}
                         <tr>
-                            <td class="text-end"> <strong> Mean  </strong> </td>
+                            <td class="text-end"> <strong>  Mean  </strong> </td>
                             <td class="text-center"> <strong> {{number_format($catPts / $catCount, 2)}} </strong> </td>
                         </tr>
                         @php
@@ -279,11 +280,11 @@
                     @endforeach
                     <tr>
                         <td class="text-end"> <strong> Grand Mean </strong> </td>
-                        <td class="text-center"> <strong> {{number_format($totalPts / ($count - 1), 2)}} </strong> </td>  
+                        <td class="text-center"> <strong> {{number_format(($totalPts / $data->where('isLec', false)->where('q_type_id', 1)->count()), 2)}} </strong> </td>  
                     </tr>
                     <tr>
                         <td class="text-end"> <strong> Descriptive Rating </strong> </td>
-                        <td class="text-center"> <strong> {{rating($totalPts / ($count - 2))}} </strong> </td>  
+                        <td class="text-center"> <strong> {{rating($totalPts / $data->where('isLec', false)->where('q_type_id', 1)->count())}} </strong> </td>  
                     </tr>
                 </tbody>
             </table>

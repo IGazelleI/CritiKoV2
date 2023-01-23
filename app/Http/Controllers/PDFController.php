@@ -45,7 +45,7 @@ class PDFController extends Controller
         $pdf = $type == 3? PDF::loadview('pdf.facultyReport', array('type' =>  $type, 'faculty' => $faculty, 'subject' => $subject, 'period' => $period, 'data' => $data)) : 
                            PDF::loadview('pdf.studentReport', array('type' =>  $type, 'faculty' => $faculty, 'subject' => $subject, 'period' => $period, 'data' => $data, 'students' => $students))
                                 -> setPaper('a4', 'landscape');
-
+        
         return $pdf->stream();
     }
     
@@ -115,6 +115,7 @@ class PDFController extends Controller
             return null;
         else
         {
+            $summary->evalCount = $evaluation->count();
             foreach($category as $det)
             {
                 if($type == 3)
@@ -141,9 +142,16 @@ class PDFController extends Controller
                 foreach($det->evalDetails as $detail)
                 {
                     if($detail->question->q_type_id == 1)
-                        $summary->where('id', $detail->question_id)->first()->mean = isset($summary->where('id', $detail->question_id)->first()->mean)? ($summary->where('id', $detail->question_id)->first()->mean + $detail->answer) / 2 : $detail->answer;
+                    {
+                        if($type == 3 && $det->subject->isLec == 3)
+                        {
+                            $summary->where('id', $detail->question_id) ->first()->mean = isset($summary->where('id', $detail->question_id)->first()->mean)? ($summary->where('id', $detail->question_id)->first()->mean + (float)$detail->answer) / 2 : (float)$detail->answer;
+                        }
+                        else
+                            $summary->where('id', $detail->question_id) ->first()->mean = isset($summary->where('id', $detail->question_id)->first()->mean)? ($summary->where('id', $detail->question_id)->first()->mean + (float)$detail->answer) : (float)$detail->answer;
+                    }
                     else
-                        $summary->where('id', $detail->question_id)->first()->message = isset($summary->where('id', $detail->question_id)->first()->message)?  $summary->where('id', $detail->question_id)->first()->message = array_merge( $summary->where('id', $detail->question_id)->first()->message, [$detail->answer]) : [$detail->answer];     
+                        $summary->where('id', $detail->question_id)->first()->message = isset($summary->where('id', $detail->question_id)->first()->message)?  $summary->where('id', $detail->question_id)->first()->message = array_merge( $summary->where('id', $detail->question_id)->first()->message, [$detail->answer]) : [$detail->answer];
                 }
             }
         }

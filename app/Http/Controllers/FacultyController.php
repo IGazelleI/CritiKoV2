@@ -242,14 +242,13 @@ class FacultyController extends Controller
                 'backgroundColor' => $this->colors(0)->bg, 
                 'pointBorderColor' => $this->colors(0)->pointer,
                 'scales' => [
-                    'r' => [
-                        'min' => 0,
-                        'max' => 100,
+                    'y' => [
+                        'suggestedMax' => 5,
                         'ticks' => [
-                            'stepSize' => 20,
-                            'display' => false
+                            'stepSize' => 1
                         ]
-                ]],
+                    ]
+                ],
                 'responsive' => true
             ]);
             //get current attributes
@@ -314,14 +313,13 @@ class FacultyController extends Controller
                 'backgroundColor' => $this->colors(0)->bg, 
                 'pointBorderColor' => $this->colors(0)->pointer,
                 'scales' => [
-                    'r' => [
-                        'min' => 0,
-                        'max' => 100,
+                    'y' => [
+                        'suggestedMax' => 5,
                         'ticks' => [
-                            'stepSize' => 20,
-                            'display' => false
+                            'stepSize' => 1
                         ]
-                ]],
+                    ]
+                ],
                 'responsive' => true
             ]);
             
@@ -422,7 +420,8 @@ class FacultyController extends Controller
     {
         if(!isset($period->beginEval))
             return null;
-            
+        
+        $details = new Collection();
         $rawAtt = [];
         $lowestAttribute = 0;
         //get all categories
@@ -500,7 +499,10 @@ class FacultyController extends Controller
                         {
                             $final = $catPts / $catCount;
 
-                            $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? round($final, 0) : round(($rawAtt[$prevCat] + $final) / 2, 0);
+                            if($type == 3 && $det->subject->isLec == 3)
+                                $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? $final : ($rawAtt[$prevCat] + $final) / 2;
+                            else
+                                $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? $final : $rawAtt[$prevCat] + $final;
                         
                             if($lowestAttribute == 0)
                                 $lowestAttribute = $prevCat;
@@ -525,7 +527,11 @@ class FacultyController extends Controller
                 if($catPts != 0)
                 {
                     $final = $catPts / $catCount;
-                    $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? round($final, 0) : round(($rawAtt[$prevCat] + $final) / 2, 0);
+
+                    if($type == 3 && $det->subject->isLec == 3)
+                        $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? $final : ($rawAtt[$prevCat] + $final) / 2;
+                    else
+                        $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? $final : $rawAtt[$prevCat] + $final;
                         
                     if($lowestAttribute == 0)
                         $lowestAttribute = $prevCat;
@@ -538,10 +544,13 @@ class FacultyController extends Controller
                 }
             }
         }
+        
         $attributes = array();
         $attributes = array_merge($attributes, $rawAtt);
 
-        $details = new Collection();
+        $i = 0;
+        for($i = 0; $i < count($attributes); $i++)
+            $attributes[$i] = number_format($attributes[$i] / $evaluation->count(), 2);
 
         $details->attributes = $attributes;
         $details->lowestAttribute = $lowestAttribute;

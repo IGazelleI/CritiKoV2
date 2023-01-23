@@ -36,7 +36,7 @@ class UserStoreRequest extends FormRequest
             'id_number' => ['required', Rule::unique('students', 'id_number')],
             'fname' => 'required',
             'lname' => 'required',
-            'email' => ['required', Rule::unique('users', 'email')],
+            'email' => ['required'],
             'password' => ['required', 'confirmed', 'min:6']
         ];
     }
@@ -55,7 +55,6 @@ class UserStoreRequest extends FormRequest
             'email.required' => 'Email is required.',
             'password.required' => 'Password is required.',
             'password.confirmed' => 'The password does not match.',
-            'email.unique' => 'Email is already taken.',
             'id_number' => 'ID Number is already taken.'
         ];
     }

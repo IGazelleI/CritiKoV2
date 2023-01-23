@@ -227,7 +227,7 @@
                                             @endforeach
                                             <tr>
                                               <td class="text-end"> <strong> Grand Mean </strong> </td>
-                                              <td> <strong> {{number_format(($totalPts / ($count - ($summaryS->where('q_type_id', 2)->count())) / count($students)), 2)}} </strong> </td>  
+                                              <td> <strong> {{number_format((($totalPts / ($count - $summaryS->where('q_type_id', 2)->count())) / $summaryS->evalCount), 2)}} </strong> </td>  
                                             </tr>
                                         </tbody>
                                     </table>
@@ -443,7 +443,7 @@
                                                         @endforeach
                                                         <tr>
                                                             <td class="text-end"> <strong> Grand Mean </strong> </td>
-                                                            <td> <strong> {{number_format($totalPts / ($count - 1), 2)}} </strong> </td>  
+                                                            <td> <strong> {{number_format(($totalPts / $summaryQF->where('q_type_id', 1)->count()), 2)}} </strong> </td>  
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -570,7 +570,7 @@
                                                     @endforeach
                                                     <tr>
                                                         <td class="text-end"> <strong> Grand Mean </strong> </td>
-                                                        <td> <strong> {{number_format($totalPts / ($count - 1), 2)}} </strong> </td>  
+                                                        <td> <strong> {{number_format(($totalPts / $summaryF->where('isLec', false)->where('q_type_id', 1)->count()), 2)}} </strong> </td>  
                                                     </tr>
                                                 </tbody>
                                             </table>

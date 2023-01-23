@@ -77,6 +77,9 @@ class StudentController extends Controller
 
     public function evaluate(Request $request)
     {
+        if(!Session::get('allowed'))
+            return back()->with('message', 'Please update your profile first. Thank you.');
+
         $period = Period::find(Session::get('period'));
 
         $enrollment = Enrollment::where('user_id', auth()->user()->id)
@@ -160,6 +163,8 @@ class StudentController extends Controller
 
     public function enrollment(Request $request)
     {
+        if(!Session::get('allowed'))
+            return back()->with('message', 'Please update your profile first. Thank you.');
         //get period selected
         $period = Period::find(Session::get('period'));
         //get enrollment type
