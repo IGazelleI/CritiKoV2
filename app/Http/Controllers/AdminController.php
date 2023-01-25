@@ -578,7 +578,7 @@ class AdminController extends Controller
                             $final = $catPts / $catCount;
 
                             if($type == 3 && $det->subject->isLec == 3)
-                                $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? $final : ($rawAtt[$prevCat] + $final) / 2;
+                                $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? $final : ($rawAtt[$prevCat] + $final);
                             else
                                 $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? $final : $rawAtt[$prevCat] + $final;
                         
@@ -607,7 +607,7 @@ class AdminController extends Controller
                     $final = $catPts / $catCount;
 
                     if($type == 3 && $det->subject->isLec == 3)
-                        $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? $final : ($rawAtt[$prevCat] + $final) / 2;
+                        $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? $final : ($rawAtt[$prevCat] + $final);
                     else
                         $rawAtt[$prevCat] = $rawAtt[$prevCat] == 0? $final : $rawAtt[$prevCat] + $final;
                         
@@ -628,7 +628,7 @@ class AdminController extends Controller
         
         $i = 0;
         for($i = 0; $i < count($attributes); $i++)
-            $attributes[$i] = number_format($attributes[$i] / $evaluation->count(), 2);
+            $attributes[$i] = $type == 3? number_format($attributes[$i] / $evaluation->count() / 2, 2) : number_format($attributes[$i] / $evaluation->count(), 2);
 
         $details->attributes = $attributes;
         $details->lowestAttribute = $lowestAttribute;

@@ -150,14 +150,14 @@
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li>
-                                        <a href="{{route('admin.summaryReport', ['faculty' =>  auth()->user()->type == 1? $faculty->id : auth()->user()->faculties->first()->id, 'period' => $perSelected, 'subject' => $subSelected, 'showBy' => 'mean'])}}"
+                                        <a href="{{route('admin.summaryReport', ['faculty' =>  auth()->user()->type == 1 || auth()->user()->type == 3? $faculty->id : auth()->user()->faculties->first()->id, 'period' => $perSelected, 'subject' => $subSelected, 'showBy' => 'mean'])}}"
                                            class="dropdown-item" 
                                         >
                                             Mean    
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="{{route('admin.summaryReport', ['faculty' => auth()->user()->type == 1? $faculty->id : auth()->user()->faculties->first()->id, 'period' => $perSelected, 'subject' => $subSelected, 'showBy' => 'answer'])}}"
+                                        <a href="{{route('admin.summaryReport', ['faculty' => auth()->user()->type == 1 || auth()->user()->type == 3? $faculty->id : auth()->user()->faculties->first()->id, 'period' => $perSelected, 'subject' => $subSelected, 'showBy' => 'answer'])}}"
                                             class="dropdown-item"
                                         >
                                             Answer   
